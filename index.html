@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f6f8">
+<title>德语单词卡 · A1 → C1</title>
+<style>
+/* 德语单词卡 — 样式 */
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#15171c; --muted:#6b7280; --line:#e6e8ee;
+  --soft:#f0f1f5; --accent:#d31c2b; --gold:#e3a008; --ok:#0f8a5f; --bad:#d31c2b;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);
+  --r:18px;
+}
+[data-theme="dark"]{
+  --bg:#0e1015; --card:#161a22; --ink:#e9ecf2; --muted:#98a1b2; --line:#262c38;
+  --soft:#1d222c; --accent:#ff5a67; --gold:#f0b429; --ok:#34c38f; --bad:#ff5a67;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  transition:background .25s,color .25s;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+a{color:var(--accent)}
+
+/* ---------- 布局 ---------- */
+#app{max-width:880px;margin:0 auto;padding:0 18px 90px}
+.topbar{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;
+  padding:14px 0 12px;background:linear-gradient(var(--bg) 72%,transparent);
+  backdrop-filter:blur(8px);
+}
+.brand{display:flex;align-items:center;gap:9px;font-weight:750;letter-spacing:.2px;white-space:nowrap}
+.brand .dot{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:15px;
+  background:linear-gradient(150deg,#15171c 0 33%,#d31c2b 33% 66%,#e3a008 66% 100%);color:#fff;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+[data-theme="dark"] .brand .dot{background:linear-gradient(150deg,#000 0 33%,#d31c2b 33% 66%,#e3a008 66% 100%)}
+.tabs{margin-left:auto;display:flex;gap:2px;background:var(--soft);padding:3px;border-radius:12px}
+.tabs button{padding:7px 14px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;transition:.18s}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.view{display:none;animation:fade .22s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* ---------- 首页 ---------- */
+.hero{display:flex;gap:26px;align-items:center;padding:26px;margin-top:6px}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .bg{stroke:var(--soft)}
+.ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+.ring-inner{position:absolute;inset:0;display:grid;place-content:center;text-align:center;line-height:1.15}
+.ring-inner b{font-size:30px;font-weight:800;letter-spacing:-1px}
+.ring-inner span{font-size:12px;color:var(--muted)}
+.hero-info{flex:1;min-width:0}
+.hero-info h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.hero-info p{color:var(--muted);font-size:14px;margin-top:4px}
+.btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{padding:11px 20px;border-radius:12px;font-weight:650;font-size:15px;transition:.18s;border:1px solid transparent}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.accent{background:var(--accent);color:#fff}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.ghost:hover{background:var(--line)}
+.btn.sm{padding:7px 13px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.stat{padding:16px 18px}
+.stat .k{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+.stat .v{font-size:26px;font-weight:800;letter-spacing:-.6px;margin-top:2px}
+.stat .v small{font-size:13px;font-weight:600;color:var(--muted);margin-left:2px}
+
+.levels{margin-top:14px;padding:20px 22px}
+.levels h3{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:14px;letter-spacing:.3px}
+.lv-row{display:flex;align-items:center;gap:12px;margin:11px 0;font-size:13px}
+.lv-row .name{width:52px;font-weight:700;flex:none}
+.lv-row .track{flex:1;height:8px;background:var(--soft);border-radius:99px;overflow:hidden}
+.lv-row .fill{height:100%;border-radius:99px;background:var(--gold);transition:width .5s}
+.lv-row .num{width:74px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+
+/* ---------- 学习 ---------- */
+.study-head{display:flex;align-items:center;gap:12px;margin:10px 0 18px}
+.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--soft);display:grid;place-items:center;font-size:18px;flex:none}
+.progress{flex:1;height:8px;background:var(--soft);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .3s}
+.sess-num{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+
+.qcard{padding:30px 26px 26px;position:relative;overflow:hidden;min-height:430px;display:flex;flex-direction:column}
+.qcard::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#15171c 0 33%,#d31c2b 33% 66%,#e3a008 66%)}
+.q-tip{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.4px;text-align:center}
+.q-word{font-size:clamp(34px,7vw,54px);font-weight:750;letter-spacing:-1px;text-align:center;margin:22px 0 4px;word-break:break-word;line-height:1.2}
+.q-word.small{font-size:clamp(24px,4.4vw,34px);letter-spacing:-.4px}
+.q-sub{text-align:center;color:var(--muted);font-size:14px;min-height:22px}
+.q-audio{display:flex;justify-content:center;margin:14px 0 6px}
+.speak{width:46px;height:46px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:19px;transition:.18s}
+.speak:hover{background:var(--line)}
+.speak.playing{background:var(--gold);animation:pulse 1s ease}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto;padding-top:20px}
+.opt{display:flex;align-items:center;gap:11px;text-align:left;padding:14px 16px;border-radius:13px;
+  border:1.5px solid var(--line);background:var(--card);transition:.15s;font-size:15.5px;min-height:56px}
+.opt:hover{border-color:var(--muted)}
+.opt .n{width:22px;height:22px;border-radius:6px;background:var(--soft);display:grid;place-items:center;
+  font-size:11px;font-weight:700;color:var(--muted);flex:none}
+.opt.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,var(--card))}
+.opt.correct .n{background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--card))}
+.opt.wrong .n{background:var(--bad);color:#fff}
+.opt[disabled]{cursor:default}
+
+.spell{margin-top:auto;padding-top:20px}
+.spell input{width:100%;padding:16px 18px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);
+  font-size:20px;font-weight:600;letter-spacing:.5px;outline:none}
+.spell input:focus{border-color:var(--ink)}
+.spell .hint{margin-top:8px;font-size:12.5px;color:var(--muted);text-align:center}
+
+/* 反馈面板 */
+/* 反馈面板 */
+.fb{margin-top:18px;border-top:1px dashed var(--line);padding-top:16px;animation:fade .2s}
+.fb-verdict{display:flex;align-items:center;gap:8px;font-weight:750;font-size:15px}
+.fb-verdict.ok{color:var(--ok)}
+.fb-verdict.bad{color:var(--bad)}
+.fb-word{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:12px}
+.fb-word .de{font-size:26px;font-weight:750;letter-spacing:-.4px}
+.fb-word .art{color:var(--accent);font-weight:700}
+.fb-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:12px;padding:3px 9px;border-radius:7px;background:var(--soft);color:var(--muted);font-weight:600}
+.tag.zh{background:color-mix(in srgb,var(--gold) 16%,var(--card));color:var(--ink)}
+.fb-zh{font-size:16px;font-weight:600;margin-top:10px}
+.fb-ex{margin-top:12px;padding:12px 14px;background:var(--soft);border-radius:11px;font-size:14px;line-height:1.55}
+.fb-ex .exzh{color:var(--muted);font-size:13px;margin-top:3px}
+.fb-actions{display:flex;gap:10px;margin-top:16px;align-items:center}
+.fb-actions .btn{flex:1;justify-content:center;text-align:center}
+.star{width:44px;height:44px;border-radius:11px;background:var(--soft);display:grid;place-items:center;font-size:18px;flex:none}
+.star.on{color:var(--gold)}
+
+/* ---------- 结算 ---------- */
+.done{text-align:center;padding:44px 26px}
+.done .emoji{font-size:52px}
+.done h2{font-size:24px;font-weight:800;margin-top:12px}
+.done p{color:var(--muted);margin-top:6px}
+.done-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.done-grid div{background:var(--soft);border-radius:14px;padding:14px 8px}
+.done-grid b{display:block;font-size:24px;font-weight:800}
+.done-grid span{font-size:12px;color:var(--muted)}
+
+/* ---------- 词库 ---------- */
+.toolbar{display:flex;gap:10px;margin:8px 0 14px;flex-wrap:wrap}
+.search{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:0 14px}
+.search input{flex:1;border:none;outline:none;background:none;padding:11px 0;font-size:15px}
+.seg{display:flex;background:var(--soft);border-radius:12px;padding:3px;gap:2px;overflow-x:auto}
+.seg button{padding:8px 13px;border-radius:9px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.07)}
+
+.list{display:flex;flex-direction:column;gap:6px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--line);
+  border-radius:13px;text-align:left;width:100%;transition:.15s}
+.row:hover{border-color:var(--muted)}
+.row .de{font-weight:700;font-size:16px}
+.row .de i{font-style:normal;color:var(--accent);font-weight:700;margin-right:2px}
+.row .zh{color:var(--muted);font-size:13.5px;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .main{flex:1;min-width:0}
+.row .box{width:9px;height:9px;border-radius:50%;flex:none;background:var(--line)}
+.row .box.b1{background:color-mix(in srgb,var(--bad) 55%,var(--card))}
+.row .box.b2{background:var(--gold)}
+.row .box.b3{background:var(--ok)}
+.row .star-mini{font-size:15px;color:var(--gold)}
+
+.empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+.empty .big{font-size:40px;margin-bottom:8px}
+
+/* ---------- 统计 ---------- */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.chart-card{padding:20px}
+.chart-card h3{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:16px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:120px}
+.bars .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bars .bar{width:100%;background:var(--soft);border-radius:6px 6px 3px 3px;min-height:3px;transition:height .4s;position:relative}
+.bars .bar.has{background:linear-gradient(var(--gold),color-mix(in srgb,var(--gold) 55%,var(--card)))}
+.bars .lbl{font-size:10.5px;color:var(--muted);white-space:nowrap}
+.dist{display:flex;flex-direction:column;gap:10px}
+.dist .d-row{display:flex;align-items:center;gap:10px;font-size:13px}
+.dist .d-track{flex:1;height:9px;background:var(--soft);border-radius:99px;overflow:hidden}
+.dist .d-fill{height:100%;border-radius:99px}
+.dist .d-num{width:36px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- 设置 ---------- */
+.set-card{padding:8px 20px;margin-top:14px}
+.set-row{display:flex;align-items:center;gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:none}
+.set-row .lbl{flex:1}
+.set-row .lbl b{display:block;font-size:15px;font-weight:650}
+.set-row .lbl span{font-size:12.5px;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:0;background:var(--soft);border-radius:10px;overflow:hidden}
+.stepper button{width:34px;height:34px;font-size:17px;color:var(--muted)}
+.stepper button:hover{background:var(--line);color:var(--ink)}
+.stepper b{min-width:38px;text-align:center;font-size:14px;font-variant-numeric:tabular-nums}
+.switch{width:46px;height:27px;border-radius:99px;background:var(--line);position:relative;transition:.2s;flex:none}
+.switch.on{background:var(--ok)}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;
+  transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch.on::after{left:22px}
+
+/* ---------- 弹层 ---------- */
+.mask{position:fixed;inset:0;background:rgba(8,10,14,.45);backdrop-filter:blur(3px);z-index:50;display:none;
+  align-items:center;justify-content:center;padding:18px}
+.mask.on{display:flex}
+.modal{background:var(--card);border-radius:20px;width:100%;max-width:560px;max-height:88vh;overflow:auto;
+  padding:26px;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.modal h2{font-size:19px;font-weight:800;margin-bottom:6px}
+.modal .muted{color:var(--muted);font-size:13.5px}
+.modal textarea{width:100%;min-height:180px;margin-top:14px;padding:13px;border-radius:12px;border:1px solid var(--line);
+  background:var(--soft);font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.7;resize:vertical;outline:none}
+.modal textarea:focus{border-color:var(--muted)}
+.modal .modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);
+  padding:11px 20px;border-radius:12px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:99}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 底部导航（手机） */
+.mobile-nav{display:none}
+
+@media (max-width:720px){
+  #app{padding:0 14px 96px}
+  .tabs{display:none}
+  .hero{flex-direction:column;text-align:center;padding:24px 20px;gap:18px}
+  .hero-info .btns{justify-content:center}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .options{grid-template-columns:1fr}
+  .charts{grid-template-columns:1fr}
+  .qcard{padding:24px 18px;min-height:400px}
+  .mobile-nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--card) 92%,transparent);
+    border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:40;backdrop-filter:blur(10px)}
+  .mobile-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;
+    color:var(--muted);padding:6px 0;font-weight:600}
+  .mobile-nav button .ic{font-size:19px;line-height:1.2}
+  .mobile-nav button.on{color:var(--ink)}
+  .done-grid{grid-template-columns:1fr 1fr}
+
+  /* --- 学习页：手机上收紧，一屏看完题干 + 选项 + 反馈 --- */
+  body.studying .mobile-nav{display:none}
+  body.studying #app{padding-bottom:12px}
+  .study-head{margin:2px 0 8px;gap:8px}
+  .study-head .icon-btn{width:32px;height:32px;border-radius:9px;font-size:15px}
+  .study-head .progress{height:6px}
+  .study-head .sess-num{font-size:12px;min-width:42px}
+  .qcard{padding:14px 14px 12px;min-height:0;border-radius:16px}
+  .qcard .q-tip{font-size:11.5px;padding:0 40px}
+  .q-word{font-size:clamp(26px,8.6vw,38px);margin:8px 0 2px;line-height:1.15}
+  .q-word.small{font-size:22px}
+  .q-sub{font-size:12px;min-height:18px}
+  .q-audio{margin:4px 0 2px}
+  .speak{width:36px;height:36px;font-size:16px}
+  .options{gap:7px;padding-top:10px}
+  .opt{min-height:44px;padding:8px 12px;font-size:14px;border-radius:11px;gap:9px}
+  .opt .n{width:18px;height:18px;font-size:10px;border-radius:5px}
+  .fb{margin-top:10px;padding-top:10px}
+  .fb-verdict{font-size:14px}
+  .fb-word{margin-top:6px}
+  .fb-word .de{font-size:22px}
+  .fb-meta{margin-top:6px;gap:6px}
+  .fb-zh{font-size:14px;margin-top:6px}
+  .fb-ex{margin-top:8px;padding:8px 10px;font-size:12.5px;line-height:1.5}
+  .fb-ex .exzh{font-size:11.5px}
+  .fb-actions{margin-top:10px;gap:8px}
+  .fb-actions .star{width:38px;height:38px;font-size:16px}
+  .spell{padding-top:10px}
+  .spell input{padding:12px 14px;font-size:17px}
+  .spell .hint{margin-top:5px;font-size:11.5px}
+  .done{padding:26px 16px}
+  .done .emoji{font-size:40px}
+  .done h2{font-size:20px;margin-top:8px}
+  .done-grid{margin:16px 0;gap:8px}
+  .done-grid div{padding:10px 6px}
+  .done-grid b{font-size:20px}
+  /* 答完题：选项/输入框收起，反馈占满一屏 */
+  .qcard.answered .options{display:none}
+  .qcard.answered .spell{display:none}
+  .qcard.answered .q-audio{display:none}
+}
+
+/* 更矮的屏幕（iPhone SE / Safari 工具栏占位多）再收一档 */
+@media (max-width:720px) and (max-height:700px){
+  .q-word{font-size:clamp(24px,8vw,32px);margin:6px 0 2px}
+  .qcard{padding:12px 12px 10px}
+  .options{gap:6px;padding-top:8px}
+  .opt{min-height:40px;padding:7px 11px;font-size:13.5px}
+  .fb-ex{max-height:96px;overflow:auto}
+}
+
+/* ===== 词性缩写 ===== */
+.ptag{display:inline-block;vertical-align:middle;margin-left:9px;font-size:12px;font-weight:700;font-style:normal;
+  padding:2px 7px;border-radius:7px;background:var(--soft);color:var(--muted);line-height:1.5;transform:translateY(-2px)}
+.q-word .ptag{font-size:clamp(12px,2vw,15px);padding:3px 9px;margin-left:12px}
+.opt .ptag{margin-left:6px;font-size:11px;padding:1px 6px;transform:none}
+.row .ptag{font-size:10.5px;padding:1px 5px;margin-left:6px;transform:none;font-weight:700}
+.fb-word .ptag{font-size:13px;padding:2px 8px}
+.ptag.p-n{background:color-mix(in srgb,#3b82f6 14%,var(--card));color:#3b82f6}
+.ptag.p-v{background:color-mix(in srgb,#10b981 14%,var(--card));color:#0f9d76}
+.ptag.p-adj{background:color-mix(in srgb,#a855f7 14%,var(--card));color:#9333ea}
+.ptag.p-adv{background:color-mix(in srgb,#f59e0b 16%,var(--card));color:#b45309}
+
+/* ===== 斩杀 ===== */
+.kill-btn{color:var(--muted)}
+.kill-btn:hover{color:var(--bad)}
+.kill-btn.on{width:auto;padding:0 12px;color:var(--bad);font-size:12px;font-weight:700;
+  background:color-mix(in srgb,var(--bad) 12%,var(--card))}
+.star-mini.dead{color:var(--bad);font-size:14px}
+
+/* ===== 单词学习进度（3 轮制：1/3 → 2/3 → 3/3 学完） ===== */
+.lvchip{position:absolute;top:15px;right:15px;z-index:2;font-size:11.5px;font-weight:800;letter-spacing:.3px;
+  padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--muted);border:1px solid var(--line);
+  font-variant-numeric:tabular-nums}
+.lvchip.r0,.lvchip.r1{color:var(--bad);background:color-mix(in srgb,var(--bad) 11%,transparent);border-color:transparent}
+.lvchip.r2{color:#b45309;background:color-mix(in srgb,var(--gold) 20%,transparent);border-color:transparent}
+.lvchip.done{color:#0f9d76;background:color-mix(in srgb,var(--ok) 16%,transparent);border-color:transparent}
+.lvchip.dead{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:transparent}
+.qcard .q-tip{padding:0 46px}
+.row .row-lv{flex:none;min-width:34px;text-align:right;font-size:11px;font-weight:800;color:var(--muted);
+  font-variant-numeric:tabular-nums;letter-spacing:.2px}
+.row .row-lv.dead{color:var(--bad)}
+.deck-seg{margin:14px 0 0}
+.deck-seg .cnt{font-size:10.5px;opacity:.55;margin-left:5px;font-weight:700}
+
+
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><span class="dot">D</span><span>德语单词卡</span></div>
+    <nav class="tabs">
+      <button data-view="home" class="on">今日</button>
+      <button data-view="browse">词库</button>
+      <button data-view="stats">统计</button>
+      <button data-view="settings">设置</button>
+    </nav>
+  </header>
+
+  <!-- ============ 首页 ============ -->
+  <section id="view-home" class="view on">
+    <div class="hero card">
+      <div class="ring">
+        <svg width="132" height="132" viewBox="0 0 132 132">
+          <circle class="bg" cx="66" cy="66" r="56" fill="none" stroke-width="11"></circle>
+          <circle id="ringFg" class="fg" cx="66" cy="66" r="56" fill="none" stroke-width="11"></circle>
+        </svg>
+        <div class="ring-inner"><b id="ringDone">0</b><span id="ringTotal">/ 0</span></div>
+      </div>
+      <div class="hero-info">
+        <h1 id="heroTitle">今天背几个词？</h1>
+        <p id="heroSub">正在准备词库…</p>
+        <div class="btns">
+          <button class="btn primary" id="btnStart">开始学习</button>
+          <button class="btn ghost" id="btnReview">只复习</button>
+          <button class="btn ghost" id="btnNew">只学新词</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="seg deck-seg" id="segDeck"></div>
+
+    <div class="stat-grid">
+      <div class="stat card"><div class="k">词库总量</div><div class="v" id="statTotal">0</div></div>
+      <div class="stat card"><div class="k">学过</div><div class="v" id="statLearned">0</div></div>
+      <div class="stat card"><div class="k">已掌握</div><div class="v" id="statMastered">0</div></div>
+      <div class="stat card"><div class="k">正确率</div><div class="v" id="statAcc">0<small>%</small></div></div>
+    </div>
+
+    <div class="card levels">
+      <h3>词库进度</h3>
+      <div id="levelRows"></div>
+    </div>
+
+    <div class="card levels" style="margin-top:14px">
+      <h3>怎么用</h3>
+      <p style="font-size:13.5px;color:var(--muted);line-height:1.8">
+        点「开始学习」直接出题，看到单词就选意思，答完立刻看到释义和例句。每个新词都要<b>答对 3 轮才算学完</b>：
+        答对一次是 1/3，它会隔几张再出现一次（2/3），第三次答对才是 3/3，然后按 1 / 3 / 7 / 15 天往后推。
+        答错的词会回到 0/3，几分钟后再来一遍。
+        学新词的中途会插一两张以前学过的词，防止背了新的忘了旧的。
+        单词旁边的 <b>n. / v. / adj.</b> 是词性；点 <b>⚡</b> 可以「斩杀」——这个词以后再也不复习了。<br>
+        键盘 <b>1–4</b> 选答案，<b>空格</b> 继续，<b>S</b> 重听发音。
+        有自己的词表？去「设置 → 导入词库」，支持从 Excel 复制粘贴。
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 学习 ============ -->
+  <section id="view-study" class="view">
+    <div class="study-head">
+      <button class="icon-btn" id="btnQuit" aria-label="退出">✕</button>
+      <div class="progress"><i id="sessBar"></i></div>
+      <div class="sess-num" id="sessNum">0/0</div>
+    </div>
+    <div id="qArea"></div>
+  </section>
+
+  <!-- ============ 词库 ============ -->
+  <section id="view-browse" class="view">
+    <div class="toolbar">
+      <div class="search"><span style="color:var(--muted)">🔍</span><input id="searchInput" placeholder="搜索德语或中文…" autocomplete="off"></div>
+    </div>
+    <div class="seg" id="segStatus" style="margin-bottom:8px">
+      <button data-s="all" class="on">全部</button>
+      <button data-s="new">新词</button>
+      <button data-s="learning">学习中</button>
+      <button data-s="mastered">已掌握</button>
+      <button data-s="star">★ 生词本</button>
+      <button data-s="dead">⚡ 已斩</button>
+    </div>
+    <div class="seg" id="segLevel" style="margin-bottom:14px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span id="browseCount" style="font-size:13px;color:var(--muted)">0 词</span>
+      <span style="font-size:12px;color:var(--muted)">● 新词　<span style="color:var(--gold)">●</span> 初识　<span style="color:var(--ok)">●</span> 掌握</span>
+    </div>
+    <div class="list" id="rowList"></div>
+    <button class="btn ghost" id="btnMore" style="width:100%;margin-top:14px;display:none">显示更多</button>
+  </section>
+
+  <!-- ============ 统计 ============ -->
+  <section id="view-stats" class="view">
+    <div class="stat-grid" id="statNumbers" style="margin-top:6px"></div>
+    <div class="charts">
+      <div class="card chart-card">
+        <h3>最近 7 天作答</h3>
+        <div class="bars" id="bars"></div>
+      </div>
+      <div class="card chart-card">
+        <h3>掌握分布</h3>
+        <div class="dist" id="dist"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 设置 ============ -->
+  <section id="view-settings" class="view">
+    <div class="card set-card">
+      <div class="set-row">
+        <div class="lbl"><b>每日新词</b><span>每天最多学几个新词</span></div>
+        <div class="stepper"><button id="decNew">−</button><b id="setDailyNew">20</b><button id="incNew">+</button></div>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>每日复习上限</b><span>防止某天堆积太多</span></div>
+        <div class="stepper"><button id="decRev">−</button><b id="setDailyReview">60</b><button id="incRev">+</button></div>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>自动发音</b><span>出现单词时自动读一遍</span></div>
+        <div class="switch" id="switchAudio"></div>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>更多题型</b><span>加入听音辨义和拼写（更花时间）</span></div>
+        <div class="switch" id="switchExtra"></div>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>语速</b><span>朗读速度</span></div>
+        <div class="stepper"><button id="rateDown">−</button><b id="setRate">0.9×</b><button id="rateUp">+</button></div>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>主题</b><span>浅色 / 深色 / 跟随系统</span></div>
+        <button class="btn ghost sm" id="setTheme">跟随系统</button>
+      </div>
+    </div>
+
+    <div class="card set-card">
+      <div class="set-row">
+        <div class="lbl"><b>词库</b><span id="setCount">—</span></div>
+        <button class="btn primary sm" id="btnImport">导入词库</button>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>备份进度</b><span>导出 JSON，换设备可恢复</span></div>
+        <button class="btn ghost sm" id="btnExport">导出备份</button>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>恢复备份</b><span>读取之前导出的 JSON</span></div>
+        <button class="btn ghost sm" id="btnRestore">选择文件</button>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>清空学习进度</b><span>保留单词，重置记忆曲线</span></div>
+        <button class="btn ghost sm" id="btnResetProg" style="color:var(--bad)">清空</button>
+      </div>
+      <div class="set-row">
+        <div class="lbl"><b>恢复初始状态</b><span>删除导入的词和全部进度</span></div>
+        <button class="btn ghost sm" id="btnResetAll" style="color:var(--bad)">重置</button>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
+      数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
+      <span style="opacity:.7">版本 5 · 2025-11-01 · 去掉预览卡，看到单词直接做题</span>
+    </p>
+  </section>
+</div>
+
+<nav class="mobile-nav">
+  <button data-view="home" class="on"><span class="ic">◉</span>今日</button>
+  <button data-view="browse"><span class="ic">▤</span>词库</button>
+  <button data-view="stats"><span class="ic">▥</span>统计</button>
+  <button data-view="settings"><span class="ic">⚙</span>设置</button>
+</nav>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <h2 id="modalTitle">标题</h2>
+    <div id="modalBody"></div>
+    <div class="modal-actions"><button class="btn primary" id="modalOk">确定</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+window.DECKS = {
+  "a1": "# A1 入门词书 · 第 1 部分：问候 / 人 / 数字 / 时间 / 常用动词 / 居住 / 疑问词\n# 格式：等级|德语|冠词|复数或变位|词性|中文|例句|例句翻译\nA1|hallo|||int|你好|Hallo, wie geht's?|你好，怎么样？\nA1|tschüss|||int|再见（口语）|Tschüss, bis morgen!|再见，明天见！\nA1|danke|||int|谢谢|Danke schön!|非常感谢！\nA1|bitte|||int|请／不客气|Bitte, hier ist Ihr Kaffee.|请，这是您的咖啡。\nA1|ja|||int|是|Ja, das stimmt.|是的，没错。\nA1|nein|||int|不|Nein, danke.|不，谢谢。\nA1|guten Morgen|||phrase|早上好|Guten Morgen, Frau Müller!|早上好，穆勒女士！\nA1|guten Tag|||phrase|你好（白天）|Guten Tag, ich heiße Anna.|您好，我叫安娜。\nA1|guten Abend|||phrase|晚上好|Guten Abend, kommen Sie herein.|晚上好，请进。\nA1|gute Nacht|||phrase|晚安|Gute Nacht, schlaf gut.|晚安，睡个好觉。\nA1|auf Wiedersehen|||phrase|再见（正式）|Auf Wiedersehen, Herr Weber.|再见，韦伯先生。\nA1|bis bald|||phrase|回头见|Bis bald, mach's gut!|回头见，保重！\nA1|wie geht's|||phrase|你好吗|Hallo Tom, wie geht's?|你好汤姆，最近怎么样？\nA1|Entschuldigung|die|die Entschuldigungen|n|抱歉／打扰一下|Entschuldigung, wo ist der Bahnhof?|请问，火车站在哪里？\nA1|Mann|der|die Männer|n|男人／丈夫|Der Mann liest Zeitung.|那个男人在读报。\nA1|Frau|die|die Frauen|n|女人／妻子|Die Frau arbeitet im Büro.|这位女士在办公室工作。\nA1|Kind|das|die Kinder|n|孩子|Das Kind spielt im Garten.|孩子在花园里玩。\nA1|Junge|der|die Jungen|n|男孩|Der Junge ist zehn Jahre alt.|这个男孩十岁。\nA1|Mädchen|das|die Mädchen|n|女孩|Das Mädchen singt sehr schön.|这个女孩唱得很好。\nA1|Familie|die|die Familien|n|家庭|Wir sind eine kleine Familie.|我们是个小家庭。\nA1|Eltern|die|—|n|父母|Meine Eltern wohnen in Hamburg.|我父母住在汉堡。\nA1|Vater|der|die Väter|n|父亲|Mein Vater kocht gern.|我爸爸喜欢做饭。\nA1|Mutter|die|die Mütter|n|母亲|Meine Mutter ist Lehrerin.|我妈妈是老师。\nA1|Sohn|der|die Söhne|n|儿子|Ihr Sohn geht zur Schule.|她儿子上学了。\nA1|Tochter|die|die Töchter|n|女儿|Meine Tochter ist drei.|我女儿三岁。\nA1|Bruder|der|die Brüder|n|兄弟|Mein Bruder wohnt in Wien.|我哥哥住在维也纳。\nA1|Schwester|die|die Schwestern|n|姐妹|Seine Schwester studiert Medizin.|他姐姐学医。\nA1|Großmutter|die|die Großmütter|n|祖母／外婆|Meine Großmutter ist achtzig.|我奶奶八十岁。\nA1|Großvater|der|die Großväter|n|祖父／外公|Mein Großvater erzählt gern.|我爷爷爱讲故事。\nA1|Freund|der|die Freunde|n|朋友／男友|Er ist mein bester Freund.|他是我最好的朋友。\nA1|Freundin|die|die Freundinnen|n|女友／女性朋友|Sie ist meine Freundin.|她是我的朋友。\nA1|Nachbar|der|die Nachbarn|n|邻居|Unser Nachbar ist sehr nett.|我们邻居人很好。\nA1|Mensch|der|die Menschen|n|人|Viele Menschen warten hier.|很多人在等。\nA1|Baby|das|die Babys|n|婴儿|Das Baby schläft gerade.|宝宝正在睡觉。\nA1|null|||num|零|Null Grad ist kalt.|零度很冷。\nA1|eins|||num|一|Eins plus eins ist zwei.|一加一等于二。\nA1|zwei|||num|二|Ich habe zwei Brüder.|我有两个兄弟。\nA1|drei|||num|三|Wir bleiben drei Tage.|我们待三天。\nA1|vier|||num|四|Der Tisch hat vier Beine.|桌子有四条腿。\nA1|fünf|||num|五|Ich arbeite fünf Tage pro Woche.|我一周工作五天。\nA1|sechs|||num|六|Sie steht um sechs auf.|她六点起床。\nA1|sieben|||num|七|Die Woche hat sieben Tage.|一周有七天。\nA1|acht|||num|八|Der Kurs beginnt um acht.|课程八点开始。\nA1|neun|||num|九|Es ist neun Uhr.|九点了。\nA1|zehn|||num|十|Zehn Euro, bitte.|十欧，谢谢。\nA1|elf|||num|十一|Sie kommt um elf.|她十一点来。\nA1|zwölf|||num|十二|Das Jahr hat zwölf Monate.|一年有十二个月。\nA1|zwanzig|||num|二十|Das kostet zwanzig Euro.|这个二十欧。\nA1|hundert|||num|一百|Hundert Gramm Käse, bitte.|请给我一百克奶酪。\nA1|tausend|||num|一千|Die Stadt hat tausend Einwohner.|这座城市有一千居民。\nA1|erste|||adj|第一|Das ist mein erster Tag hier.|这是我在这里的第一天。\nA1|zweite|||adj|第二|Wir wohnen im zweiten Stock.|我们住三楼。\nA1|Zeit|die|die Zeiten|n|时间|Ich habe keine Zeit.|我没时间。\nA1|Stunde|die|die Stunden|n|小时|Der Film dauert zwei Stunden.|电影有两个小时。\nA1|Minute|die|die Minuten|n|分钟|Warte eine Minute!|等一分钟！\nA1|Tag|der|die Tage|n|天／白天|Der Tag war lang.|这一天很长。\nA1|Woche|die|die Wochen|n|星期|Nächste Woche fahre ich weg.|下周我出门。\nA1|Monat|der|die Monate|n|月|Der Monat Mai ist schön.|五月很美。\nA1|Jahr|das|die Jahre|n|年|Ich lerne seit einem Jahr Deutsch.|我学德语一年了。\nA1|heute|||adv|今天|Heute ist Montag.|今天是周一。\nA1|morgen|||adv|明天|Morgen habe ich frei.|明天我休息。\nA1|gestern|||adv|昨天|Gestern war ich krank.|昨天我病了。\nA1|jetzt|||adv|现在|Jetzt essen wir.|现在我们吃饭。\nA1|immer|||adv|总是|Er ist immer freundlich.|他总是很友好。\nA1|oft|||adv|经常|Ich gehe oft schwimmen.|我常去游泳。\nA1|manchmal|||adv|有时|Manchmal koche ich selbst.|有时我自己做饭。\nA1|nie|||adv|从不|Ich trinke nie Kaffee.|我从不喝咖啡。\nA1|Morgen|der|die Morgen|n|早上|Am Morgen trinke ich Tee.|早上我喝茶。\nA1|Abend|der|die Abende|n|晚上|Am Abend sehen wir fern.|晚上我们看电视。\nA1|Nacht|die|die Nächte|n|夜晚|Die Nacht war ruhig.|夜里很安静。\nA1|Montag|der|die Montage|n|星期一|Am Montag beginnt die Arbeit.|周一开始上班。\nA1|Wochenende|das|die Wochenenden|n|周末|Am Wochenende schlafe ich lange.|周末我睡懒觉。\nA1|Uhr|die|die Uhren|n|钟／点钟|Wie viel Uhr ist es?|几点了？\nA1|Termin|der|die Termine|n|预约|Ich habe morgen einen Termin.|我明天有约。\nA1|sein||er ist|v|是|Ich bin Student.|我是学生。\nA1|haben||er hat|v|有|Ich habe eine Frage.|我有个问题。\nA1|werden||er wird|v|变成／将|Es wird kalt.|天要冷了。\nA1|gehen||er geht|v|走|Ich gehe nach Hause.|我回家。\nA1|kommen||er kommt|v|来|Er kommt aus Spanien.|他来自西班牙。\nA1|fahren||er fährt|v|乘车／开车|Wir fahren nach Köln.|我们去科隆。\nA1|fliegen||er fliegt|v|飞|Ich fliege morgen nach Berlin.|我明天飞柏林。\nA1|machen||er macht|v|做|Was machst du heute?|你今天做什么？\nA1|arbeiten||er arbeitet|v|工作|Sie arbeitet in einem Büro.|她在办公室工作。\nA1|lernen||er lernt|v|学习|Ich lerne jeden Tag Deutsch.|我每天学德语。\nA1|studieren||er studiert|v|上大学／攻读|Er studiert Physik.|他学物理。\nA1|lesen||er liest|v|读|Sie liest ein Buch.|她在读书。\nA1|schreiben||er schreibt|v|写|Ich schreibe eine E-Mail.|我在写邮件。\nA1|sprechen||er spricht|v|说|Sprichst du Englisch?|你说英语吗？\nA1|hören||er hört|v|听|Ich höre Musik.|我在听音乐。\nA1|sehen||er sieht|v|看见|Ich sehe nichts.|我什么也看不见。\nA1|essen||er isst|v|吃|Wir essen um sieben.|我们七点吃饭。\nA1|trinken||er trinkt|v|喝|Ich trinke Wasser.|我喝水。\nA1|kaufen||er kauft|v|买|Ich kaufe Brot.|我买面包。\nA1|bezahlen||er bezahlt|v|付款|Ich möchte bar bezahlen.|我想付现金。\nA1|kochen||er kocht|v|做饭／煮|Meine Mutter kocht Suppe.|我妈妈做汤。\nA1|schlafen||er schläft|v|睡觉|Das Kind schläft schon.|孩子已经睡了。\nA1|aufstehen||er steht auf|v|起床|Ich stehe um sechs auf.|我六点起床。\nA1|wohnen||er wohnt|v|居住|Wir wohnen in der Stadt.|我们住在城里。\nA1|leben||er lebt|v|生活|Er lebt allein.|他独自生活。\nA1|spielen||er spielt|v|玩／演奏|Die Kinder spielen Fußball.|孩子们踢球。\nA1|helfen||er hilft|v|帮助|Kannst du mir helfen?|你能帮我吗？\nA1|brauchen||er braucht|v|需要|Ich brauche einen Arzt.|我需要医生。\nA1|finden||er findet|v|找到／觉得|Ich finde den Film gut.|我觉得这电影不错。\nA1|suchen||er sucht|v|寻找|Ich suche meine Brille.|我在找眼镜。\nA1|warten||er wartet|v|等待|Wir warten auf den Bus.|我们等公交。\nA1|verstehen||er versteht|v|理解|Ich verstehe das nicht.|我不明白。\nA1|fragen||er fragt|v|问|Darf ich etwas fragen?|我可以问一下吗？\nA1|antworten||er antwortet|v|回答|Bitte antworte mir!|请回答我！\nA1|heißen||er heißt|v|名叫|Ich heiße Anna.|我叫安娜。\nA1|mögen||er mag|v|喜欢|Ich mag Katzen.|我喜欢猫。\nA1|möchten||er möchte|v|想要|Ich möchte einen Kaffee.|我想要一杯咖啡。\nA1|können||er kann|v|能／会|Ich kann schwimmen.|我会游泳。\nA1|müssen||er muss|v|必须|Du musst jetzt gehen.|你现在必须走了。\nA1|dürfen||er darf|v|可以|Darf ich rauchen?|我可以抽烟吗？\nA1|wollen||er will|v|想要|Wir wollen nach Italien.|我们想去意大利。\nA1|sollen||er soll|v|应该|Du sollst mehr schlafen.|你应该多睡。\nA1|geben||er gibt|v|给|Gib mir bitte das Buch.|请把书给我。\nA1|nehmen||er nimmt|v|拿／乘坐|Ich nehme den Bus.|我乘公交。\nA1|bringen||er bringt|v|带来|Bring mir bitte Wasser.|请给我带水。\nA1|öffnen||er öffnet|v|打开|Bitte öffnen Sie das Fenster.|请打开窗户。\nA1|schließen||er schließt|v|关闭|Der Laden schließt um acht.|商店八点关门。\nA1|beginnen||er beginnt|v|开始|Der Kurs beginnt um neun.|课程九点开始。\nA1|anfangen||er fängt an|v|开始|Wir fangen jetzt an.|我们现在开始。\nA1|aufhören||er hört auf|v|停止|Hör bitte auf!|请停下！\nA1|wissen||er weiß|v|知道|Ich weiß es nicht.|我不知道。\nA1|denken||er denkt|v|想／认为|Ich denke oft an dich.|我常想起你。\nA1|Wohnung|die|die Wohnungen|n|公寓|Meine Wohnung ist klein.|我的公寓很小。\nA1|Haus|das|die Häuser|n|房子|Das Haus ist alt.|这房子很老。\nA1|Zimmer|das|die Zimmer|n|房间|Mein Zimmer ist im dritten Stock.|我的房间在四楼。\nA1|Küche|die|die Küchen|n|厨房|Die Küche ist sehr groß.|厨房很大。\nA1|Bad|das|die Bäder|n|浴室|Das Bad hat ein Fenster.|浴室有窗。\nA1|Bett|das|die Betten|n|床|Das Bett ist bequem.|床很舒服。\nA1|Tisch|der|die Tische|n|桌子|Der Tisch steht am Fenster.|桌子在窗边。\nA1|Stuhl|der|die Stühle|n|椅子|Nimm bitte einen Stuhl.|请拿把椅子。\nA1|Schrank|der|die Schränke|n|柜子|Die Kleidung ist im Schrank.|衣服在柜子里。\nA1|Tür|die|die Türen|n|门|Bitte mach die Tür zu.|请关门。\nA1|Fenster|das|die Fenster|n|窗户|Öffne bitte das Fenster.|请开窗。\nA1|Lampe|die|die Lampen|n|灯|Die Lampe ist kaputt.|灯坏了。\nA1|Schlüssel|der|die Schlüssel|n|钥匙|Ich habe meinen Schlüssel verloren.|我把钥匙丢了。\nA1|Garten|der|die Gärten|n|花园|Wir haben einen kleinen Garten.|我们有个小花园。\nA1|Straße|die|die Straßen|n|街道|Die Straße ist sehr laut.|这条街很吵。\nA1|Stadt|die|die Städte|n|城市|München ist eine schöne Stadt.|慕尼黑是座美丽的城市。\nA1|Dorf|das|die Dörfer|n|村庄|Sie wohnt in einem Dorf.|她住在一个村子里。\nA1|Stock|der|die Stockwerke|n|楼层|Wir wohnen im ersten Stock.|我们住二楼。\nA1|Miete|die|die Mieten|n|房租|Die Miete ist teuer.|房租很贵。\nA1|Vermieter|der|die Vermieter|n|房东|Der Vermieter kommt heute.|房东今天来。\nA1|was|||pron|什么|Was ist das?|这是什么？\nA1|wer|||pron|谁|Wer ist das?|那是谁？\nA1|wo|||adv|哪里|Wo wohnst du?|你住哪儿？\nA1|wohin|||adv|去哪里|Wohin gehst du?|你去哪儿？\nA1|woher|||adv|从哪里|Woher kommst du?|你从哪儿来？\nA1|wann|||adv|什么时候|Wann beginnt der Film?|电影几点开始？\nA1|warum|||adv|为什么|Warum lernst du Deutsch?|你为什么学德语？\nA1|wie|||adv|怎样|Wie heißt du?|你叫什么？\nA1|wie viel|||phrase|多少|Wie viel kostet das?|这个多少钱？\nA1|welcher|||pron|哪一个|Welcher Bus fährt zum Bahnhof?|哪路公交去火车站？\n# A1 入门词书 · 第 2 部分：吃喝 / 购物 / 出行 / 工作学习 / 身体 / 衣服\nA1|Brot|das|die Brote|n|面包|Ich kaufe frisches Brot.|我买新鲜面包。\nA1|Brötchen|das|die Brötchen|n|小面包|Zum Frühstück esse ich ein Brötchen.|早饭我吃一个小面包。\nA1|Butter|die|—|n|黄油|Die Butter ist im Kühlschrank.|黄油在冰箱里。\nA1|Käse|der|—|n|奶酪|Ich mag deutschen Käse.|我喜欢德国奶酪。\nA1|Milch|die|—|n|牛奶|Ich trinke Milch zum Frühstück.|早饭我喝牛奶。\nA1|Wasser|das|—|n|水|Ein Glas Wasser, bitte.|请给一杯水。\nA1|Kaffee|der|—|n|咖啡|Der Kaffee ist zu heiß.|咖啡太烫了。\nA1|Tee|der|—|n|茶|Möchten Sie Tee oder Kaffee?|您要茶还是咖啡？\nA1|Saft|der|die Säfte|n|果汁|Ich trinke gern Apfelsaft.|我喜欢喝苹果汁。\nA1|Bier|das|die Biere|n|啤酒|Ein Bier, bitte!|请来一杯啤酒！\nA1|Wein|der|die Weine|n|葡萄酒|Der Wein kommt aus Italien.|这酒来自意大利。\nA1|Ei|das|die Eier|n|鸡蛋|Ich esse zwei Eier.|我吃两个鸡蛋。\nA1|Fleisch|das|—|n|肉|Ich esse kein Fleisch.|我不吃肉。\nA1|Fisch|der|die Fische|n|鱼|Der Fisch ist frisch.|鱼很新鲜。\nA1|Hähnchen|das|die Hähnchen|n|鸡肉／童子鸡|Das Hähnchen schmeckt gut.|这鸡肉很好吃。\nA1|Reis|der|—|n|米饭|Ich esse Reis mit Gemüse.|我吃米饭配蔬菜。\nA1|Nudel|die|die Nudeln|n|面条|Die Kinder mögen Nudeln.|孩子们喜欢面条。\nA1|Kartoffel|die|die Kartoffeln|n|土豆|Die Kartoffeln sind noch hart.|土豆还硬。\nA1|Gemüse|das|—|n|蔬菜|Ich kaufe Gemüse auf dem Markt.|我在市场买蔬菜。\nA1|Obst|das|—|n|水果|Obst ist gesund.|水果很健康。\nA1|Apfel|der|die Äpfel|n|苹果|Der Apfel ist rot.|苹果是红的。\nA1|Banane|die|die Bananen|n|香蕉|Ich esse eine Banane.|我吃一根香蕉。\nA1|Orange|die|die Orangen|n|橙子|Die Orange ist sauer.|橙子很酸。\nA1|Tomate|die|die Tomaten|n|西红柿|Ich brauche zwei Tomaten.|我需要两个西红柿。\nA1|Salat|der|die Salate|n|沙拉／生菜|Ich nehme einen Salat.|我要一份沙拉。\nA1|Zucker|der|—|n|糖|Nimmst du Zucker in den Tee?|你茶里放糖吗？\nA1|Salz|das|—|n|盐|Gib mir bitte das Salz.|请把盐递给我。\nA1|Kuchen|der|die Kuchen|n|蛋糕|Der Kuchen ist selbst gemacht.|蛋糕是自己做的。\nA1|Eis|das|—|n|冰淇淋|Möchtest du ein Eis?|你要个冰淇淋吗？\nA1|Suppe|die|die Suppen|n|汤|Die Suppe ist zu salzig.|汤太咸了。\nA1|Frühstück|das|—|n|早餐|Das Frühstück ist um sieben.|七点吃早饭。\nA1|Mittagessen|das|—|n|午餐|Zum Mittagessen gibt es Fisch.|午餐吃鱼。\nA1|Abendessen|das|—|n|晚餐|Das Abendessen war lecker.|晚餐很好吃。\nA1|Restaurant|das|die Restaurants|n|饭店|Das Restaurant ist heute voll.|饭店今天客满。\nA1|Café|das|die Cafés|n|咖啡馆|Wir treffen uns im Café.|我们在咖啡馆见。\nA1|Speisekarte|die|die Speisekarten|n|菜单|Die Speisekarte, bitte.|请给菜单。\nA1|Rechnung|die|die Rechnungen|n|账单|Die Rechnung, bitte!|请结账！\nA1|Hunger|der|—|n|饥饿|Ich habe großen Hunger.|我很饿。\nA1|Durst|der|—|n|口渴|Hast du Durst?|你渴吗？\nA1|schmecken||er schmeckt|v|尝起来|Das Essen schmeckt gut.|这饭很好吃。\nA1|bestellen||er bestellt|v|点菜／订购|Wir bestellen zwei Suppen.|我们点两份汤。\nA1|probieren||er probiert|v|品尝／试试|Probieren Sie den Kuchen!|您尝尝这蛋糕！\nA1|empfehlen||er empfiehlt|v|推荐|Was können Sie empfehlen?|您能推荐什么？\nA1|Geschäft|das|die Geschäfte|n|商店|Das Geschäft ist geschlossen.|商店关门了。\nA1|Laden|der|die Läden|n|小店|Der Laden öffnet um acht.|小店八点开门。\nA1|Supermarkt|der|die Supermärkte|n|超市|Ich gehe in den Supermarkt.|我去超市。\nA1|Markt|der|die Märkte|n|市场|Am Samstag ist Markt.|周六有集市。\nA1|Geld|das|—|n|钱|Ich habe kein Geld dabei.|我没带钱。\nA1|Euro|der|die Euro|n|欧元|Das macht zwölf Euro.|一共十二欧。\nA1|Preis|der|die Preise|n|价格|Der Preis ist okay.|价格还行。\nA1|Kasse|die|die Kassen|n|收银台|Bitte zahlen Sie an der Kasse.|请在收银台付款。\nA1|Tüte|die|die Tüten|n|袋子|Brauchen Sie eine Tüte?|您需要袋子吗？\nA1|Größe|die|die Größen|n|尺码／大小|Welche Größe haben Sie?|您穿多大码？\nA1|Angebot|das|die Angebote|n|特价／报价|Heute ist Milch im Angebot.|今天牛奶特价。\nA1|verkaufen||er verkauft|v|卖|Er verkauft sein Auto.|他卖他的车。\nA1|anprobieren||er probiert an|v|试穿|Darf ich das anprobieren?|我可以试穿吗？\nA1|Bahnhof|der|die Bahnhöfe|n|火车站|Der Bahnhof ist nicht weit.|火车站不远。\nA1|Flughafen|der|die Flughäfen|n|机场|Wir fahren zum Flughafen.|我们去机场。\nA1|Bus|der|die Busse|n|公交车|Der Bus kommt in fünf Minuten.|公交五分钟到。\nA1|Bahn|die|die Bahnen|n|铁路／火车|Ich fahre mit der Bahn.|我坐火车。\nA1|Zug|der|die Züge|n|火车|Der Zug hat Verspätung.|火车晚点了。\nA1|U-Bahn|die|die U-Bahnen|n|地铁|Nimm die U-Bahn Linie 2.|坐地铁二号线。\nA1|Taxi|das|die Taxis|n|出租车|Wir nehmen ein Taxi.|我们打车。\nA1|Fahrrad|das|die Fahrräder|n|自行车|Ich fahre mit dem Fahrrad.|我骑自行车。\nA1|Auto|das|die Autos|n|汽车|Das Auto ist neu.|这车是新的。\nA1|Haltestelle|die|die Haltestellen|n|车站（公交）|Die Haltestelle ist dort.|车站在那边。\nA1|Ticket|das|die Tickets|n|票|Ich kaufe ein Ticket.|我买一张票。\nA1|Fahrkarte|die|die Fahrkarten|n|车票|Eine Fahrkarte nach Bonn, bitte.|一张去波恩的票。\nA1|Weg|der|die Wege|n|路／路程|Der Weg ist zu weit.|路太远了。\nA1|Post|die|—|n|邮局|Die Post ist neben der Bank.|邮局在银行旁边。\nA1|Bank|die|die Banken|n|银行|Ich muss zur Bank.|我得去银行。\nA1|Apotheke|die|die Apotheken|n|药店|Die Apotheke hat Notdienst.|药店有急诊服务。\nA1|Krankenhaus|das|die Krankenhäuser|n|医院|Er liegt im Krankenhaus.|他住院了。\nA1|Schule|die|die Schulen|n|学校|Die Schule beginnt um acht.|学校八点上课。\nA1|Universität|die|die Universitäten|n|大学|Sie studiert an der Universität.|她在大学读书。\nA1|Bibliothek|die|die Bibliotheken|n|图书馆|Ich lerne in der Bibliothek.|我在图书馆学习。\nA1|Kino|das|die Kinos|n|电影院|Gehen wir ins Kino?|我们去看电影吗？\nA1|Museum|das|die Museen|n|博物馆|Das Museum ist montags zu.|博物馆周一闭馆。\nA1|Hotel|das|die Hotels|n|旅馆|Wir suchen ein Hotel.|我们在找旅馆。\nA1|Park|der|die Parks|n|公园|Im Park spielen Kinder.|公园里有孩子玩。\nA1|Platz|der|die Plätze|n|广场／座位|Der Platz ist frei.|这个位子空着。\nA1|Brücke|die|die Brücken|n|桥|Geh über die Brücke.|过桥。\nA1|links|||adv|左边|Das Kino ist links.|电影院在左边。\nA1|rechts|||adv|右边|Die Bank ist rechts.|银行在右边。\nA1|geradeaus|||adv|一直往前|Gehen Sie geradeaus.|您一直往前走。\nA1|hier|||adv|这里|Hier ist mein Platz.|这是我的位子。\nA1|dort|||adv|那里|Dort ist die Haltestelle.|车站在那儿。\nA1|Arbeit|die|die Arbeiten|n|工作|Die Arbeit macht mir Spaß.|这工作我喜欢。\nA1|Job|der|die Jobs|n|工作／职位|Er hat einen neuen Job.|他有新工作了。\nA1|Beruf|der|die Berufe|n|职业|Was ist Ihr Beruf?|您是做什么的？\nA1|Büro|das|die Büros|n|办公室|Ich bin im Büro.|我在办公室。\nA1|Kollege|der|die Kollegen|n|同事|Mein Kollege ist krank.|我同事病了。\nA1|Chef|der|die Chefs|n|上司|Der Chef ist im Urlaub.|老板休假了。\nA1|Firma|die|die Firmen|n|公司|Die Firma ist in Stuttgart.|公司在斯图加特。\nA1|Kurs|der|die Kurse|n|课程|Der Kurs dauert drei Monate.|课程持续三个月。\nA1|Prüfung|die|die Prüfungen|n|考试|Die Prüfung ist am Freitag.|考试在周五。\nA1|Hausaufgabe|die|die Hausaufgaben|n|作业|Ich mache meine Hausaufgaben.|我在写作业。\nA1|Buch|das|die Bücher|n|书|Das Buch ist interessant.|这本书有意思。\nA1|Stift|der|die Stifte|n|笔|Hast du einen Stift?|你有笔吗？\nA1|Papier|das|die Papiere|n|纸|Ich brauche ein Blatt Papier.|我需要一张纸。\nA1|Frage|die|die Fragen|n|问题|Ich habe eine Frage.|我有个问题。\nA1|Antwort|die|die Antworten|n|回答|Deine Antwort ist richtig.|你的回答正确。\nA1|Wort|das|die Wörter|n|单词|Dieses Wort kenne ich nicht.|这个词我不认识。\nA1|Satz|der|die Sätze|n|句子|Bitte lies den Satz vor.|请读这个句子。\nA1|Sprache|die|die Sprachen|n|语言|Deutsch ist eine schwere Sprache.|德语是门难学的语言。\nA1|Lehrer|der|die Lehrer|n|老师|Unser Lehrer ist sehr geduldig.|我们老师很有耐心。\nA1|Student|der|die Studenten|n|大学生|Er ist Student in Berlin.|他是柏林的大学生。\nA1|Kopf|der|die Köpfe|n|头|Mir tut der Kopf weh.|我头疼。\nA1|Auge|das|die Augen|n|眼睛|Sie hat blaue Augen.|她蓝眼睛。\nA1|Nase|die|die Nasen|n|鼻子|Meine Nase läuft.|我流鼻涕。\nA1|Mund|der|die Münder|n|嘴|Bitte den Mund öffnen.|请张嘴。\nA1|Ohr|das|die Ohren|n|耳朵|Mein Ohr tut weh.|我耳朵疼。\nA1|Hand|die|die Hände|n|手|Wasch dir die Hände!|洗手！\nA1|Arm|der|die Arme|n|手臂|Mein Arm ist gebrochen.|我手臂骨折了。\nA1|Bein|das|die Beine|n|腿|Das Bein tut weh.|腿疼。\nA1|Fuß|der|die Füße|n|脚|Meine Füße sind kalt.|我脚冷。\nA1|Bauch|der|die Bäuche|n|肚子|Ich habe Bauchschmerzen.|我肚子疼。\nA1|Rücken|der|die Rücken|n|背|Mein Rücken ist steif.|我背僵了。\nA1|Herz|das|die Herzen|n|心脏／心|Mein Herz klopft schnell.|我心跳得快。\nA1|Arzt|der|die Ärzte|n|医生|Ich gehe zum Arzt.|我去看医生。\nA1|Medizin|die|die Medizinen|n|药／医学|Nimm die Medizin nach dem Essen.|饭后吃药。\nA1|Tablette|die|die Tabletten|n|药片|Ich nehme zwei Tabletten.|我吃两片药。\nA1|Schmerz|der|die Schmerzen|n|疼痛|Ich habe starke Schmerzen.|我疼得厉害。\nA1|wehtun||es tut weh|v|疼|Mein Bein tut weh.|我腿疼。\nA1|krank|||adj|生病的|Ich bin heute krank.|我今天病了。\nA1|gesund|||adj|健康的|Obst ist gesund.|水果有益健康。\nA1|Kleidung|die|—|n|衣服（总称）|Die Kleidung ist zu warm.|这衣服太厚了。\nA1|Hemd|das|die Hemden|n|衬衫|Das Hemd ist zu klein.|衬衫太小。\nA1|Hose|die|die Hosen|n|裤子|Die Hose passt gut.|裤子很合身。\nA1|Kleid|das|die Kleider|n|连衣裙|Sie trägt ein rotes Kleid.|她穿红裙子。\nA1|Rock|der|die Röcke|n|裙子|Der Rock ist zu lang.|裙子太长。\nA1|Jacke|die|die Jacken|n|夹克|Nimm eine Jacke mit!|带件外套！\nA1|Mantel|der|die Mäntel|n|大衣|Im Winter trage ich einen Mantel.|冬天我穿大衣。\nA1|Schuh|der|die Schuhe|n|鞋|Die Schuhe sind zu teuer.|这鞋太贵。\nA1|Socke|die|die Socken|n|袜子|Ich suche meine Socken.|我在找袜子。\nA1|Hut|der|die Hüte|n|帽子|Er trägt einen Hut.|他戴帽子。\nA1|Pullover|der|die Pullover|n|毛衣|Der Pullover ist warm.|毛衣很暖。\nA1|anziehen||er zieht an|v|穿上|Zieh die Jacke an!|把外套穿上！\nA1|tragen||er trägt|v|穿／携带|Sie trägt eine Brille.|她戴眼镜。\n# A1 入门词书 · 第 3 部分：形容词 / 天气 / 休闲 / 介词 / 连词 / 代词 / 常用句\nA1|gut|||adj|好的|Das Essen ist gut.|饭菜不错。\nA1|schlecht|||adj|坏的／差的|Das Wetter ist schlecht.|天气不好。\nA1|groß|||adj|大的|Die Wohnung ist groß.|公寓很大。\nA1|klein|||adj|小的|Ich habe ein kleines Zimmer.|我有个小房间。\nA1|alt|||adj|老的／旧的|Das Haus ist sehr alt.|这房子很老。\nA1|jung|||adj|年轻的|Sie ist noch jung.|她还年轻。\nA1|neu|||adj|新的|Ich habe ein neues Handy.|我有新手机。\nA1|schön|||adj|美的／漂亮的|Der Garten ist schön.|花园很美。\nA1|hässlich|||adj|丑的|Das Gebäude ist hässlich.|这楼很丑。\nA1|teuer|||adj|贵的|Das Auto ist zu teuer.|这车太贵。\nA1|billig|||adj|便宜的|Ich suche ein billiges Hotel.|我在找便宜的旅馆。\nA1|schnell|||adj|快的|Der Zug ist sehr schnell.|火车很快。\nA1|langsam|||adj|慢的|Sprich bitte langsam!|请说慢点！\nA1|warm|||adj|暖的|Heute ist es warm.|今天很暖和。\nA1|kalt|||adj|冷的|Das Wasser ist kalt.|水是凉的。\nA1|heiß|||adj|热的／烫的|Der Tee ist heiß.|茶很烫。\nA1|frisch|||adj|新鲜的|Das Brot ist frisch.|面包很新鲜。\nA1|lecker|||adj|好吃的|Der Kuchen ist lecker.|蛋糕很好吃。\nA1|freundlich|||adj|友好的|Die Leute sind freundlich.|人们很友好。\nA1|nett|||adj|友善的／客气的|Das ist nett von dir.|你真好。\nA1|glücklich|||adj|幸福的|Sie ist sehr glücklich.|她很幸福。\nA1|traurig|||adj|难过的|Warum bist du traurig?|你为什么难过？\nA1|müde|||adj|累的|Ich bin heute müde.|我今天很累。\nA1|schwierig|||adj|难的|Die Prüfung ist schwierig.|考试很难。\nA1|leicht|||adj|容易的／轻的|Die Aufgabe ist leicht.|这题很简单。\nA1|wichtig|||adj|重要的|Das ist sehr wichtig.|这很重要。\nA1|richtig|||adj|正确的|Die Antwort ist richtig.|答案正确。\nA1|falsch|||adj|错误的|Das ist die falsche Adresse.|这是错误地址。\nA1|frei|||adj|空的／自由的|Ist dieser Platz frei?|这个位子空着吗？\nA1|voll|||adj|满的|Der Bus ist voll.|公交车满了。\nA1|leer|||adj|空的|Die Flasche ist leer.|瓶子空了。\nA1|sauber|||adj|干净的|Das Zimmer ist sauber.|房间很干净。\nA1|laut|||adj|大声的|Die Musik ist zu laut.|音乐太吵。\nA1|leise|||adj|安静的／小声的|Sprich bitte leise!|请小声说！\nA1|lang|||adj|长的|Der Film ist zu lang.|电影太长。\nA1|kurz|||adj|短的|Ich brauche eine kurze Pause.|我需要短休。\nA1|stark|||adj|强壮的／浓的|Der Kaffee ist stark.|咖啡很浓。\nA1|hoch|||adj|高的|Der Turm ist sehr hoch.|塔很高。\nA1|niedrig|||adj|低的|Der Preis ist niedrig.|价格很低。\nA1|nah|||adj|近的|Die Apotheke ist nah.|药店很近。\nA1|weit|||adj|远的|Der Weg ist weit.|路很远。\nA1|offen|||adj|开着的|Der Laden ist noch offen.|商店还开着。\nA1|geschlossen|||adj|关着的|Am Sonntag ist alles geschlossen.|周日都关门。\nA1|rot|||adj|红色的|Ich möchte das rote Hemd.|我要那件红衬衫。\nA1|blau|||adj|蓝色的|Der Himmel ist blau.|天空是蓝的。\nA1|grün|||adj|绿色的|Ich trinke gern grünen Tee.|我喜欢喝绿茶。\nA1|gelb|||adj|黄色的|Die Banane ist gelb.|香蕉是黄的。\nA1|schwarz|||adj|黑色的|Er trägt eine schwarze Jacke.|他穿黑夹克。\nA1|weiß|||adj|白色的|Das Hemd ist weiß.|衬衫是白的。\nA1|braun|||adj|棕色的|Sie hat braune Haare.|她有棕发。\nA1|grau|||adj|灰色的|Der Himmel ist grau.|天空灰蒙蒙的。\nA1|Wetter|das|—|n|天气|Das Wetter ist heute schön.|今天天气很好。\nA1|Sonne|die|die Sonnen|n|太阳|Die Sonne scheint.|太阳照着。\nA1|Regen|der|—|n|雨|Der Regen hört nicht auf.|雨下个不停。\nA1|Schnee|der|—|n|雪|Im Winter gibt es Schnee.|冬天有雪。\nA1|Wind|der|die Winde|n|风|Der Wind ist heute stark.|今天风很大。\nA1|Wolke|die|die Wolken|n|云|Am Himmel sind viele Wolken.|天上有许多云。\nA1|regnen||es regnet|v|下雨|Es regnet den ganzen Tag.|下了一整天雨。\nA1|schneien||es schneit|v|下雪|Morgen soll es schneien.|明天要下雪。\nA1|scheinen||die Sonne scheint|v|照耀／似乎|Die Sonne scheint hell.|太阳很亮。\nA1|Himmel|der|—|n|天空|Der Himmel ist klar.|天空晴朗。\nA1|Sommer|der|die Sommer|n|夏天|Im Sommer fahren wir ans Meer.|夏天我们去海边。\nA1|Winter|der|die Winter|n|冬天|Der Winter ist hier lang.|这里冬天很长。\nA1|Frühling|der|die Frühlinge|n|春天|Im Frühling blühen die Blumen.|春天花开了。\nA1|Herbst|der|die Herbste|n|秋天|Im Herbst regnet es oft.|秋天常下雨。\nA1|Grad|der|die Grade|n|度|Es sind zwanzig Grad.|气温二十度。\nA1|Musik|die|—|n|音乐|Ich höre gern Musik.|我喜欢听音乐。\nA1|Lied|das|die Lieder|n|歌曲|Das Lied ist schön.|这首歌好听。\nA1|Film|der|die Filme|n|电影|Der Film beginnt um acht.|电影八点开始。\nA1|fernsehen||er sieht fern|v|看电视|Abends sehen wir fern.|晚上我们看电视。\nA1|Sport|der|—|n|运动|Sport ist gesund.|运动有益健康。\nA1|schwimmen||er schwimmt|v|游泳|Ich schwimme jeden Morgen.|我每天早上游泳。\nA1|laufen||er läuft|v|跑／走|Er läuft sehr schnell.|他跑得很快。\nA1|tanzen||er tanzt|v|跳舞|Wir tanzen gern.|我们喜欢跳舞。\nA1|singen||er singt|v|唱歌|Sie singt ein Lied.|她唱一首歌。\nA1|reisen||er reist|v|旅行|Ich reise gern allein.|我喜欢独自旅行。\nA1|Reise|die|die Reisen|n|旅行|Die Reise war schön.|这次旅行很好。\nA1|Urlaub|der|die Urlaube|n|假期|Wir fahren in den Urlaub.|我们去度假。\nA1|Hobby|das|die Hobbys|n|爱好|Mein Hobby ist Lesen.|我的爱好是读书。\nA1|Party|die|die Partys|n|派对|Wir machen eine Party.|我们要办个派对。\nA1|Fest|das|die Feste|n|节日／庆典|Das Fest dauert drei Tage.|庆典持续三天。\nA1|Geburtstag|der|die Geburtstage|n|生日|Mein Geburtstag ist im Mai.|我生日在五月。\nA1|Geschenk|das|die Geschenke|n|礼物|Das Geschenk ist für dich.|这礼物给你。\nA1|schenken||er schenkt|v|赠送|Ich schenke ihr Blumen.|我送她花。\nA1|einladen||er lädt ein|v|邀请|Ich lade dich ein.|我邀请你。\nA1|treffen||er trifft|v|遇见／会面|Wir treffen uns um sechs.|我们六点见。\nA1|Freizeit|die|—|n|业余时间|In meiner Freizeit lese ich.|业余时间我读书。\nA1|Handy|das|die Handys|n|手机|Mein Handy ist kaputt.|我手机坏了。\nA1|Telefon|das|die Telefone|n|电话|Das Telefon klingelt.|电话响了。\nA1|anrufen||er ruft an|v|打电话|Ich rufe dich später an.|我稍后打给你。\nA1|Internet|das|—|n|互联网|Ich suche im Internet.|我在网上查。\nA1|Computer|der|die Computer|n|电脑|Der Computer ist neu.|电脑是新的。\nA1|Fernseher|der|die Fernseher|n|电视机|Der Fernseher läuft.|电视开着。\nA1|Zeitung|die|die Zeitungen|n|报纸|Ich lese die Zeitung.|我在看报纸。\nA1|Foto|das|die Fotos|n|照片|Das Foto ist alt.|这张照片很老。\nA1|Theater|das|die Theater|n|剧院|Wir gehen ins Theater.|我们去看戏。\nA1|Konzert|das|die Konzerte|n|音乐会|Das Konzert beginnt um neun.|音乐会九点开始。\nA1|in|||prep|在……里|Ich wohne in Berlin.|我住在柏林。\nA1|auf|||prep|在……上|Das Buch liegt auf dem Tisch.|书在桌上。\nA1|unter|||prep|在……下|Die Katze ist unter dem Stuhl.|猫在椅子下。\nA1|über|||prep|在……上方／关于|Das Bild hängt über dem Sofa.|画挂在沙发上。\nA1|neben|||prep|在……旁边|Die Bank ist neben der Post.|银行在邮局旁。\nA1|zwischen|||prep|在……之间|Das Café ist zwischen den Häusern.|咖啡馆在两楼之间。\nA1|vor|||prep|在……前|Wir treffen uns vor dem Kino.|我们在电影院前见。\nA1|hinter|||prep|在……后|Der Garten ist hinter dem Haus.|花园在房后。\nA1|mit|||prep|和／带着|Ich fahre mit dem Bus.|我坐公交。\nA1|ohne|||prep|没有|Ich trinke Kaffee ohne Zucker.|我喝咖啡不加糖。\nA1|für|||prep|为了／给|Das ist für dich.|这是给你的。\nA1|gegen|||prep|反对／对抗|Ich habe nichts dagegen.|我不反对。\nA1|durch|||prep|穿过|Wir gehen durch den Park.|我们穿过公园。\nA1|um|||prep|围绕／在（时间）|Der Kurs beginnt um neun.|课程九点开始。\nA1|von|||prep|从／的|Ich komme von der Arbeit.|我从单位来。\nA1|zu|||prep|去／太|Ich gehe zu Fuß.|我步行去。\nA1|bei|||prep|在……处／在……家|Ich wohne bei meinen Eltern.|我住父母家。\nA1|nach|||prep|去（城市）／在……之后|Nach dem Essen gehen wir spazieren.|饭后我们散步。\nA1|seit|||prep|自从|Ich lerne seit einem Monat Deutsch.|我学德语一个月了。\nA1|aus|||prep|来自|Ich komme aus China.|我来自中国。\nA1|bis|||prep|直到|Ich arbeite bis fünf Uhr.|我工作到五点。\nA1|und|||conj|和|Ich trinke Tee und esse Kuchen.|我喝茶吃蛋糕。\nA1|oder|||conj|或者|Tee oder Kaffee?|茶还是咖啡？\nA1|aber|||conj|但是|Ich bin müde, aber glücklich.|我累但开心。\nA1|weil|||conj|因为|Ich bleibe zu Hause, weil ich krank bin.|我待在家，因为我病了。\nA1|dass|||conj|（引导从句）|Ich glaube, dass er kommt.|我相信他会来。\nA1|wenn|||conj|如果／当……时|Wenn es regnet, bleiben wir hier.|如果下雨我们就待这儿。\nA1|denn|||conj|因为|Ich gehe früh ins Bett, denn ich bin müde.|我早睡，因为我累了。\nA1|also|||adv|所以|Ich bin krank, also komme ich nicht.|我病了，所以不来了。\nA1|ich|||pron|我|Ich komme aus China.|我来自中国。\nA1|du|||pron|你|Woher kommst du?|你从哪儿来？\nA1|er|||pron|他|Er wohnt in Wien.|他住在维也纳。\nA1|sie|||pron|她／他们|Sie arbeitet hier.|她在这里工作。\nA1|es|||pron|它|Es ist kalt heute.|今天很冷。\nA1|wir|||pron|我们|Wir lernen zusammen.|我们一起学习。\nA1|ihr|||pron|你们|Wo wohnt ihr?|你们住哪儿？\nA1|Sie|||pron|您（尊称）|Wie heißen Sie?|您叫什么名字？\nA1|mein|||pron|我的|Das ist mein Buch.|这是我的书。\nA1|dein|||pron|你的|Ist das dein Handy?|这是你的手机吗？\nA1|unser|||pron|我们的|Unser Haus ist klein.|我们的房子很小。\nA1|Deutschland|—||n|德国|Ich wohne in Deutschland.|我住在德国。\nA1|Österreich|—||n|奥地利|Wien liegt in Österreich.|维也纳在奥地利。\nA1|Schweiz|die|—|n|瑞士|Die Schweiz ist teuer.|瑞士很贵。\nA1|Deutsch|—||n|德语|Ich lerne Deutsch.|我学德语。\nA1|Englisch|—||n|英语|Sprechen Sie Englisch?|您说英语吗？\nA1|China|—||n|中国|Meine Familie lebt in China.|我家人住在中国。\nA1|Land|das|die Länder|n|国家／乡村|Deutschland ist ein schönes Land.|德国是个美丽的国家。\nA1|Hund|der|die Hunde|n|狗|Der Hund bellt laut.|狗叫得凶。\nA1|Katze|die|die Katzen|n|猫|Die Katze schläft auf dem Sofa.|猫在沙发上睡。\nA1|Vogel|der|die Vögel|n|鸟|Die Vögel singen morgens.|鸟早上叫。\nA1|Tier|das|die Tiere|n|动物|Ich mag Tiere sehr.|我很喜欢动物。\nA1|Wie bitte?|||phrase|请再说一遍？|Wie bitte? Ich habe das nicht verstanden.|什么？我没听懂。\nA1|Kein Problem|||phrase|没问题|Kein Problem, ich helfe dir.|没问题，我帮你。\nA1|Es tut mir leid|||phrase|对不起|Es tut mir leid, ich komme zu spät.|抱歉，我来晚了。\nA1|Ich verstehe nicht|||phrase|我不明白|Ich verstehe nicht, was du sagst.|我不懂你说什么。\nA1|Was bedeutet das?|||phrase|这是什么意思？|Was bedeutet dieses Wort?|这个词什么意思？\nA1|Wie sagt man das auf Deutsch?|||phrase|这个用德语怎么说？|Wie sagt man „Stift\" auf Deutsch?|“笔”用德语怎么说？\nA1|Ich hätte gern|||phrase|我想要（礼貌）|Ich hätte gern einen Kaffee.|我想要一杯咖啡。\nA1|Viel Glück|||phrase|祝你好运|Viel Glück bei der Prüfung!|考试好运！\nA1|Herzlichen Glückwunsch|||phrase|恭喜|Herzlichen Glückwunsch zum Geburtstag!|生日快乐！\nA1|Guten Appetit|||phrase|用餐愉快|Guten Appetit!|祝您用餐愉快！\nA1|Prost|||int|干杯|Prost! Auf deine Gesundheit!|干杯！祝你健康！\nA1|Alles Gute|||phrase|一切顺利|Alles Gute für dich!|祝你一切顺利！\nA1|Bis später|||phrase|待会儿见|Bis später, ich muss los.|待会儿见，我得走了。",
+  "b2c1": "# 格式：等级|德语|冠词|复数(或动词变位/形容词比较级)|词性|中文|例句|例句翻译\n# 词表定位：TestDaF / DSH 学术德语（B2–C1）\nB2|Studium|das|Studien|n|大学学业；研究|Das Studium an einer deutschen Universität dauert meist vier bis fünf Jahre.|在德国大学读本科通常要四到五年。\nB2|Forschung|die||n|研究|Die Forschung auf diesem Gebiet hat große Fortschritte gemacht.|这一领域的研究取得了很大进展。\nB2|Wissenschaft|die|Wissenschaften|n|科学；学术|Wissenschaft und Technik verändern unser Leben.|科学和技术改变着我们的生活。\nB2|Vorlesung|die|Vorlesungen|n|讲座；大课|Die Vorlesung beginnt um neun Uhr.|大课九点开始。\nB2|Seminar|das|Seminare|n|研讨课|Im Seminar diskutieren wir über aktuelle Studien.|研讨课上我们讨论最新的研究。\nB2|Toleranz|die||n|宽容；包容|Toleranz gegenüber anderen Meinungen ist in einer Demokratie unverzichtbar.|对他人意见的宽容在民主社会不可或缺。\nB2|Hausarbeit|die|Hausarbeiten|n|学期论文|Die Hausarbeit muss bis Freitag abgegeben werden.|学期论文必须在周五前交。\nB2|Abschluss|der|Abschlüsse|n|毕业；结束|Nach dem Abschluss möchte er promovieren.|毕业后他想读博。\nB2|Zulassung|die|Zulassungen|n|录取；许可|Die Zulassung zum Studium setzt gute Deutschkenntnisse voraus.|录取的前提是良好的德语水平。\nB2|Bewerbung|die|Bewerbungen|n|申请|Die Bewerbung um einen Studienplatz ist online einzureichen.|入学申请需在线提交。\nB2|Fach|das|Fächer|n|专业；学科|Sie studiert ein technisches Fach.|她学的是工科专业。\nB2|Fachbereich|der|Fachbereiche|n|院系|Der Fachbereich Biologie liegt im Norden des Campus.|生物系位于校园北侧。\nB2|Dozent|der|Dozenten|n|讲师|Der Dozent erklärt die Methode sehr anschaulich.|讲师把方法讲得很清楚。\nB2|Professor|der|Professoren|n|教授|Der Professor leitet ein großes Forschungsprojekt.|这位教授领导一个大型研究项目。\nB2|Wohlstand|der||n|富裕；福祉|Der Wohlstand eines Landes misst sich nicht nur am Einkommen.|一个国家的富裕不能只用收入衡量。\nB2|Kommilitone|der|Kommilitonen|n|同学|Meine Kommilitonen helfen mir beim Lernen.|同学们帮我学习。\nB2|Nachhaltigkeit|die||n|可持续性|Nachhaltigkeit spielt in der heutigen Wirtschaft eine zentrale Rolle.|可持续性在当今经济中起核心作用。\nB2|Campus|der|Campus|n|校园|Der Campus ist mit dem Fahrrad gut zu erreichen.|骑自行车很容易到校园。\nB2|Semester|das|Semester|n|学期|Im nächsten Semester belege ich zwei Kurse.|下学期我选两门课。\nB2|Leistung|die|Leistungen|n|成绩；表现；功率|Seine Leistungen haben sich deutlich verbessert.|他的成绩明显提高了。\nB2|Note|die|Noten|n|分数|Für die Note zählt auch die Mitarbeit im Seminar.|分数也包括研讨课上的参与。\nB2|Stipendium|das|Stipendien|n|奖学金|Sie erhielt ein Stipendium für ein Jahr in Deutschland.|她获得了在德国一年的奖学金。\nB2|Forschungsergebnis|das|Forschungsergebnisse|n|研究成果|Die Forschungsergebnisse wurden in einer Fachzeitschrift veröffentlicht.|研究成果发表在一份专业期刊上。\nB2|Methode|die|Methoden|n|方法|Die Methode eignet sich für große Datenmengen.|这种方法适合大数据。\nB2|Analyse|die|Analysen|n|分析|Die Analyse zeigt einen klaren Zusammenhang.|分析表明存在明显的关联。\nB2|Hypothese|die|Hypothesen|n|假设|Die Hypothese konnte nicht bestätigt werden.|这个假设未能得到证实。\nB2|Theorie|die|Theorien|n|理论|Die Theorie stammt aus dem 19. Jahrhundert.|该理论源自19世纪。\nB2|Daten|die||n|数据|Die Daten wurden anonym erhoben.|数据是匿名收集的。\nB2|Umfrage|die|Umfragen|n|问卷调查|Laut Umfrage sind zwei Drittel dafür.|调查显示三分之二的人赞成。\nB2|Statistik|die|Statistiken|n|统计|Die Statistik zeigt einen Anstieg der Preise.|统计显示价格上涨。\nB2|Umwelt|die||n|环境|Wir müssen die Umwelt besser schützen.|我们必须更好地保护环境。\nB2|Umweltschutz|der||n|环境保护|Umweltschutz beginnt im Alltag.|环保从日常生活开始。\nB2|Klimawandel|der||n|气候变化|Der Klimawandel betrifft alle Länder.|气候变化影响所有国家。\nB2|Energie|die|Energien|n|能源|Erneuerbare Energien werden immer wichtiger.|可再生能源越来越重要。\nB2|Wirtschaft|die|Wirtschaften|n|经济|Die Wirtschaft wächst langsamer als erwartet.|经济增长低于预期。\nB2|Gesellschaft|die|Gesellschaften|n|社会|Die Gesellschaft altert schnell.|社会正在快速老龄化。\nB2|Bildung|die||n|教育|Bildung ist der Schlüssel zum Erfolg.|教育是成功的关键。\nB2|Politik|die||n|政治|Die Politik muss schneller reagieren.|政治必须更快作出反应。\nB2|Regierung|die|Regierungen|n|政府|Die Regierung hat ein neues Gesetz beschlossen.|政府通过了一项新法律。\nB2|Gesetz|das|Gesetze|n|法律|Das Gesetz tritt im Januar in Kraft.|该法律一月生效。\nB2|Technik|die|Techniken|n|技术|Die Technik hat unsere Kommunikation verändert.|技术改变了我们的交流方式。\nB2|Digitalisierung|die||n|数字化|Die Digitalisierung verändert die Arbeitswelt.|数字化正在改变职场。\nB2|Verkehr|der||n|交通|Der Verkehr in den Städten nimmt zu.|城市交通在增加。\nB2|Gesundheit|die||n|健康|Bewegung ist gut für die Gesundheit.|运动有益健康。\nB2|Ernährung|die||n|营养；饮食|Gesunde Ernährung senkt das Risiko für Herzkrankheiten.|健康饮食降低心脏病风险。\nB2|Bevölkerung|die|Bevölkerungen|n|人口|Die Bevölkerung der Stadt wächst jährlich.|该市人口每年增长。\nB2|Armut|die||n|贫困|Armut ist ein strukturelles Problem.|贫困是结构性问题。\nB2|Migration|die|Migrationen|n|移民|Migration prägt die Geschichte Europas.|移民塑造了欧洲的历史。\nB2|Integration|die|Integrationen|n|融入；整合|Integration braucht Zeit und Angebote.|融入需要时间和配套措施。\nB2|Arbeitsmarkt|der|Arbeitsmärkte|n|就业市场|Der Arbeitsmarkt verlangt neue Qualifikationen.|就业市场要求新的技能。\nB2|Qualifikation|die|Qualifikationen|n|资质；技能|Ohne Qualifikation ist die Jobsuche schwer.|没有资质很难找工作。\nB2|Unternehmen|das|Unternehmen|n|企业|Das Unternehmen investiert viel in Forschung.|这家企业大量投资研究。\nB2|Industrie|die|Industrien|n|工业|Die Industrie muss klimafreundlicher werden.|工业必须变得更环保。\nB2|Kosten|die||n|成本；费用|Die Kosten für Wohnen steigen stark.|住房成本大幅上涨。\nB2|Gewinn|der|Gewinne|n|利润|Der Gewinn ist im letzten Jahr gesunken.|去年利润下降了。\nB2|Investition|die|Investitionen|n|投资|Investitionen in Bildung lohnen sich langfristig.|教育投资长期看是值得的。\nB2|Infrastruktur|die|Infrastrukturen|n|基础设施|Die Infrastruktur im ländlichen Raum ist schwach.|农村地区基础设施薄弱。\nB2|Ressource|die|Ressourcen|n|资源|Wasser ist eine knappe Ressource.|水是稀缺资源。\nB2|Klima|das|Klimata|n|气候|Das Klima in dieser Region ist mild.|该地区气候温和。\nB2|Abfall|der|Abfälle|n|垃圾；废料|Der Abfall wird getrennt gesammelt.|垃圾分类收集。\nB2|Ursache|die|Ursachen|n|原因|Die Ursache des Problems ist unklar.|问题的原因尚不清楚。\nB2|Folge|die|Folgen|n|后果|Die Folgen für die Wirtschaft sind enorm.|对经济的影响是巨大的。\nB2|Grund|der|Gründe|n|原因；理由|Es gibt mehrere Gründe für diese Entwicklung.|这种发展有几个原因。\nB2|Ziel|das|Ziele|n|目标|Das Ziel der Studie ist es, Risiken zu bewerten.|这项研究的目标是评估风险。\nB2|Zweck|der|Zwecke|n|目的|Der Zweck der Maßnahme ist umstritten.|该措施的目的存在争议。\nB2|Vorteil|der|Vorteile|n|优点|Ein Vorteil ist die geringe Belastung der Umwelt.|一个优点是对环境的负担小。\nB2|Nachteil|der|Nachteile|n|缺点|Der größte Nachteil sind die hohen Kosten.|最大的缺点是成本高。\nB2|Bedeutung|die|Bedeutungen|n|意义；重要性|Die Bedeutung dieser Frage wächst.|这个问题的重要性在增加。\nB2|Zusammenhang|der|Zusammenhänge|n|关联；联系|Zwischen Armut und Bildung besteht ein enger Zusammenhang.|贫困与教育之间存在密切联系。\nB2|Unterschied|der|Unterschiede|n|区别|Der Unterschied zwischen den beiden Modellen ist gering.|两个模型的差别很小。\nB2|Entwicklung|die|Entwicklungen|n|发展|Die technische Entwicklung verläuft rasant.|技术发展迅猛。\nB2|Veränderung|die|Veränderungen|n|变化|Die Veränderungen betreffen vor allem junge Menschen.|这些变化主要影响年轻人。\nB2|Möglichkeit|die|Möglichkeiten|n|可能性；机会|Es gibt mehrere Möglichkeiten, das Problem zu lösen.|解决这个问题有好几种可能。\nB2|Schwierigkeit|die|Schwierigkeiten|n|困难|Die größte Schwierigkeit liegt in der Finanzierung.|最大的困难在于融资。\nB2|Lösung|die|Lösungen|n|解决方案|Eine nachhaltige Lösung erfordert internationale Zusammenarbeit.|可持续的解决方案需要国际合作。\nB2|Maßnahme|die|Maßnahmen|n|措施|Die Regierung plant weitere Maßnahmen.|政府计划采取更多措施。\nB2|Bereich|der|Bereiche|n|领域；范围|In diesem Bereich gibt es kaum Forschung.|这一领域几乎没有研究。\nB2|Aspekt|der|Aspekte|n|方面|Der soziale Aspekt wird oft übersehen.|社会方面常被忽视。\nB2|Faktor|der|Faktoren|n|因素|Der wichtigste Faktor ist die Motivation.|最重要的因素是动机。\nB2|Ergebnis|das|Ergebnisse|n|结果|Das Ergebnis überraschte die Forscher.|结果让研究人员感到意外。\nB2|Studie|die|Studien|n|研究；论文|Eine neue Studie bestätigt den Verdacht.|一项新研究证实了这一怀疑。\nB2|Anteil|der|Anteile|n|比例；份额|Der Anteil der Frauen in der Forschung steigt.|科研中女性的比例在上升。\nB2|Anstieg|der|Anstiege|n|上升|Der Anstieg der Mieten ist dramatisch.|租金上涨是剧烈的。\nB2|Rückgang|der|Rückgänge|n|下降|Ein Rückgang der Geburtenrate ist zu beobachten.|可以观察到出生率下降。\nB2|Trend|der|Trends|n|趋势|Dieser Trend hält seit Jahren an.|这一趋势已持续多年。\nB2|untersuchen||untersuchte, hat untersucht|v|研究；检查|Die Forscher untersuchen das Verhalten von Kindern.|研究人员研究儿童的行为。\nB2|analysieren||analysierte, hat analysiert|v|分析|Wir analysieren die Daten mit einem Computerprogramm.|我们用计算机程序分析数据。\nB2|beeinflussen||beeinflusste, hat beeinflusst|v|影响|Der Preis beeinflusst die Nachfrage stark.|价格对需求影响很大。\nB2|fördern||förderte, hat gefördert|v|促进；资助|Die Regierung fördert erneuerbare Energien.|政府资助可再生能源。\nB2|fordern||forderte, hat gefordert|v|要求|Die Studierenden fordern bessere Bedingungen.|学生们要求更好的条件。\nB2|ermöglichen||ermöglichte, hat ermöglicht|v|使成为可能|Neue Technik ermöglicht genauere Messungen.|新技术使更精确的测量成为可能。\nB2|verursachen||verursachte, hat verursacht|v|造成；引起|Der Verkehr verursacht viel Lärm.|交通造成大量噪音。\nB2|betrachten||betrachtete, hat betrachtet|v|观察；视为|Wir betrachten das Problem aus zwei Perspektiven.|我们从两个角度看待这个问题。\nB2|gelten||galt, hat gegolten|v|适用；被视为|Diese Regel gilt für alle Studierenden.|这条规定适用于所有学生。\nB2|erweisen||erwies, hat erwiesen|v|证明|Die Methode hat sich als wirksam erwiesen.|该方法已被证明有效。\nB2|verfügen||verfügte, hat verfügt|v|拥有；支配|Das Institut verfügt über moderne Geräte.|该研究所拥有现代化设备。\nB2|berücksichtigen||berücksichtigte, hat berücksichtigt|v|考虑到|Bei der Planung müssen wir die Kosten berücksichtigen.|规划时我们必须考虑成本。\nB2|zusammenfassen||fasste zusammen, hat zusammengefasst|v|总结|Fassen Sie die Ergebnisse in drei Sätzen zusammen.|请用三句话总结结果。\nB2|darstellen||stellte dar, hat dargestellt|v|描述；表现|Die Grafik stellt die Entwicklung seit 1990 dar.|图表展示了1990年以来的发展。\nB2|erläutern||erläuterte, hat erläutert|v|解释；说明|Können Sie das an einem Beispiel erläutern?|您能举个例子说明吗？\nB2|begründen||begründete, hat begründet|v|论证；说明理由|Begründen Sie Ihre Entscheidung.|请说明您的决定理由。\nB2|bewerten||bewertete, hat bewertet|v|评价|Wie bewerten Sie diese Entwicklung?|您如何评价这一发展？\nB2|vergleichen||verglich, hat verglichen|v|比较|Der Text vergleicht zwei Studien.|这篇文章比较了两项研究。\nB2|widersprechen||widersprach, hat widersprochen|v|反驳；与…矛盾|Die Ergebnisse widersprechen früheren Annahmen.|结果与早先的假设相矛盾。\nB2|abhängen||hing ab, hat abgehangen|v|取决于|Der Erfolg hängt von vielen Faktoren ab.|成功取决于许多因素。\nB2|zunehmen||nahm zu, hat zugenommen|v|增加|Die Zahl der Studierenden hat zugenommen.|学生人数增加了。\nB2|abnehmen||nahm ab, hat abgenommen|v|减少|Die Geburtenrate nimmt weiter ab.|出生率继续下降。\nB2|beitragen||trug bei, hat beigetragen|v|有助于|Jeder kann zum Klimaschutz beitragen.|每个人都能为气候保护作贡献。\nB2|verzichten||verzichtete, hat verzichtet|v|放弃；不用|Viele verzichten auf das Auto.|很多人放弃开车。\nB2|auswirken||wirkte aus, hat ausgewirkt|v|产生影响|Der Lärm wirkt sich negativ auf die Gesundheit aus.|噪音对健康有负面影响。\nB2|entstehen||entstand, ist entstanden|v|产生|Durch die Reform sind neue Probleme entstanden.|改革产生了新问题。\nB2|erhöhen||erhöhte, hat erhöht|v|提高|Die Stadt will die Preise für Parken erhöhen.|市政府想提高停车费。\nB2|senken||senkte, hat gesenkt|v|降低|Die Maßnahme soll den Verbrauch senken.|该措施应降低消耗。\nB2|verbessern||verbesserte, hat verbessert|v|改善|Die Luftqualität hat sich verbessert.|空气质量改善了。\nB2|verschlechtern||verschlechterte, hat verschlechtert|v|恶化|Die Lage hat sich verschlechtert.|情况恶化了。\nB2|sichern||sicherte, hat gesichert|v|保障|Die Regierung will die Renten sichern.|政府想保障养老金。\nB2|gewährleisten||gewährleistete, hat gewährleistet|v|保证|Der Staat muss die Grundversorgung gewährleisten.|国家必须保障基本供给。\nB2|voraussetzen||setzte voraus, hat vorausgesetzt|v|以…为前提|Das Studium setzt gute Deutschkenntnisse voraus.|学业以良好的德语水平为前提。\nB2|betonen||betonte, hat betont|v|强调|Der Autor betont die Rolle der Bildung.|作者强调教育的作用。\nB2|bezweifeln||bezweifelte, hat bezweifelt|v|怀疑|Viele Experten bezweifeln diese Zahlen.|许多专家怀疑这些数字。\nB2|schätzen||schätzte, hat geschätzt|v|估计；珍视|Die Kosten werden auf eine Million Euro geschätzt.|成本估计为一百万欧元。\nB2|verringern||verringerte, hat verringert|v|减少|Die Firma will den Energieverbrauch verringern.|公司想减少能耗。\nB2|steigern||steigerte, hat gesteigert|v|提高|Die Produktion soll gesteigert werden.|产量应提高。\nB2|leiden||litt, hat gelitten|v|受苦；受损|Die Wirtschaft leidet unter der Krise.|经济受危机影响。\nB2|profitieren||profitierte, hat profitiert|v|受益|Vor allem junge Familien profitieren von der Reform.|尤其是年轻家庭从改革中受益。\nB2|zitieren||zitierte, hat zitiert|v|引用|Der Autor zitiert eine bekannte Studie.|作者引用了一项著名研究。\nB2|veröffentlichen||veröffentlichte, hat veröffentlicht|v|发表|Die Ergebnisse wurden 2023 veröffentlicht.|结果于2023年发表。\nB2|beobachten||beobachtete, hat beobachtet|v|观察|Wir beobachten eine langsame Veränderung.|我们观察到缓慢的变化。\nB2|messen||maß, hat gemessen|v|测量|Die Temperatur wird täglich gemessen.|每天测量温度。\nB2|überprüfen||überprüfte, hat überprüft|v|检查；审核|Die Behörde überprüft die Angaben.|当局审核这些信息。\nB2|feststellen||stellte fest, hat festgestellt|v|确认；发现|Die Studie stellt fest, dass die Zahl sinkt.|研究确认数字在下降。\nB2|vermuten||vermuten, hat vermutet|v|推测|Man vermutet, dass der Preis weiter steigt.|人们推测价格会继续上涨。\nB2|erwarten||erwartete, hat erwartet|v|预期|Experten erwarten eine schnelle Erholung.|专家预计会快速复苏。\nB2|benötigen||benötigte, hat benötigt|v|需要|Das Projekt benötigt mehr Zeit.|这个项目需要更多时间。\nB2|erfassen||erfasste, hat erfasst|v|记录；涵盖|Die Umfrage erfasst 5000 Haushalte.|调查涵盖5000个家庭。\nB2|beschreiben||beschrieb, hat beschrieben|v|描述|Beschreiben Sie den Prozess in eigenen Worten.|用自己的话描述这个过程。\nB2|bedeutend||bedeutender, am bedeutendsten|adj|重要的|Das ist ein bedeutender Schritt für die Forschung.|这是研究的重要一步。\nB2|erheblich|||adj|相当大的|Die Kosten sind erheblich gestiegen.|成本大幅上升。\nB2|deutlich||deutlicher, am deutlichsten|adj|明显的|Es gibt deutliche Unterschiede zwischen den Gruppen.|各组之间存在明显差异。\nB2|gering||geringer, am geringsten|adj|少量的；低的|Das Risiko ist gering.|风险很低。\nB2|zahlreich|||adj|众多的|Zahlreiche Studien bestätigen das Ergebnis.|大量研究证实了这一结果。\nB2|umfangreich||umfangreicher, am umfangreichsten|adj|广泛的；大量的|Das Projekt ist sehr umfangreich.|这个项目规模很大。\nB2|wesentlich|||adj|本质的；重要的|Ein wesentlicher Punkt fehlt noch.|还缺一个要点。\nB2|entscheidend|||adj|决定性的|Die Bildung ist entscheidend für die Zukunft.|教育对未来至关重要。\nB2|geeignet||geeigneter, am geeignetsten|adj|合适的|Diese Methode ist für Anfänger nicht geeignet.|这种方法不适合初学者。\nB2|erforderlich|||adj|必需的|Für die Zulassung sind bestimmte Noten erforderlich.|录取需要达到一定分数。\nB2|nachhaltig||nachhaltiger, am nachhaltigsten|adj|可持续的|Wir brauchen eine nachhaltige Lösung.|我们需要可持续的解决方案。\nB2|wirtschaftlich|||adj|经济的|Das Land befindet sich in einer schwierigen wirtschaftlichen Lage.|该国经济形势困难。\nB2|gesellschaftlich|||adj|社会的|Das ist ein gesellschaftliches Problem.|这是一个社会问题。\nB2|wissenschaftlich|||adj|科学的|Die Aussage ist wissenschaftlich nicht belegt.|该说法没有科学依据。\nB2|technisch|||adj|技术的|Der technische Fortschritt ist kaum aufzuhalten.|技术进步几乎无法阻挡。\nB2|gesundheitlich|||adj|健康方面的|Die gesundheitlichen Folgen sind noch unklar.|健康后果尚不清楚。\nB2|verfügbar|||adj|可用的|Die Daten sind öffentlich verfügbar.|数据是公开可用的。\nB2|zunehmend|||adv|越来越|Zunehmend mehr Menschen arbeiten von zu Hause.|越来越多的人在家工作。\nB2|überwiegend|||adv|绝大部分；占多数|Die Teilnehmer waren überwiegend jung.|参与者绝大多数是年轻人。\nB2|grundsätzlich|||adv|原则上|Grundsätzlich gilt: erst prüfen, dann entscheiden.|原则上：先审查，再决定。\nB2|tatsächlich|||adv|实际上|Tatsächlich ist die Zahl niedriger.|实际上数字更低。\nB2|insbesondere|||adv|尤其|Insbesondere junge Menschen sind betroffen.|尤其是年轻人受影响。\nB2|dennoch|||adv|尽管如此|Es regnete; dennoch kamen alle.|下雨了，尽管如此大家还是来了。\nB2|allerdings|||adv|不过；然而|Die Idee ist gut, allerdings teuer.|想法不错，不过很贵。\nB2|inzwischen|||adv|如今；与此同时|Inzwischen hat sich die Lage beruhigt.|如今局势已经平静。\nB2|teilweise|||adv|部分地|Die Kritik ist teilweise berechtigt.|批评部分有理。\nB2|hinsichtlich|||prep|关于（支配第二格）|Hinsichtlich der Kosten gibt es noch Fragen.|关于成本还有一些问题。\nB2|bezüglich|||prep|关于（支配第二格）|Bezüglich Ihrer Bewerbung erhalten Sie bald Antwort.|关于您的申请您很快会收到答复。\nB2|angesichts|||prep|面对（支配第二格）|Angesichts der Krise sind Reformen nötig.|面对危机需要改革。\nB2|aufgrund|||prep|由于（支配第二格）|Aufgrund des Wetters wurde das Spiel abgesagt.|由于天气比赛取消了。\nB2|trotz|||prep|尽管（支配第二格）|Trotz der Kritik bleibt der Plan bestehen.|尽管有批评计划仍不变。\nB2|während|||prep|在…期间|Während der Prüfung darf man nicht sprechen.|考试期间不许说话。\nB2|obwohl|||conj|虽然|Obwohl er müde war, arbeitete er weiter.|虽然累了，他仍继续工作。\nB2|sodass|||conj|以至于；因此|Die Preise stiegen, sodass viele umzogen.|价格上涨，因此很多人搬走了。\nB2|damit|||conj|为了；以便|Man investiert, damit die Wirtschaft wächst.|人们投资，以便经济增长。\nB2|indem|||conj|通过…方式|Die Firma spart Kosten, indem sie digitalisiert.|公司通过数字化节省成本。\nB2|sofern|||conj|只要|Sofern es nicht regnet, findet das Fest statt.|只要不下雨，庆典就举行。\nB2|falls|||conj|如果|Falls Sie Fragen haben, melden Sie sich.|如果您有问题请联系。\nB2|einerseits|||adv|一方面|Einerseits spart es Zeit, andererseits kostet es Geld.|一方面省时间，另一方面费钱。\nB2|andererseits|||adv|另一方面|Andererseits gibt es auch Risiken.|另一方面也有风险。"
+};
+window.DEMO_TEXT = "# A1 入门词书 · 第 1 部分：问候 / 人 / 数字 / 时间 / 常用动词 / 居住 / 疑问词\n# 格式：等级|德语|冠词|复数或变位|词性|中文|例句|例句翻译\nA1|hallo|||int|你好|Hallo, wie geht's?|你好，怎么样？\nA1|tschüss|||int|再见（口语）|Tschüss, bis morgen!|再见，明天见！\nA1|danke|||int|谢谢|Danke schön!|非常感谢！\nA1|bitte|||int|请／不客气|Bitte, hier ist Ihr Kaffee.|请，这是您的咖啡。\nA1|ja|||int|是|Ja, das stimmt.|是的，没错。\nA1|nein|||int|不|Nein, danke.|不，谢谢。\nA1|guten Morgen|||phrase|早上好|Guten Morgen, Frau Müller!|早上好，穆勒女士！\nA1|guten Tag|||phrase|你好（白天）|Guten Tag, ich heiße Anna.|您好，我叫安娜。\nA1|guten Abend|||phrase|晚上好|Guten Abend, kommen Sie herein.|晚上好，请进。\nA1|gute Nacht|||phrase|晚安|Gute Nacht, schlaf gut.|晚安，睡个好觉。\nA1|auf Wiedersehen|||phrase|再见（正式）|Auf Wiedersehen, Herr Weber.|再见，韦伯先生。\nA1|bis bald|||phrase|回头见|Bis bald, mach's gut!|回头见，保重！\nA1|wie geht's|||phrase|你好吗|Hallo Tom, wie geht's?|你好汤姆，最近怎么样？\nA1|Entschuldigung|die|die Entschuldigungen|n|抱歉／打扰一下|Entschuldigung, wo ist der Bahnhof?|请问，火车站在哪里？\nA1|Mann|der|die Männer|n|男人／丈夫|Der Mann liest Zeitung.|那个男人在读报。\nA1|Frau|die|die Frauen|n|女人／妻子|Die Frau arbeitet im Büro.|这位女士在办公室工作。\nA1|Kind|das|die Kinder|n|孩子|Das Kind spielt im Garten.|孩子在花园里玩。\nA1|Junge|der|die Jungen|n|男孩|Der Junge ist zehn Jahre alt.|这个男孩十岁。\nA1|Mädchen|das|die Mädchen|n|女孩|Das Mädchen singt sehr schön.|这个女孩唱得很好。\nA1|Familie|die|die Familien|n|家庭|Wir sind eine kleine Familie.|我们是个小家庭。\nA1|Eltern|die|—|n|父母|Meine Eltern wohnen in Hamburg.|我父母住在汉堡。\nA1|Vater|der|die Väter|n|父亲|Mein Vater kocht gern.|我爸爸喜欢做饭。\nA1|Mutter|die|die Mütter|n|母亲|Meine Mutter ist Lehrerin.|我妈妈是老师。\nA1|Sohn|der|die Söhne|n|儿子|Ihr Sohn geht zur Schule.|她儿子上学了。\nA1|Tochter|die|die Töchter|n|女儿|Meine Tochter ist drei.|我女儿三岁。\nA1|Bruder|der|die Brüder|n|兄弟|Mein Bruder wohnt in Wien.|我哥哥住在维也纳。\nA1|Schwester|die|die Schwestern|n|姐妹|Seine Schwester studiert Medizin.|他姐姐学医。\nA1|Großmutter|die|die Großmütter|n|祖母／外婆|Meine Großmutter ist achtzig.|我奶奶八十岁。\nA1|Großvater|der|die Großväter|n|祖父／外公|Mein Großvater erzählt gern.|我爷爷爱讲故事。\nA1|Freund|der|die Freunde|n|朋友／男友|Er ist mein bester Freund.|他是我最好的朋友。\nA1|Freundin|die|die Freundinnen|n|女友／女性朋友|Sie ist meine Freundin.|她是我的朋友。\nA1|Nachbar|der|die Nachbarn|n|邻居|Unser Nachbar ist sehr nett.|我们邻居人很好。\nA1|Mensch|der|die Menschen|n|人|Viele Menschen warten hier.|很多人在等。\nA1|Baby|das|die Babys|n|婴儿|Das Baby schläft gerade.|宝宝正在睡觉。\nA1|null|||num|零|Null Grad ist kalt.|零度很冷。\nA1|eins|||num|一|Eins plus eins ist zwei.|一加一等于二。\nA1|zwei|||num|二|Ich habe zwei Brüder.|我有两个兄弟。\nA1|drei|||num|三|Wir bleiben drei Tage.|我们待三天。\nA1|vier|||num|四|Der Tisch hat vier Beine.|桌子有四条腿。\nA1|fünf|||num|五|Ich arbeite fünf Tage pro Woche.|我一周工作五天。\nA1|sechs|||num|六|Sie steht um sechs auf.|她六点起床。\nA1|sieben|||num|七|Die Woche hat sieben Tage.|一周有七天。\nA1|acht|||num|八|Der Kurs beginnt um acht.|课程八点开始。\nA1|neun|||num|九|Es ist neun Uhr.|九点了。\nA1|zehn|||num|十|Zehn Euro, bitte.|十欧，谢谢。\nA1|elf|||num|十一|Sie kommt um elf.|她十一点来。\nA1|zwölf|||num|十二|Das Jahr hat zwölf Monate.|一年有十二个月。\nA1|zwanzig|||num|二十|Das kostet zwanzig Euro.|这个二十欧。\nA1|hundert|||num|一百|Hundert Gramm Käse, bitte.|请给我一百克奶酪。\nA1|tausend|||num|一千|Die Stadt hat tausend Einwohner.|这座城市有一千居民。\nA1|erste|||adj|第一|Das ist mein erster Tag hier.|这是我在这里的第一天。\nA1|zweite|||adj|第二|Wir wohnen im zweiten Stock.|我们住三楼。\nA1|Zeit|die|die Zeiten|n|时间|Ich habe keine Zeit.|我没时间。\nA1|Stunde|die|die Stunden|n|小时|Der Film dauert zwei Stunden.|电影有两个小时。\nA1|Minute|die|die Minuten|n|分钟|Warte eine Minute!|等一分钟！\nA1|Tag|der|die Tage|n|天／白天|Der Tag war lang.|这一天很长。\nA1|Woche|die|die Wochen|n|星期|Nächste Woche fahre ich weg.|下周我出门。\nA1|Monat|der|die Monate|n|月|Der Monat Mai ist schön.|五月很美。\nA1|Jahr|das|die Jahre|n|年|Ich lerne seit einem Jahr Deutsch.|我学德语一年了。\nA1|heute|||adv|今天|Heute ist Montag.|今天是周一。\nA1|morgen|||adv|明天|Morgen habe ich frei.|明天我休息。\nA1|gestern|||adv|昨天|Gestern war ich krank.|昨天我病了。\nA1|jetzt|||adv|现在|Jetzt essen wir.|现在我们吃饭。\nA1|immer|||adv|总是|Er ist immer freundlich.|他总是很友好。\nA1|oft|||adv|经常|Ich gehe oft schwimmen.|我常去游泳。\nA1|manchmal|||adv|有时|Manchmal koche ich selbst.|有时我自己做饭。\nA1|nie|||adv|从不|Ich trinke nie Kaffee.|我从不喝咖啡。\nA1|Morgen|der|die Morgen|n|早上|Am Morgen trinke ich Tee.|早上我喝茶。\nA1|Abend|der|die Abende|n|晚上|Am Abend sehen wir fern.|晚上我们看电视。\nA1|Nacht|die|die Nächte|n|夜晚|Die Nacht war ruhig.|夜里很安静。\nA1|Montag|der|die Montage|n|星期一|Am Montag beginnt die Arbeit.|周一开始上班。\nA1|Wochenende|das|die Wochenenden|n|周末|Am Wochenende schlafe ich lange.|周末我睡懒觉。\nA1|Uhr|die|die Uhren|n|钟／点钟|Wie viel Uhr ist es?|几点了？\nA1|Termin|der|die Termine|n|预约|Ich habe morgen einen Termin.|我明天有约。\nA1|sein||er ist|v|是|Ich bin Student.|我是学生。\nA1|haben||er hat|v|有|Ich habe eine Frage.|我有个问题。\nA1|werden||er wird|v|变成／将|Es wird kalt.|天要冷了。\nA1|gehen||er geht|v|走|Ich gehe nach Hause.|我回家。\nA1|kommen||er kommt|v|来|Er kommt aus Spanien.|他来自西班牙。\nA1|fahren||er fährt|v|乘车／开车|Wir fahren nach Köln.|我们去科隆。\nA1|fliegen||er fliegt|v|飞|Ich fliege morgen nach Berlin.|我明天飞柏林。\nA1|machen||er macht|v|做|Was machst du heute?|你今天做什么？\nA1|arbeiten||er arbeitet|v|工作|Sie arbeitet in einem Büro.|她在办公室工作。\nA1|lernen||er lernt|v|学习|Ich lerne jeden Tag Deutsch.|我每天学德语。\nA1|studieren||er studiert|v|上大学／攻读|Er studiert Physik.|他学物理。\nA1|lesen||er liest|v|读|Sie liest ein Buch.|她在读书。\nA1|schreiben||er schreibt|v|写|Ich schreibe eine E-Mail.|我在写邮件。\nA1|sprechen||er spricht|v|说|Sprichst du Englisch?|你说英语吗？\nA1|hören||er hört|v|听|Ich höre Musik.|我在听音乐。\nA1|sehen||er sieht|v|看见|Ich sehe nichts.|我什么也看不见。\nA1|essen||er isst|v|吃|Wir essen um sieben.|我们七点吃饭。\nA1|trinken||er trinkt|v|喝|Ich trinke Wasser.|我喝水。\nA1|kaufen||er kauft|v|买|Ich kaufe Brot.|我买面包。\nA1|bezahlen||er bezahlt|v|付款|Ich möchte bar bezahlen.|我想付现金。\nA1|kochen||er kocht|v|做饭／煮|Meine Mutter kocht Suppe.|我妈妈做汤。\nA1|schlafen||er schläft|v|睡觉|Das Kind schläft schon.|孩子已经睡了。\nA1|aufstehen||er steht auf|v|起床|Ich stehe um sechs auf.|我六点起床。\nA1|wohnen||er wohnt|v|居住|Wir wohnen in der Stadt.|我们住在城里。\nA1|leben||er lebt|v|生活|Er lebt allein.|他独自生活。\nA1|spielen||er spielt|v|玩／演奏|Die Kinder spielen Fußball.|孩子们踢球。\nA1|helfen||er hilft|v|帮助|Kannst du mir helfen?|你能帮我吗？\nA1|brauchen||er braucht|v|需要|Ich brauche einen Arzt.|我需要医生。\nA1|finden||er findet|v|找到／觉得|Ich finde den Film gut.|我觉得这电影不错。\nA1|suchen||er sucht|v|寻找|Ich suche meine Brille.|我在找眼镜。\nA1|warten||er wartet|v|等待|Wir warten auf den Bus.|我们等公交。\nA1|verstehen||er versteht|v|理解|Ich verstehe das nicht.|我不明白。\nA1|fragen||er fragt|v|问|Darf ich etwas fragen?|我可以问一下吗？\nA1|antworten||er antwortet|v|回答|Bitte antworte mir!|请回答我！\nA1|heißen||er heißt|v|名叫|Ich heiße Anna.|我叫安娜。\nA1|mögen||er mag|v|喜欢|Ich mag Katzen.|我喜欢猫。\nA1|möchten||er möchte|v|想要|Ich möchte einen Kaffee.|我想要一杯咖啡。\nA1|können||er kann|v|能／会|Ich kann schwimmen.|我会游泳。\nA1|müssen||er muss|v|必须|Du musst jetzt gehen.|你现在必须走了。\nA1|dürfen||er darf|v|可以|Darf ich rauchen?|我可以抽烟吗？\nA1|wollen||er will|v|想要|Wir wollen nach Italien.|我们想去意大利。\nA1|sollen||er soll|v|应该|Du sollst mehr schlafen.|你应该多睡。\nA1|geben||er gibt|v|给|Gib mir bitte das Buch.|请把书给我。\nA1|nehmen||er nimmt|v|拿／乘坐|Ich nehme den Bus.|我乘公交。\nA1|bringen||er bringt|v|带来|Bring mir bitte Wasser.|请给我带水。\nA1|öffnen||er öffnet|v|打开|Bitte öffnen Sie das Fenster.|请打开窗户。\nA1|schließen||er schließt|v|关闭|Der Laden schließt um acht.|商店八点关门。\nA1|beginnen||er beginnt|v|开始|Der Kurs beginnt um neun.|课程九点开始。\nA1|anfangen||er fängt an|v|开始|Wir fangen jetzt an.|我们现在开始。\nA1|aufhören||er hört auf|v|停止|Hör bitte auf!|请停下！\nA1|wissen||er weiß|v|知道|Ich weiß es nicht.|我不知道。\nA1|denken||er denkt|v|想／认为|Ich denke oft an dich.|我常想起你。\nA1|Wohnung|die|die Wohnungen|n|公寓|Meine Wohnung ist klein.|我的公寓很小。\nA1|Haus|das|die Häuser|n|房子|Das Haus ist alt.|这房子很老。\nA1|Zimmer|das|die Zimmer|n|房间|Mein Zimmer ist im dritten Stock.|我的房间在四楼。\nA1|Küche|die|die Küchen|n|厨房|Die Küche ist sehr groß.|厨房很大。\nA1|Bad|das|die Bäder|n|浴室|Das Bad hat ein Fenster.|浴室有窗。\nA1|Bett|das|die Betten|n|床|Das Bett ist bequem.|床很舒服。\nA1|Tisch|der|die Tische|n|桌子|Der Tisch steht am Fenster.|桌子在窗边。\nA1|Stuhl|der|die Stühle|n|椅子|Nimm bitte einen Stuhl.|请拿把椅子。\nA1|Schrank|der|die Schränke|n|柜子|Die Kleidung ist im Schrank.|衣服在柜子里。\nA1|Tür|die|die Türen|n|门|Bitte mach die Tür zu.|请关门。\nA1|Fenster|das|die Fenster|n|窗户|Öffne bitte das Fenster.|请开窗。\nA1|Lampe|die|die Lampen|n|灯|Die Lampe ist kaputt.|灯坏了。\nA1|Schlüssel|der|die Schlüssel|n|钥匙|Ich habe meinen Schlüssel verloren.|我把钥匙丢了。\nA1|Garten|der|die Gärten|n|花园|Wir haben einen kleinen Garten.|我们有个小花园。\nA1|Straße|die|die Straßen|n|街道|Die Straße ist sehr laut.|这条街很吵。\nA1|Stadt|die|die Städte|n|城市|München ist eine schöne Stadt.|慕尼黑是座美丽的城市。\nA1|Dorf|das|die Dörfer|n|村庄|Sie wohnt in einem Dorf.|她住在一个村子里。\nA1|Stock|der|die Stockwerke|n|楼层|Wir wohnen im ersten Stock.|我们住二楼。\nA1|Miete|die|die Mieten|n|房租|Die Miete ist teuer.|房租很贵。\nA1|Vermieter|der|die Vermieter|n|房东|Der Vermieter kommt heute.|房东今天来。\nA1|was|||pron|什么|Was ist das?|这是什么？\nA1|wer|||pron|谁|Wer ist das?|那是谁？\nA1|wo|||adv|哪里|Wo wohnst du?|你住哪儿？\nA1|wohin|||adv|去哪里|Wohin gehst du?|你去哪儿？\nA1|woher|||adv|从哪里|Woher kommst du?|你从哪儿来？\nA1|wann|||adv|什么时候|Wann beginnt der Film?|电影几点开始？\nA1|warum|||adv|为什么|Warum lernst du Deutsch?|你为什么学德语？\nA1|wie|||adv|怎样|Wie heißt du?|你叫什么？\nA1|wie viel|||phrase|多少|Wie viel kostet das?|这个多少钱？\nA1|welcher|||pron|哪一个|Welcher Bus fährt zum Bahnhof?|哪路公交去火车站？\n# A1 入门词书 · 第 2 部分：吃喝 / 购物 / 出行 / 工作学习 / 身体 / 衣服\nA1|Brot|das|die Brote|n|面包|Ich kaufe frisches Brot.|我买新鲜面包。\nA1|Brötchen|das|die Brötchen|n|小面包|Zum Frühstück esse ich ein Brötchen.|早饭我吃一个小面包。\nA1|Butter|die|—|n|黄油|Die Butter ist im Kühlschrank.|黄油在冰箱里。\nA1|Käse|der|—|n|奶酪|Ich mag deutschen Käse.|我喜欢德国奶酪。\nA1|Milch|die|—|n|牛奶|Ich trinke Milch zum Frühstück.|早饭我喝牛奶。\nA1|Wasser|das|—|n|水|Ein Glas Wasser, bitte.|请给一杯水。\nA1|Kaffee|der|—|n|咖啡|Der Kaffee ist zu heiß.|咖啡太烫了。\nA1|Tee|der|—|n|茶|Möchten Sie Tee oder Kaffee?|您要茶还是咖啡？\nA1|Saft|der|die Säfte|n|果汁|Ich trinke gern Apfelsaft.|我喜欢喝苹果汁。\nA1|Bier|das|die Biere|n|啤酒|Ein Bier, bitte!|请来一杯啤酒！\nA1|Wein|der|die Weine|n|葡萄酒|Der Wein kommt aus Italien.|这酒来自意大利。\nA1|Ei|das|die Eier|n|鸡蛋|Ich esse zwei Eier.|我吃两个鸡蛋。\nA1|Fleisch|das|—|n|肉|Ich esse kein Fleisch.|我不吃肉。\nA1|Fisch|der|die Fische|n|鱼|Der Fisch ist frisch.|鱼很新鲜。\nA1|Hähnchen|das|die Hähnchen|n|鸡肉／童子鸡|Das Hähnchen schmeckt gut.|这鸡肉很好吃。\nA1|Reis|der|—|n|米饭|Ich esse Reis mit Gemüse.|我吃米饭配蔬菜。\nA1|Nudel|die|die Nudeln|n|面条|Die Kinder mögen Nudeln.|孩子们喜欢面条。\nA1|Kartoffel|die|die Kartoffeln|n|土豆|Die Kartoffeln sind noch hart.|土豆还硬。\nA1|Gemüse|das|—|n|蔬菜|Ich kaufe Gemüse auf dem Markt.|我在市场买蔬菜。\nA1|Obst|das|—|n|水果|Obst ist gesund.|水果很健康。\nA1|Apfel|der|die Äpfel|n|苹果|Der Apfel ist rot.|苹果是红的。\nA1|Banane|die|die Bananen|n|香蕉|Ich esse eine Banane.|我吃一根香蕉。\nA1|Orange|die|die Orangen|n|橙子|Die Orange ist sauer.|橙子很酸。\nA1|Tomate|die|die Tomaten|n|西红柿|Ich brauche zwei Tomaten.|我需要两个西红柿。\nA1|Salat|der|die Salate|n|沙拉／生菜|Ich nehme einen Salat.|我要一份沙拉。\nA1|Zucker|der|—|n|糖|Nimmst du Zucker in den Tee?|你茶里放糖吗？\nA1|Salz|das|—|n|盐|Gib mir bitte das Salz.|请把盐递给我。\nA1|Kuchen|der|die Kuchen|n|蛋糕|Der Kuchen ist selbst gemacht.|蛋糕是自己做的。\nA1|Eis|das|—|n|冰淇淋|Möchtest du ein Eis?|你要个冰淇淋吗？\nA1|Suppe|die|die Suppen|n|汤|Die Suppe ist zu salzig.|汤太咸了。\nA1|Frühstück|das|—|n|早餐|Das Frühstück ist um sieben.|七点吃早饭。\nA1|Mittagessen|das|—|n|午餐|Zum Mittagessen gibt es Fisch.|午餐吃鱼。\nA1|Abendessen|das|—|n|晚餐|Das Abendessen war lecker.|晚餐很好吃。\nA1|Restaurant|das|die Restaurants|n|饭店|Das Restaurant ist heute voll.|饭店今天客满。\nA1|Café|das|die Cafés|n|咖啡馆|Wir treffen uns im Café.|我们在咖啡馆见。\nA1|Speisekarte|die|die Speisekarten|n|菜单|Die Speisekarte, bitte.|请给菜单。\nA1|Rechnung|die|die Rechnungen|n|账单|Die Rechnung, bitte!|请结账！\nA1|Hunger|der|—|n|饥饿|Ich habe großen Hunger.|我很饿。\nA1|Durst|der|—|n|口渴|Hast du Durst?|你渴吗？\nA1|schmecken||er schmeckt|v|尝起来|Das Essen schmeckt gut.|这饭很好吃。\nA1|bestellen||er bestellt|v|点菜／订购|Wir bestellen zwei Suppen.|我们点两份汤。\nA1|probieren||er probiert|v|品尝／试试|Probieren Sie den Kuchen!|您尝尝这蛋糕！\nA1|empfehlen||er empfiehlt|v|推荐|Was können Sie empfehlen?|您能推荐什么？\nA1|Geschäft|das|die Geschäfte|n|商店|Das Geschäft ist geschlossen.|商店关门了。\nA1|Laden|der|die Läden|n|小店|Der Laden öffnet um acht.|小店八点开门。\nA1|Supermarkt|der|die Supermärkte|n|超市|Ich gehe in den Supermarkt.|我去超市。\nA1|Markt|der|die Märkte|n|市场|Am Samstag ist Markt.|周六有集市。\nA1|Geld|das|—|n|钱|Ich habe kein Geld dabei.|我没带钱。\nA1|Euro|der|die Euro|n|欧元|Das macht zwölf Euro.|一共十二欧。\nA1|Preis|der|die Preise|n|价格|Der Preis ist okay.|价格还行。\nA1|Kasse|die|die Kassen|n|收银台|Bitte zahlen Sie an der Kasse.|请在收银台付款。\nA1|Tüte|die|die Tüten|n|袋子|Brauchen Sie eine Tüte?|您需要袋子吗？\nA1|Größe|die|die Größen|n|尺码／大小|Welche Größe haben Sie?|您穿多大码？\nA1|Angebot|das|die Angebote|n|特价／报价|Heute ist Milch im Angebot.|今天牛奶特价。\nA1|verkaufen||er verkauft|v|卖|Er verkauft sein Auto.|他卖他的车。\nA1|anprobieren||er probiert an|v|试穿|Darf ich das anprobieren?|我可以试穿吗？\nA1|Bahnhof|der|die Bahnhöfe|n|火车站|Der Bahnhof ist nicht weit.|火车站不远。\nA1|Flughafen|der|die Flughäfen|n|机场|Wir fahren zum Flughafen.|我们去机场。\nA1|Bus|der|die Busse|n|公交车|Der Bus kommt in fünf Minuten.|公交五分钟到。\nA1|Bahn|die|die Bahnen|n|铁路／火车|Ich fahre mit der Bahn.|我坐火车。\nA1|Zug|der|die Züge|n|火车|Der Zug hat Verspätung.|火车晚点了。\nA1|U-Bahn|die|die U-Bahnen|n|地铁|Nimm die U-Bahn Linie 2.|坐地铁二号线。\nA1|Taxi|das|die Taxis|n|出租车|Wir nehmen ein Taxi.|我们打车。\nA1|Fahrrad|das|die Fahrräder|n|自行车|Ich fahre mit dem Fahrrad.|我骑自行车。\nA1|Auto|das|die Autos|n|汽车|Das Auto ist neu.|这车是新的。\nA1|Haltestelle|die|die Haltestellen|n|车站（公交）|Die Haltestelle ist dort.|车站在那边。\nA1|Ticket|das|die Tickets|n|票|Ich kaufe ein Ticket.|我买一张票。\nA1|Fahrkarte|die|die Fahrkarten|n|车票|Eine Fahrkarte nach Bonn, bitte.|一张去波恩的票。\nA1|Weg|der|die Wege|n|路／路程|Der Weg ist zu weit.|路太远了。\nA1|Post|die|—|n|邮局|Die Post ist neben der Bank.|邮局在银行旁边。\nA1|Bank|die|die Banken|n|银行|Ich muss zur Bank.|我得去银行。\nA1|Apotheke|die|die Apotheken|n|药店|Die Apotheke hat Notdienst.|药店有急诊服务。\nA1|Krankenhaus|das|die Krankenhäuser|n|医院|Er liegt im Krankenhaus.|他住院了。\nA1|Schule|die|die Schulen|n|学校|Die Schule beginnt um acht.|学校八点上课。\nA1|Universität|die|die Universitäten|n|大学|Sie studiert an der Universität.|她在大学读书。\nA1|Bibliothek|die|die Bibliotheken|n|图书馆|Ich lerne in der Bibliothek.|我在图书馆学习。\nA1|Kino|das|die Kinos|n|电影院|Gehen wir ins Kino?|我们去看电影吗？\nA1|Museum|das|die Museen|n|博物馆|Das Museum ist montags zu.|博物馆周一闭馆。\nA1|Hotel|das|die Hotels|n|旅馆|Wir suchen ein Hotel.|我们在找旅馆。\nA1|Park|der|die Parks|n|公园|Im Park spielen Kinder.|公园里有孩子玩。\nA1|Platz|der|die Plätze|n|广场／座位|Der Platz ist frei.|这个位子空着。\nA1|Brücke|die|die Brücken|n|桥|Geh über die Brücke.|过桥。\nA1|links|||adv|左边|Das Kino ist links.|电影院在左边。\nA1|rechts|||adv|右边|Die Bank ist rechts.|银行在右边。\nA1|geradeaus|||adv|一直往前|Gehen Sie geradeaus.|您一直往前走。\nA1|hier|||adv|这里|Hier ist mein Platz.|这是我的位子。\nA1|dort|||adv|那里|Dort ist die Haltestelle.|车站在那儿。\nA1|Arbeit|die|die Arbeiten|n|工作|Die Arbeit macht mir Spaß.|这工作我喜欢。\nA1|Job|der|die Jobs|n|工作／职位|Er hat einen neuen Job.|他有新工作了。\nA1|Beruf|der|die Berufe|n|职业|Was ist Ihr Beruf?|您是做什么的？\nA1|Büro|das|die Büros|n|办公室|Ich bin im Büro.|我在办公室。\nA1|Kollege|der|die Kollegen|n|同事|Mein Kollege ist krank.|我同事病了。\nA1|Chef|der|die Chefs|n|上司|Der Chef ist im Urlaub.|老板休假了。\nA1|Firma|die|die Firmen|n|公司|Die Firma ist in Stuttgart.|公司在斯图加特。\nA1|Kurs|der|die Kurse|n|课程|Der Kurs dauert drei Monate.|课程持续三个月。\nA1|Prüfung|die|die Prüfungen|n|考试|Die Prüfung ist am Freitag.|考试在周五。\nA1|Hausaufgabe|die|die Hausaufgaben|n|作业|Ich mache meine Hausaufgaben.|我在写作业。\nA1|Buch|das|die Bücher|n|书|Das Buch ist interessant.|这本书有意思。\nA1|Stift|der|die Stifte|n|笔|Hast du einen Stift?|你有笔吗？\nA1|Papier|das|die Papiere|n|纸|Ich brauche ein Blatt Papier.|我需要一张纸。\nA1|Frage|die|die Fragen|n|问题|Ich habe eine Frage.|我有个问题。\nA1|Antwort|die|die Antworten|n|回答|Deine Antwort ist richtig.|你的回答正确。\nA1|Wort|das|die Wörter|n|单词|Dieses Wort kenne ich nicht.|这个词我不认识。\nA1|Satz|der|die Sätze|n|句子|Bitte lies den Satz vor.|请读这个句子。\nA1|Sprache|die|die Sprachen|n|语言|Deutsch ist eine schwere Sprache.|德语是门难学的语言。\nA1|Lehrer|der|die Lehrer|n|老师|Unser Lehrer ist sehr geduldig.|我们老师很有耐心。\nA1|Student|der|die Studenten|n|大学生|Er ist Student in Berlin.|他是柏林的大学生。\nA1|Kopf|der|die Köpfe|n|头|Mir tut der Kopf weh.|我头疼。\nA1|Auge|das|die Augen|n|眼睛|Sie hat blaue Augen.|她蓝眼睛。\nA1|Nase|die|die Nasen|n|鼻子|Meine Nase läuft.|我流鼻涕。\nA1|Mund|der|die Münder|n|嘴|Bitte den Mund öffnen.|请张嘴。\nA1|Ohr|das|die Ohren|n|耳朵|Mein Ohr tut weh.|我耳朵疼。\nA1|Hand|die|die Hände|n|手|Wasch dir die Hände!|洗手！\nA1|Arm|der|die Arme|n|手臂|Mein Arm ist gebrochen.|我手臂骨折了。\nA1|Bein|das|die Beine|n|腿|Das Bein tut weh.|腿疼。\nA1|Fuß|der|die Füße|n|脚|Meine Füße sind kalt.|我脚冷。\nA1|Bauch|der|die Bäuche|n|肚子|Ich habe Bauchschmerzen.|我肚子疼。\nA1|Rücken|der|die Rücken|n|背|Mein Rücken ist steif.|我背僵了。\nA1|Herz|das|die Herzen|n|心脏／心|Mein Herz klopft schnell.|我心跳得快。\nA1|Arzt|der|die Ärzte|n|医生|Ich gehe zum Arzt.|我去看医生。\nA1|Medizin|die|die Medizinen|n|药／医学|Nimm die Medizin nach dem Essen.|饭后吃药。\nA1|Tablette|die|die Tabletten|n|药片|Ich nehme zwei Tabletten.|我吃两片药。\nA1|Schmerz|der|die Schmerzen|n|疼痛|Ich habe starke Schmerzen.|我疼得厉害。\nA1|wehtun||es tut weh|v|疼|Mein Bein tut weh.|我腿疼。\nA1|krank|||adj|生病的|Ich bin heute krank.|我今天病了。\nA1|gesund|||adj|健康的|Obst ist gesund.|水果有益健康。\nA1|Kleidung|die|—|n|衣服（总称）|Die Kleidung ist zu warm.|这衣服太厚了。\nA1|Hemd|das|die Hemden|n|衬衫|Das Hemd ist zu klein.|衬衫太小。\nA1|Hose|die|die Hosen|n|裤子|Die Hose passt gut.|裤子很合身。\nA1|Kleid|das|die Kleider|n|连衣裙|Sie trägt ein rotes Kleid.|她穿红裙子。\nA1|Rock|der|die Röcke|n|裙子|Der Rock ist zu lang.|裙子太长。\nA1|Jacke|die|die Jacken|n|夹克|Nimm eine Jacke mit!|带件外套！\nA1|Mantel|der|die Mäntel|n|大衣|Im Winter trage ich einen Mantel.|冬天我穿大衣。\nA1|Schuh|der|die Schuhe|n|鞋|Die Schuhe sind zu teuer.|这鞋太贵。\nA1|Socke|die|die Socken|n|袜子|Ich suche meine Socken.|我在找袜子。\nA1|Hut|der|die Hüte|n|帽子|Er trägt einen Hut.|他戴帽子。\nA1|Pullover|der|die Pullover|n|毛衣|Der Pullover ist warm.|毛衣很暖。\nA1|anziehen||er zieht an|v|穿上|Zieh die Jacke an!|把外套穿上！\nA1|tragen||er trägt|v|穿／携带|Sie trägt eine Brille.|她戴眼镜。\n# A1 入门词书 · 第 3 部分：形容词 / 天气 / 休闲 / 介词 / 连词 / 代词 / 常用句\nA1|gut|||adj|好的|Das Essen ist gut.|饭菜不错。\nA1|schlecht|||adj|坏的／差的|Das Wetter ist schlecht.|天气不好。\nA1|groß|||adj|大的|Die Wohnung ist groß.|公寓很大。\nA1|klein|||adj|小的|Ich habe ein kleines Zimmer.|我有个小房间。\nA1|alt|||adj|老的／旧的|Das Haus ist sehr alt.|这房子很老。\nA1|jung|||adj|年轻的|Sie ist noch jung.|她还年轻。\nA1|neu|||adj|新的|Ich habe ein neues Handy.|我有新手机。\nA1|schön|||adj|美的／漂亮的|Der Garten ist schön.|花园很美。\nA1|hässlich|||adj|丑的|Das Gebäude ist hässlich.|这楼很丑。\nA1|teuer|||adj|贵的|Das Auto ist zu teuer.|这车太贵。\nA1|billig|||adj|便宜的|Ich suche ein billiges Hotel.|我在找便宜的旅馆。\nA1|schnell|||adj|快的|Der Zug ist sehr schnell.|火车很快。\nA1|langsam|||adj|慢的|Sprich bitte langsam!|请说慢点！\nA1|warm|||adj|暖的|Heute ist es warm.|今天很暖和。\nA1|kalt|||adj|冷的|Das Wasser ist kalt.|水是凉的。\nA1|heiß|||adj|热的／烫的|Der Tee ist heiß.|茶很烫。\nA1|frisch|||adj|新鲜的|Das Brot ist frisch.|面包很新鲜。\nA1|lecker|||adj|好吃的|Der Kuchen ist lecker.|蛋糕很好吃。\nA1|freundlich|||adj|友好的|Die Leute sind freundlich.|人们很友好。\nA1|nett|||adj|友善的／客气的|Das ist nett von dir.|你真好。\nA1|glücklich|||adj|幸福的|Sie ist sehr glücklich.|她很幸福。\nA1|traurig|||adj|难过的|Warum bist du traurig?|你为什么难过？\nA1|müde|||adj|累的|Ich bin heute müde.|我今天很累。\nA1|schwierig|||adj|难的|Die Prüfung ist schwierig.|考试很难。\nA1|leicht|||adj|容易的／轻的|Die Aufgabe ist leicht.|这题很简单。\nA1|wichtig|||adj|重要的|Das ist sehr wichtig.|这很重要。\nA1|richtig|||adj|正确的|Die Antwort ist richtig.|答案正确。\nA1|falsch|||adj|错误的|Das ist die falsche Adresse.|这是错误地址。\nA1|frei|||adj|空的／自由的|Ist dieser Platz frei?|这个位子空着吗？\nA1|voll|||adj|满的|Der Bus ist voll.|公交车满了。\nA1|leer|||adj|空的|Die Flasche ist leer.|瓶子空了。\nA1|sauber|||adj|干净的|Das Zimmer ist sauber.|房间很干净。\nA1|laut|||adj|大声的|Die Musik ist zu laut.|音乐太吵。\nA1|leise|||adj|安静的／小声的|Sprich bitte leise!|请小声说！\nA1|lang|||adj|长的|Der Film ist zu lang.|电影太长。\nA1|kurz|||adj|短的|Ich brauche eine kurze Pause.|我需要短休。\nA1|stark|||adj|强壮的／浓的|Der Kaffee ist stark.|咖啡很浓。\nA1|hoch|||adj|高的|Der Turm ist sehr hoch.|塔很高。\nA1|niedrig|||adj|低的|Der Preis ist niedrig.|价格很低。\nA1|nah|||adj|近的|Die Apotheke ist nah.|药店很近。\nA1|weit|||adj|远的|Der Weg ist weit.|路很远。\nA1|offen|||adj|开着的|Der Laden ist noch offen.|商店还开着。\nA1|geschlossen|||adj|关着的|Am Sonntag ist alles geschlossen.|周日都关门。\nA1|rot|||adj|红色的|Ich möchte das rote Hemd.|我要那件红衬衫。\nA1|blau|||adj|蓝色的|Der Himmel ist blau.|天空是蓝的。\nA1|grün|||adj|绿色的|Ich trinke gern grünen Tee.|我喜欢喝绿茶。\nA1|gelb|||adj|黄色的|Die Banane ist gelb.|香蕉是黄的。\nA1|schwarz|||adj|黑色的|Er trägt eine schwarze Jacke.|他穿黑夹克。\nA1|weiß|||adj|白色的|Das Hemd ist weiß.|衬衫是白的。\nA1|braun|||adj|棕色的|Sie hat braune Haare.|她有棕发。\nA1|grau|||adj|灰色的|Der Himmel ist grau.|天空灰蒙蒙的。\nA1|Wetter|das|—|n|天气|Das Wetter ist heute schön.|今天天气很好。\nA1|Sonne|die|die Sonnen|n|太阳|Die Sonne scheint.|太阳照着。\nA1|Regen|der|—|n|雨|Der Regen hört nicht auf.|雨下个不停。\nA1|Schnee|der|—|n|雪|Im Winter gibt es Schnee.|冬天有雪。\nA1|Wind|der|die Winde|n|风|Der Wind ist heute stark.|今天风很大。\nA1|Wolke|die|die Wolken|n|云|Am Himmel sind viele Wolken.|天上有许多云。\nA1|regnen||es regnet|v|下雨|Es regnet den ganzen Tag.|下了一整天雨。\nA1|schneien||es schneit|v|下雪|Morgen soll es schneien.|明天要下雪。\nA1|scheinen||die Sonne scheint|v|照耀／似乎|Die Sonne scheint hell.|太阳很亮。\nA1|Himmel|der|—|n|天空|Der Himmel ist klar.|天空晴朗。\nA1|Sommer|der|die Sommer|n|夏天|Im Sommer fahren wir ans Meer.|夏天我们去海边。\nA1|Winter|der|die Winter|n|冬天|Der Winter ist hier lang.|这里冬天很长。\nA1|Frühling|der|die Frühlinge|n|春天|Im Frühling blühen die Blumen.|春天花开了。\nA1|Herbst|der|die Herbste|n|秋天|Im Herbst regnet es oft.|秋天常下雨。\nA1|Grad|der|die Grade|n|度|Es sind zwanzig Grad.|气温二十度。\nA1|Musik|die|—|n|音乐|Ich höre gern Musik.|我喜欢听音乐。\nA1|Lied|das|die Lieder|n|歌曲|Das Lied ist schön.|这首歌好听。\nA1|Film|der|die Filme|n|电影|Der Film beginnt um acht.|电影八点开始。\nA1|fernsehen||er sieht fern|v|看电视|Abends sehen wir fern.|晚上我们看电视。\nA1|Sport|der|—|n|运动|Sport ist gesund.|运动有益健康。\nA1|schwimmen||er schwimmt|v|游泳|Ich schwimme jeden Morgen.|我每天早上游泳。\nA1|laufen||er läuft|v|跑／走|Er läuft sehr schnell.|他跑得很快。\nA1|tanzen||er tanzt|v|跳舞|Wir tanzen gern.|我们喜欢跳舞。\nA1|singen||er singt|v|唱歌|Sie singt ein Lied.|她唱一首歌。\nA1|reisen||er reist|v|旅行|Ich reise gern allein.|我喜欢独自旅行。\nA1|Reise|die|die Reisen|n|旅行|Die Reise war schön.|这次旅行很好。\nA1|Urlaub|der|die Urlaube|n|假期|Wir fahren in den Urlaub.|我们去度假。\nA1|Hobby|das|die Hobbys|n|爱好|Mein Hobby ist Lesen.|我的爱好是读书。\nA1|Party|die|die Partys|n|派对|Wir machen eine Party.|我们要办个派对。\nA1|Fest|das|die Feste|n|节日／庆典|Das Fest dauert drei Tage.|庆典持续三天。\nA1|Geburtstag|der|die Geburtstage|n|生日|Mein Geburtstag ist im Mai.|我生日在五月。\nA1|Geschenk|das|die Geschenke|n|礼物|Das Geschenk ist für dich.|这礼物给你。\nA1|schenken||er schenkt|v|赠送|Ich schenke ihr Blumen.|我送她花。\nA1|einladen||er lädt ein|v|邀请|Ich lade dich ein.|我邀请你。\nA1|treffen||er trifft|v|遇见／会面|Wir treffen uns um sechs.|我们六点见。\nA1|Freizeit|die|—|n|业余时间|In meiner Freizeit lese ich.|业余时间我读书。\nA1|Handy|das|die Handys|n|手机|Mein Handy ist kaputt.|我手机坏了。\nA1|Telefon|das|die Telefone|n|电话|Das Telefon klingelt.|电话响了。\nA1|anrufen||er ruft an|v|打电话|Ich rufe dich später an.|我稍后打给你。\nA1|Internet|das|—|n|互联网|Ich suche im Internet.|我在网上查。\nA1|Computer|der|die Computer|n|电脑|Der Computer ist neu.|电脑是新的。\nA1|Fernseher|der|die Fernseher|n|电视机|Der Fernseher läuft.|电视开着。\nA1|Zeitung|die|die Zeitungen|n|报纸|Ich lese die Zeitung.|我在看报纸。\nA1|Foto|das|die Fotos|n|照片|Das Foto ist alt.|这张照片很老。\nA1|Theater|das|die Theater|n|剧院|Wir gehen ins Theater.|我们去看戏。\nA1|Konzert|das|die Konzerte|n|音乐会|Das Konzert beginnt um neun.|音乐会九点开始。\nA1|in|||prep|在……里|Ich wohne in Berlin.|我住在柏林。\nA1|auf|||prep|在……上|Das Buch liegt auf dem Tisch.|书在桌上。\nA1|unter|||prep|在……下|Die Katze ist unter dem Stuhl.|猫在椅子下。\nA1|über|||prep|在……上方／关于|Das Bild hängt über dem Sofa.|画挂在沙发上。\nA1|neben|||prep|在……旁边|Die Bank ist neben der Post.|银行在邮局旁。\nA1|zwischen|||prep|在……之间|Das Café ist zwischen den Häusern.|咖啡馆在两楼之间。\nA1|vor|||prep|在……前|Wir treffen uns vor dem Kino.|我们在电影院前见。\nA1|hinter|||prep|在……后|Der Garten ist hinter dem Haus.|花园在房后。\nA1|mit|||prep|和／带着|Ich fahre mit dem Bus.|我坐公交。\nA1|ohne|||prep|没有|Ich trinke Kaffee ohne Zucker.|我喝咖啡不加糖。\nA1|für|||prep|为了／给|Das ist für dich.|这是给你的。\nA1|gegen|||prep|反对／对抗|Ich habe nichts dagegen.|我不反对。\nA1|durch|||prep|穿过|Wir gehen durch den Park.|我们穿过公园。\nA1|um|||prep|围绕／在（时间）|Der Kurs beginnt um neun.|课程九点开始。\nA1|von|||prep|从／的|Ich komme von der Arbeit.|我从单位来。\nA1|zu|||prep|去／太|Ich gehe zu Fuß.|我步行去。\nA1|bei|||prep|在……处／在……家|Ich wohne bei meinen Eltern.|我住父母家。\nA1|nach|||prep|去（城市）／在……之后|Nach dem Essen gehen wir spazieren.|饭后我们散步。\nA1|seit|||prep|自从|Ich lerne seit einem Monat Deutsch.|我学德语一个月了。\nA1|aus|||prep|来自|Ich komme aus China.|我来自中国。\nA1|bis|||prep|直到|Ich arbeite bis fünf Uhr.|我工作到五点。\nA1|und|||conj|和|Ich trinke Tee und esse Kuchen.|我喝茶吃蛋糕。\nA1|oder|||conj|或者|Tee oder Kaffee?|茶还是咖啡？\nA1|aber|||conj|但是|Ich bin müde, aber glücklich.|我累但开心。\nA1|weil|||conj|因为|Ich bleibe zu Hause, weil ich krank bin.|我待在家，因为我病了。\nA1|dass|||conj|（引导从句）|Ich glaube, dass er kommt.|我相信他会来。\nA1|wenn|||conj|如果／当……时|Wenn es regnet, bleiben wir hier.|如果下雨我们就待这儿。\nA1|denn|||conj|因为|Ich gehe früh ins Bett, denn ich bin müde.|我早睡，因为我累了。\nA1|also|||adv|所以|Ich bin krank, also komme ich nicht.|我病了，所以不来了。\nA1|ich|||pron|我|Ich komme aus China.|我来自中国。\nA1|du|||pron|你|Woher kommst du?|你从哪儿来？\nA1|er|||pron|他|Er wohnt in Wien.|他住在维也纳。\nA1|sie|||pron|她／他们|Sie arbeitet hier.|她在这里工作。\nA1|es|||pron|它|Es ist kalt heute.|今天很冷。\nA1|wir|||pron|我们|Wir lernen zusammen.|我们一起学习。\nA1|ihr|||pron|你们|Wo wohnt ihr?|你们住哪儿？\nA1|Sie|||pron|您（尊称）|Wie heißen Sie?|您叫什么名字？\nA1|mein|||pron|我的|Das ist mein Buch.|这是我的书。\nA1|dein|||pron|你的|Ist das dein Handy?|这是你的手机吗？\nA1|unser|||pron|我们的|Unser Haus ist klein.|我们的房子很小。\nA1|Deutschland|—||n|德国|Ich wohne in Deutschland.|我住在德国。\nA1|Österreich|—||n|奥地利|Wien liegt in Österreich.|维也纳在奥地利。\nA1|Schweiz|die|—|n|瑞士|Die Schweiz ist teuer.|瑞士很贵。\nA1|Deutsch|—||n|德语|Ich lerne Deutsch.|我学德语。\nA1|Englisch|—||n|英语|Sprechen Sie Englisch?|您说英语吗？\nA1|China|—||n|中国|Meine Familie lebt in China.|我家人住在中国。\nA1|Land|das|die Länder|n|国家／乡村|Deutschland ist ein schönes Land.|德国是个美丽的国家。\nA1|Hund|der|die Hunde|n|狗|Der Hund bellt laut.|狗叫得凶。\nA1|Katze|die|die Katzen|n|猫|Die Katze schläft auf dem Sofa.|猫在沙发上睡。\nA1|Vogel|der|die Vögel|n|鸟|Die Vögel singen morgens.|鸟早上叫。\nA1|Tier|das|die Tiere|n|动物|Ich mag Tiere sehr.|我很喜欢动物。\nA1|Wie bitte?|||phrase|请再说一遍？|Wie bitte? Ich habe das nicht verstanden.|什么？我没听懂。\nA1|Kein Problem|||phrase|没问题|Kein Problem, ich helfe dir.|没问题，我帮你。\nA1|Es tut mir leid|||phrase|对不起|Es tut mir leid, ich komme zu spät.|抱歉，我来晚了。\nA1|Ich verstehe nicht|||phrase|我不明白|Ich verstehe nicht, was du sagst.|我不懂你说什么。\nA1|Was bedeutet das?|||phrase|这是什么意思？|Was bedeutet dieses Wort?|这个词什么意思？\nA1|Wie sagt man das auf Deutsch?|||phrase|这个用德语怎么说？|Wie sagt man „Stift\" auf Deutsch?|“笔”用德语怎么说？\nA1|Ich hätte gern|||phrase|我想要（礼貌）|Ich hätte gern einen Kaffee.|我想要一杯咖啡。\nA1|Viel Glück|||phrase|祝你好运|Viel Glück bei der Prüfung!|考试好运！\nA1|Herzlichen Glückwunsch|||phrase|恭喜|Herzlichen Glückwunsch zum Geburtstag!|生日快乐！\nA1|Guten Appetit|||phrase|用餐愉快|Guten Appetit!|祝您用餐愉快！\nA1|Prost|||int|干杯|Prost! Auf deine Gesundheit!|干杯！祝你健康！\nA1|Alles Gute|||phrase|一切顺利|Alles Gute für dich!|祝你一切顺利！\nA1|Bis später|||phrase|待会儿见|Bis später, ich muss los.|待会儿见，我得走了。\n# 格式：等级|德语|冠词|复数(或动词变位/形容词比较级)|词性|中文|例句|例句翻译\n# 词表定位：TestDaF / DSH 学术德语（B2–C1）\nB2|Studium|das|Studien|n|大学学业；研究|Das Studium an einer deutschen Universität dauert meist vier bis fünf Jahre.|在德国大学读本科通常要四到五年。\nB2|Forschung|die||n|研究|Die Forschung auf diesem Gebiet hat große Fortschritte gemacht.|这一领域的研究取得了很大进展。\nB2|Wissenschaft|die|Wissenschaften|n|科学；学术|Wissenschaft und Technik verändern unser Leben.|科学和技术改变着我们的生活。\nB2|Vorlesung|die|Vorlesungen|n|讲座；大课|Die Vorlesung beginnt um neun Uhr.|大课九点开始。\nB2|Seminar|das|Seminare|n|研讨课|Im Seminar diskutieren wir über aktuelle Studien.|研讨课上我们讨论最新的研究。\nB2|Toleranz|die||n|宽容；包容|Toleranz gegenüber anderen Meinungen ist in einer Demokratie unverzichtbar.|对他人意见的宽容在民主社会不可或缺。\nB2|Hausarbeit|die|Hausarbeiten|n|学期论文|Die Hausarbeit muss bis Freitag abgegeben werden.|学期论文必须在周五前交。\nB2|Abschluss|der|Abschlüsse|n|毕业；结束|Nach dem Abschluss möchte er promovieren.|毕业后他想读博。\nB2|Zulassung|die|Zulassungen|n|录取；许可|Die Zulassung zum Studium setzt gute Deutschkenntnisse voraus.|录取的前提是良好的德语水平。\nB2|Bewerbung|die|Bewerbungen|n|申请|Die Bewerbung um einen Studienplatz ist online einzureichen.|入学申请需在线提交。\nB2|Fach|das|Fächer|n|专业；学科|Sie studiert ein technisches Fach.|她学的是工科专业。\nB2|Fachbereich|der|Fachbereiche|n|院系|Der Fachbereich Biologie liegt im Norden des Campus.|生物系位于校园北侧。\nB2|Dozent|der|Dozenten|n|讲师|Der Dozent erklärt die Methode sehr anschaulich.|讲师把方法讲得很清楚。\nB2|Professor|der|Professoren|n|教授|Der Professor leitet ein großes Forschungsprojekt.|这位教授领导一个大型研究项目。\nB2|Wohlstand|der||n|富裕；福祉|Der Wohlstand eines Landes misst sich nicht nur am Einkommen.|一个国家的富裕不能只用收入衡量。\nB2|Kommilitone|der|Kommilitonen|n|同学|Meine Kommilitonen helfen mir beim Lernen.|同学们帮我学习。\nB2|Nachhaltigkeit|die||n|可持续性|Nachhaltigkeit spielt in der heutigen Wirtschaft eine zentrale Rolle.|可持续性在当今经济中起核心作用。\nB2|Campus|der|Campus|n|校园|Der Campus ist mit dem Fahrrad gut zu erreichen.|骑自行车很容易到校园。\nB2|Semester|das|Semester|n|学期|Im nächsten Semester belege ich zwei Kurse.|下学期我选两门课。\nB2|Leistung|die|Leistungen|n|成绩；表现；功率|Seine Leistungen haben sich deutlich verbessert.|他的成绩明显提高了。\nB2|Note|die|Noten|n|分数|Für die Note zählt auch die Mitarbeit im Seminar.|分数也包括研讨课上的参与。\nB2|Stipendium|das|Stipendien|n|奖学金|Sie erhielt ein Stipendium für ein Jahr in Deutschland.|她获得了在德国一年的奖学金。\nB2|Forschungsergebnis|das|Forschungsergebnisse|n|研究成果|Die Forschungsergebnisse wurden in einer Fachzeitschrift veröffentlicht.|研究成果发表在一份专业期刊上。\nB2|Methode|die|Methoden|n|方法|Die Methode eignet sich für große Datenmengen.|这种方法适合大数据。\nB2|Analyse|die|Analysen|n|分析|Die Analyse zeigt einen klaren Zusammenhang.|分析表明存在明显的关联。\nB2|Hypothese|die|Hypothesen|n|假设|Die Hypothese konnte nicht bestätigt werden.|这个假设未能得到证实。\nB2|Theorie|die|Theorien|n|理论|Die Theorie stammt aus dem 19. Jahrhundert.|该理论源自19世纪。\nB2|Daten|die||n|数据|Die Daten wurden anonym erhoben.|数据是匿名收集的。\nB2|Umfrage|die|Umfragen|n|问卷调查|Laut Umfrage sind zwei Drittel dafür.|调查显示三分之二的人赞成。\nB2|Statistik|die|Statistiken|n|统计|Die Statistik zeigt einen Anstieg der Preise.|统计显示价格上涨。\nB2|Umwelt|die||n|环境|Wir müssen die Umwelt besser schützen.|我们必须更好地保护环境。\nB2|Umweltschutz|der||n|环境保护|Umweltschutz beginnt im Alltag.|环保从日常生活开始。\nB2|Klimawandel|der||n|气候变化|Der Klimawandel betrifft alle Länder.|气候变化影响所有国家。\nB2|Energie|die|Energien|n|能源|Erneuerbare Energien werden immer wichtiger.|可再生能源越来越重要。\nB2|Wirtschaft|die|Wirtschaften|n|经济|Die Wirtschaft wächst langsamer als erwartet.|经济增长低于预期。\nB2|Gesellschaft|die|Gesellschaften|n|社会|Die Gesellschaft altert schnell.|社会正在快速老龄化。\nB2|Bildung|die||n|教育|Bildung ist der Schlüssel zum Erfolg.|教育是成功的关键。\nB2|Politik|die||n|政治|Die Politik muss schneller reagieren.|政治必须更快作出反应。\nB2|Regierung|die|Regierungen|n|政府|Die Regierung hat ein neues Gesetz beschlossen.|政府通过了一项新法律。\nB2|Gesetz|das|Gesetze|n|法律|Das Gesetz tritt im Januar in Kraft.|该法律一月生效。\nB2|Technik|die|Techniken|n|技术|Die Technik hat unsere Kommunikation verändert.|技术改变了我们的交流方式。\nB2|Digitalisierung|die||n|数字化|Die Digitalisierung verändert die Arbeitswelt.|数字化正在改变职场。\nB2|Verkehr|der||n|交通|Der Verkehr in den Städten nimmt zu.|城市交通在增加。\nB2|Gesundheit|die||n|健康|Bewegung ist gut für die Gesundheit.|运动有益健康。\nB2|Ernährung|die||n|营养；饮食|Gesunde Ernährung senkt das Risiko für Herzkrankheiten.|健康饮食降低心脏病风险。\nB2|Bevölkerung|die|Bevölkerungen|n|人口|Die Bevölkerung der Stadt wächst jährlich.|该市人口每年增长。\nB2|Armut|die||n|贫困|Armut ist ein strukturelles Problem.|贫困是结构性问题。\nB2|Migration|die|Migrationen|n|移民|Migration prägt die Geschichte Europas.|移民塑造了欧洲的历史。\nB2|Integration|die|Integrationen|n|融入；整合|Integration braucht Zeit und Angebote.|融入需要时间和配套措施。\nB2|Arbeitsmarkt|der|Arbeitsmärkte|n|就业市场|Der Arbeitsmarkt verlangt neue Qualifikationen.|就业市场要求新的技能。\nB2|Qualifikation|die|Qualifikationen|n|资质；技能|Ohne Qualifikation ist die Jobsuche schwer.|没有资质很难找工作。\nB2|Unternehmen|das|Unternehmen|n|企业|Das Unternehmen investiert viel in Forschung.|这家企业大量投资研究。\nB2|Industrie|die|Industrien|n|工业|Die Industrie muss klimafreundlicher werden.|工业必须变得更环保。\nB2|Kosten|die||n|成本；费用|Die Kosten für Wohnen steigen stark.|住房成本大幅上涨。\nB2|Gewinn|der|Gewinne|n|利润|Der Gewinn ist im letzten Jahr gesunken.|去年利润下降了。\nB2|Investition|die|Investitionen|n|投资|Investitionen in Bildung lohnen sich langfristig.|教育投资长期看是值得的。\nB2|Infrastruktur|die|Infrastrukturen|n|基础设施|Die Infrastruktur im ländlichen Raum ist schwach.|农村地区基础设施薄弱。\nB2|Ressource|die|Ressourcen|n|资源|Wasser ist eine knappe Ressource.|水是稀缺资源。\nB2|Klima|das|Klimata|n|气候|Das Klima in dieser Region ist mild.|该地区气候温和。\nB2|Abfall|der|Abfälle|n|垃圾；废料|Der Abfall wird getrennt gesammelt.|垃圾分类收集。\nB2|Ursache|die|Ursachen|n|原因|Die Ursache des Problems ist unklar.|问题的原因尚不清楚。\nB2|Folge|die|Folgen|n|后果|Die Folgen für die Wirtschaft sind enorm.|对经济的影响是巨大的。\nB2|Grund|der|Gründe|n|原因；理由|Es gibt mehrere Gründe für diese Entwicklung.|这种发展有几个原因。\nB2|Ziel|das|Ziele|n|目标|Das Ziel der Studie ist es, Risiken zu bewerten.|这项研究的目标是评估风险。\nB2|Zweck|der|Zwecke|n|目的|Der Zweck der Maßnahme ist umstritten.|该措施的目的存在争议。\nB2|Vorteil|der|Vorteile|n|优点|Ein Vorteil ist die geringe Belastung der Umwelt.|一个优点是对环境的负担小。\nB2|Nachteil|der|Nachteile|n|缺点|Der größte Nachteil sind die hohen Kosten.|最大的缺点是成本高。\nB2|Bedeutung|die|Bedeutungen|n|意义；重要性|Die Bedeutung dieser Frage wächst.|这个问题的重要性在增加。\nB2|Zusammenhang|der|Zusammenhänge|n|关联；联系|Zwischen Armut und Bildung besteht ein enger Zusammenhang.|贫困与教育之间存在密切联系。\nB2|Unterschied|der|Unterschiede|n|区别|Der Unterschied zwischen den beiden Modellen ist gering.|两个模型的差别很小。\nB2|Entwicklung|die|Entwicklungen|n|发展|Die technische Entwicklung verläuft rasant.|技术发展迅猛。\nB2|Veränderung|die|Veränderungen|n|变化|Die Veränderungen betreffen vor allem junge Menschen.|这些变化主要影响年轻人。\nB2|Möglichkeit|die|Möglichkeiten|n|可能性；机会|Es gibt mehrere Möglichkeiten, das Problem zu lösen.|解决这个问题有好几种可能。\nB2|Schwierigkeit|die|Schwierigkeiten|n|困难|Die größte Schwierigkeit liegt in der Finanzierung.|最大的困难在于融资。\nB2|Lösung|die|Lösungen|n|解决方案|Eine nachhaltige Lösung erfordert internationale Zusammenarbeit.|可持续的解决方案需要国际合作。\nB2|Maßnahme|die|Maßnahmen|n|措施|Die Regierung plant weitere Maßnahmen.|政府计划采取更多措施。\nB2|Bereich|der|Bereiche|n|领域；范围|In diesem Bereich gibt es kaum Forschung.|这一领域几乎没有研究。\nB2|Aspekt|der|Aspekte|n|方面|Der soziale Aspekt wird oft übersehen.|社会方面常被忽视。\nB2|Faktor|der|Faktoren|n|因素|Der wichtigste Faktor ist die Motivation.|最重要的因素是动机。\nB2|Ergebnis|das|Ergebnisse|n|结果|Das Ergebnis überraschte die Forscher.|结果让研究人员感到意外。\nB2|Studie|die|Studien|n|研究；论文|Eine neue Studie bestätigt den Verdacht.|一项新研究证实了这一怀疑。\nB2|Anteil|der|Anteile|n|比例；份额|Der Anteil der Frauen in der Forschung steigt.|科研中女性的比例在上升。\nB2|Anstieg|der|Anstiege|n|上升|Der Anstieg der Mieten ist dramatisch.|租金上涨是剧烈的。\nB2|Rückgang|der|Rückgänge|n|下降|Ein Rückgang der Geburtenrate ist zu beobachten.|可以观察到出生率下降。\nB2|Trend|der|Trends|n|趋势|Dieser Trend hält seit Jahren an.|这一趋势已持续多年。\nB2|untersuchen||untersuchte, hat untersucht|v|研究；检查|Die Forscher untersuchen das Verhalten von Kindern.|研究人员研究儿童的行为。\nB2|analysieren||analysierte, hat analysiert|v|分析|Wir analysieren die Daten mit einem Computerprogramm.|我们用计算机程序分析数据。\nB2|beeinflussen||beeinflusste, hat beeinflusst|v|影响|Der Preis beeinflusst die Nachfrage stark.|价格对需求影响很大。\nB2|fördern||förderte, hat gefördert|v|促进；资助|Die Regierung fördert erneuerbare Energien.|政府资助可再生能源。\nB2|fordern||forderte, hat gefordert|v|要求|Die Studierenden fordern bessere Bedingungen.|学生们要求更好的条件。\nB2|ermöglichen||ermöglichte, hat ermöglicht|v|使成为可能|Neue Technik ermöglicht genauere Messungen.|新技术使更精确的测量成为可能。\nB2|verursachen||verursachte, hat verursacht|v|造成；引起|Der Verkehr verursacht viel Lärm.|交通造成大量噪音。\nB2|betrachten||betrachtete, hat betrachtet|v|观察；视为|Wir betrachten das Problem aus zwei Perspektiven.|我们从两个角度看待这个问题。\nB2|gelten||galt, hat gegolten|v|适用；被视为|Diese Regel gilt für alle Studierenden.|这条规定适用于所有学生。\nB2|erweisen||erwies, hat erwiesen|v|证明|Die Methode hat sich als wirksam erwiesen.|该方法已被证明有效。\nB2|verfügen||verfügte, hat verfügt|v|拥有；支配|Das Institut verfügt über moderne Geräte.|该研究所拥有现代化设备。\nB2|berücksichtigen||berücksichtigte, hat berücksichtigt|v|考虑到|Bei der Planung müssen wir die Kosten berücksichtigen.|规划时我们必须考虑成本。\nB2|zusammenfassen||fasste zusammen, hat zusammengefasst|v|总结|Fassen Sie die Ergebnisse in drei Sätzen zusammen.|请用三句话总结结果。\nB2|darstellen||stellte dar, hat dargestellt|v|描述；表现|Die Grafik stellt die Entwicklung seit 1990 dar.|图表展示了1990年以来的发展。\nB2|erläutern||erläuterte, hat erläutert|v|解释；说明|Können Sie das an einem Beispiel erläutern?|您能举个例子说明吗？\nB2|begründen||begründete, hat begründet|v|论证；说明理由|Begründen Sie Ihre Entscheidung.|请说明您的决定理由。\nB2|bewerten||bewertete, hat bewertet|v|评价|Wie bewerten Sie diese Entwicklung?|您如何评价这一发展？\nB2|vergleichen||verglich, hat verglichen|v|比较|Der Text vergleicht zwei Studien.|这篇文章比较了两项研究。\nB2|widersprechen||widersprach, hat widersprochen|v|反驳；与…矛盾|Die Ergebnisse widersprechen früheren Annahmen.|结果与早先的假设相矛盾。\nB2|abhängen||hing ab, hat abgehangen|v|取决于|Der Erfolg hängt von vielen Faktoren ab.|成功取决于许多因素。\nB2|zunehmen||nahm zu, hat zugenommen|v|增加|Die Zahl der Studierenden hat zugenommen.|学生人数增加了。\nB2|abnehmen||nahm ab, hat abgenommen|v|减少|Die Geburtenrate nimmt weiter ab.|出生率继续下降。\nB2|beitragen||trug bei, hat beigetragen|v|有助于|Jeder kann zum Klimaschutz beitragen.|每个人都能为气候保护作贡献。\nB2|verzichten||verzichtete, hat verzichtet|v|放弃；不用|Viele verzichten auf das Auto.|很多人放弃开车。\nB2|auswirken||wirkte aus, hat ausgewirkt|v|产生影响|Der Lärm wirkt sich negativ auf die Gesundheit aus.|噪音对健康有负面影响。\nB2|entstehen||entstand, ist entstanden|v|产生|Durch die Reform sind neue Probleme entstanden.|改革产生了新问题。\nB2|erhöhen||erhöhte, hat erhöht|v|提高|Die Stadt will die Preise für Parken erhöhen.|市政府想提高停车费。\nB2|senken||senkte, hat gesenkt|v|降低|Die Maßnahme soll den Verbrauch senken.|该措施应降低消耗。\nB2|verbessern||verbesserte, hat verbessert|v|改善|Die Luftqualität hat sich verbessert.|空气质量改善了。\nB2|verschlechtern||verschlechterte, hat verschlechtert|v|恶化|Die Lage hat sich verschlechtert.|情况恶化了。\nB2|sichern||sicherte, hat gesichert|v|保障|Die Regierung will die Renten sichern.|政府想保障养老金。\nB2|gewährleisten||gewährleistete, hat gewährleistet|v|保证|Der Staat muss die Grundversorgung gewährleisten.|国家必须保障基本供给。\nB2|voraussetzen||setzte voraus, hat vorausgesetzt|v|以…为前提|Das Studium setzt gute Deutschkenntnisse voraus.|学业以良好的德语水平为前提。\nB2|betonen||betonte, hat betont|v|强调|Der Autor betont die Rolle der Bildung.|作者强调教育的作用。\nB2|bezweifeln||bezweifelte, hat bezweifelt|v|怀疑|Viele Experten bezweifeln diese Zahlen.|许多专家怀疑这些数字。\nB2|schätzen||schätzte, hat geschätzt|v|估计；珍视|Die Kosten werden auf eine Million Euro geschätzt.|成本估计为一百万欧元。\nB2|verringern||verringerte, hat verringert|v|减少|Die Firma will den Energieverbrauch verringern.|公司想减少能耗。\nB2|steigern||steigerte, hat gesteigert|v|提高|Die Produktion soll gesteigert werden.|产量应提高。\nB2|leiden||litt, hat gelitten|v|受苦；受损|Die Wirtschaft leidet unter der Krise.|经济受危机影响。\nB2|profitieren||profitierte, hat profitiert|v|受益|Vor allem junge Familien profitieren von der Reform.|尤其是年轻家庭从改革中受益。\nB2|zitieren||zitierte, hat zitiert|v|引用|Der Autor zitiert eine bekannte Studie.|作者引用了一项著名研究。\nB2|veröffentlichen||veröffentlichte, hat veröffentlicht|v|发表|Die Ergebnisse wurden 2023 veröffentlicht.|结果于2023年发表。\nB2|beobachten||beobachtete, hat beobachtet|v|观察|Wir beobachten eine langsame Veränderung.|我们观察到缓慢的变化。\nB2|messen||maß, hat gemessen|v|测量|Die Temperatur wird täglich gemessen.|每天测量温度。\nB2|überprüfen||überprüfte, hat überprüft|v|检查；审核|Die Behörde überprüft die Angaben.|当局审核这些信息。\nB2|feststellen||stellte fest, hat festgestellt|v|确认；发现|Die Studie stellt fest, dass die Zahl sinkt.|研究确认数字在下降。\nB2|vermuten||vermuten, hat vermutet|v|推测|Man vermutet, dass der Preis weiter steigt.|人们推测价格会继续上涨。\nB2|erwarten||erwartete, hat erwartet|v|预期|Experten erwarten eine schnelle Erholung.|专家预计会快速复苏。\nB2|benötigen||benötigte, hat benötigt|v|需要|Das Projekt benötigt mehr Zeit.|这个项目需要更多时间。\nB2|erfassen||erfasste, hat erfasst|v|记录；涵盖|Die Umfrage erfasst 5000 Haushalte.|调查涵盖5000个家庭。\nB2|beschreiben||beschrieb, hat beschrieben|v|描述|Beschreiben Sie den Prozess in eigenen Worten.|用自己的话描述这个过程。\nB2|bedeutend||bedeutender, am bedeutendsten|adj|重要的|Das ist ein bedeutender Schritt für die Forschung.|这是研究的重要一步。\nB2|erheblich|||adj|相当大的|Die Kosten sind erheblich gestiegen.|成本大幅上升。\nB2|deutlich||deutlicher, am deutlichsten|adj|明显的|Es gibt deutliche Unterschiede zwischen den Gruppen.|各组之间存在明显差异。\nB2|gering||geringer, am geringsten|adj|少量的；低的|Das Risiko ist gering.|风险很低。\nB2|zahlreich|||adj|众多的|Zahlreiche Studien bestätigen das Ergebnis.|大量研究证实了这一结果。\nB2|umfangreich||umfangreicher, am umfangreichsten|adj|广泛的；大量的|Das Projekt ist sehr umfangreich.|这个项目规模很大。\nB2|wesentlich|||adj|本质的；重要的|Ein wesentlicher Punkt fehlt noch.|还缺一个要点。\nB2|entscheidend|||adj|决定性的|Die Bildung ist entscheidend für die Zukunft.|教育对未来至关重要。\nB2|geeignet||geeigneter, am geeignetsten|adj|合适的|Diese Methode ist für Anfänger nicht geeignet.|这种方法不适合初学者。\nB2|erforderlich|||adj|必需的|Für die Zulassung sind bestimmte Noten erforderlich.|录取需要达到一定分数。\nB2|nachhaltig||nachhaltiger, am nachhaltigsten|adj|可持续的|Wir brauchen eine nachhaltige Lösung.|我们需要可持续的解决方案。\nB2|wirtschaftlich|||adj|经济的|Das Land befindet sich in einer schwierigen wirtschaftlichen Lage.|该国经济形势困难。\nB2|gesellschaftlich|||adj|社会的|Das ist ein gesellschaftliches Problem.|这是一个社会问题。\nB2|wissenschaftlich|||adj|科学的|Die Aussage ist wissenschaftlich nicht belegt.|该说法没有科学依据。\nB2|technisch|||adj|技术的|Der technische Fortschritt ist kaum aufzuhalten.|技术进步几乎无法阻挡。\nB2|gesundheitlich|||adj|健康方面的|Die gesundheitlichen Folgen sind noch unklar.|健康后果尚不清楚。\nB2|verfügbar|||adj|可用的|Die Daten sind öffentlich verfügbar.|数据是公开可用的。\nB2|zunehmend|||adv|越来越|Zunehmend mehr Menschen arbeiten von zu Hause.|越来越多的人在家工作。\nB2|überwiegend|||adv|绝大部分；占多数|Die Teilnehmer waren überwiegend jung.|参与者绝大多数是年轻人。\nB2|grundsätzlich|||adv|原则上|Grundsätzlich gilt: erst prüfen, dann entscheiden.|原则上：先审查，再决定。\nB2|tatsächlich|||adv|实际上|Tatsächlich ist die Zahl niedriger.|实际上数字更低。\nB2|insbesondere|||adv|尤其|Insbesondere junge Menschen sind betroffen.|尤其是年轻人受影响。\nB2|dennoch|||adv|尽管如此|Es regnete; dennoch kamen alle.|下雨了，尽管如此大家还是来了。\nB2|allerdings|||adv|不过；然而|Die Idee ist gut, allerdings teuer.|想法不错，不过很贵。\nB2|inzwischen|||adv|如今；与此同时|Inzwischen hat sich die Lage beruhigt.|如今局势已经平静。\nB2|teilweise|||adv|部分地|Die Kritik ist teilweise berechtigt.|批评部分有理。\nB2|hinsichtlich|||prep|关于（支配第二格）|Hinsichtlich der Kosten gibt es noch Fragen.|关于成本还有一些问题。\nB2|bezüglich|||prep|关于（支配第二格）|Bezüglich Ihrer Bewerbung erhalten Sie bald Antwort.|关于您的申请您很快会收到答复。\nB2|angesichts|||prep|面对（支配第二格）|Angesichts der Krise sind Reformen nötig.|面对危机需要改革。\nB2|aufgrund|||prep|由于（支配第二格）|Aufgrund des Wetters wurde das Spiel abgesagt.|由于天气比赛取消了。\nB2|trotz|||prep|尽管（支配第二格）|Trotz der Kritik bleibt der Plan bestehen.|尽管有批评计划仍不变。\nB2|während|||prep|在…期间|Während der Prüfung darf man nicht sprechen.|考试期间不许说话。\nB2|obwohl|||conj|虽然|Obwohl er müde war, arbeitete er weiter.|虽然累了，他仍继续工作。\nB2|sodass|||conj|以至于；因此|Die Preise stiegen, sodass viele umzogen.|价格上涨，因此很多人搬走了。\nB2|damit|||conj|为了；以便|Man investiert, damit die Wirtschaft wächst.|人们投资，以便经济增长。\nB2|indem|||conj|通过…方式|Die Firma spart Kosten, indem sie digitalisiert.|公司通过数字化节省成本。\nB2|sofern|||conj|只要|Sofern es nicht regnet, findet das Fest statt.|只要不下雨，庆典就举行。\nB2|falls|||conj|如果|Falls Sie Fragen haben, melden Sie sich.|如果您有问题请联系。\nB2|einerseits|||adv|一方面|Einerseits spart es Zeit, andererseits kostet es Geld.|一方面省时间，另一方面费钱。\nB2|andererseits|||adv|另一方面|Andererseits gibt es auch Risiken.|另一方面也有风险。";
+
+</script>
+<script>
+/* 德语单词卡 — 逻辑 v2 */
+(function(){
+'use strict';
+
+/* ================= 常量 & 存储 ================= */
+const K = { words:'dt.words.v1', prog:'dt.progress.v1', stats:'dt.stats.v1', set:'dt.settings.v1', seen:'dt.seen.v1' };
+const DAY = 86400000;
+const INTERVALS = [0,1,3,7,15,30,60,120];
+const DEMO_RAW = (window.DEMO_TEXT || '').trim();
+// 内置词书：key -> 原始文本（构建时注入）
+const DECKS = window.DECKS || {};
+const DECK_NAME = { a1:'A1 入门', b2c1:'B2–C1 学术', my:'我的导入' };
+
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ toast('本地存储不可用，进度无法保存'); } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+/* ================= 状态 ================= */
+let words = [];
+let progress = store.get(K.prog, {});
+// 一个词要连续答对 3 轮才算「学完」，第 1/2 轮在当轮队列里重复出现
+const ROUNDS = 3;
+function normProgress(){
+  let changed = false;
+  Object.keys(progress).forEach(id=>{
+    const p = progress[id];
+    if(!p || typeof p !== 'object') return;
+    if(typeof p.rounds !== 'number'){ p.rounds = p.reps > 0 ? ROUNDS : 0; changed = true; }
+    if(p.rounds > ROUNDS){ p.rounds = ROUNDS; changed = true; }
+  });
+  if(changed) store.set(K.prog, progress);
+}
+normProgress();
+const roundsOf = p => (p && typeof p.rounds === 'number') ? p.rounds : (p && p.reps > 0 ? ROUNDS : 0);
+const isLearned = p => !!p && !p.dead && roundsOf(p) >= ROUNDS;
+const SET_DEF = { dailyNew:20, dailyReview:60, autoAudio:true, rate:0.9, theme:'auto', extraModes:false, deck:'a1' };
+let settings = Object.assign({}, SET_DEF, store.get(K.set, {}));
+let stats = store.get(K.stats, { days:{}, total:0, correct:0 });
+let seenToday = store.get(K.seen, { date:'', ids:[] });
+let session = null;
+let browseStatus = 'all', browseQuery = '', browseLevel = 'all', browseLimit = 300;
+
+/* ================= 工具 ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const pad = n => String(n).padStart(2,'0');
+function dayKey(d){ d = d || new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+const todayKey = () => dayKey(new Date());
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); if(!t) return;
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('on'), 2200);
+}
+function normalizeDe(s){
+  return String(s||'').toLowerCase().trim()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9aeous \-]/g,'').replace(/\s+/g,' ');
+}
+const POS = { n:'名词', v:'动词', adj:'形容词', adv:'副词', prep:'介词', conj:'连词', pron:'代词', num:'数词', phrase:'短语', int:'感叹词' };
+const posName = p => POS[p] || '';
+// 词性英文缩写，跟在单词旁边
+const POS_EN = { n:'n.', v:'v.', adj:'adj.', adv:'adv.', prep:'prep.', conj:'conj.', pron:'pron.', num:'num.', phrase:'phr.', int:'int.' };
+// 名词显示复数，动词显示变位
+function formLabel(w){
+  if(!w.pl || w.pl === '—') return '';
+  return (w.pos === 'v' ? '变位 ' : '复数 ') + w.pl;
+}
+function posTag(p){
+  const t = POS_EN[p];
+  if(!t) return '';
+  return '<span class="ptag p-'+esc(p)+'">'+esc(t)+'</span>';
+}
+// 单词自己的学习进度：这个词答对到第几轮（共 3 轮算学完）
+function levelChip(p){
+  let cls = 'new', txt = '新词';
+  if(p && p.reps > 0){
+    if(p.dead){ cls = 'dead'; txt = '已斩'; }
+    else {
+      const r = clamp(typeof p.rounds === 'number' ? p.rounds : ROUNDS, 0, ROUNDS);
+      txt = r + '/' + ROUNDS;
+      cls = r >= ROUNDS ? 'done' : 'r' + r;
+    }
+  }
+  return '<span class="lvchip ' + cls + '" title="答对 3 轮才算学完">' + txt + '</span>';
+}
+const chipFor = w => levelChip(progress[w.id]);
+
+/* ================= 解析 ================= */
+function parseDemo(){
+  const out = [];
+  const src = Object.keys(DECKS).length ? DECKS : { b2c1: DEMO_RAW };
+  Object.keys(src).forEach(key=>{
+    String(src[key] || '').split('\n').forEach(line=>{
+      line = line.trim();
+      if(!line || line.startsWith('#')) return;
+      const f = line.split('|').map(s=>s.trim());
+      if(f.length < 6) return;
+      let de = f[1], art = f[2] || '';
+      // 容错：数据里把冠词写进词条（der Mann）时自动拆开，避免显示成「der der Mann」
+      if(art && art !== '—' && de.toLowerCase().indexOf(art.toLowerCase() + ' ') === 0){
+        de = de.slice(art.length + 1).trim();
+      }
+      out.push({ id:key+'-'+(out.length+1), deck:key, level:f[0]||'', de:de, art:art, pl:f[3]||'', pos:f[4]||'', zh:f[5], ex:f[6]||'', exZh:f[7]||'', src:'demo' });
+    });
+  });
+  return out;
+}
+
+function inferPos(de, art){
+  if(art) return 'n';
+  const s = String(de || '').trim();
+  if(!s || /\s/.test(s)) return '';
+  if(/^[A-ZÄÖÜ]/.test(s)) return 'n';                 // 德语名词首字母大写
+  if(/(en|ern|eln)$/.test(s)) return 'v';             // 动词不定式
+  return '';
+}
+
+function parseImportLine(line){
+  line = String(line).replace(/\r/g,'').trim();
+  if(!line || line.startsWith('#')) return null;
+  let f;
+  if(line.includes('|')) f = line.split('|');
+  else if(line.includes('\t')) f = line.split('\t');
+  else return null;
+  f = f.map(s=>s.trim());
+  let de = f[0] || '', zh = f[1] || '';
+  if(!de || !zh) return null;
+  let art = '';
+  const m = de.match(/^(der|die|das)\s+(.+)$/i);
+  if(m){ art = m[1].toLowerCase(); de = m[2]; }
+  let level = '';
+  if(f[4] && /^(A1|A2|B1|B2|C1|C2|自建|其他)$/i.test(f[4])) level = f[4].toUpperCase();
+  return { de, art, zh, ex:f[2]||'', exZh:f[3]||'', level, pos:inferPos(de, art), pl:'', src:'import' };
+}
+
+/* ================= 语音 ================= */
+let voices = [];
+function loadVoices(){ try{ voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }catch(e){ voices = []; } }
+if(window.speechSynthesis){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+
+function speak(text, btn){
+  if(!window.speechSynthesis){ toast('这个浏览器不支持语音朗读'); return; }
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE'; u.rate = settings.rate || 0.9;
+    const de = voices.filter(v => /^de/i.test(v.lang));
+    if(de.length) u.voice = de[0];
+    if(btn){
+      btn.classList.add('playing');
+      u.onend = ()=>btn.classList.remove('playing');
+      u.onerror = ()=>btn.classList.remove('playing');
+    }
+    speechSynthesis.speak(u);
+    if(!de.length && !speak.warned){ speak.warned = true; toast('没检测到德语语音包，发音可能不准'); }
+  }catch(e){ toast('朗读失败'); }
+}
+
+/* ================= 词库 ================= */
+const importedWords = () => store.get(K.words, []);
+function allWords(){ return words.concat(importedWords()); }
+function getWord(id){ return allWords().find(w=>w.id===id); }
+function levelOf(w){ return w.level || '自建'; }
+function bare(w){
+  const d = w.de || '', a = w.art;
+  return (a && a !== '—' && d.toLowerCase().indexOf(a.toLowerCase() + ' ') === 0) ? d.slice(a.length + 1) : d;
+}
+function frame(w){ return (w.art && w.art !== '—' ? w.art + ' ' : '') + bare(w); }
+
+/* ================= SRS ================= */
+function updateProgress(id, correct){
+  const p = progress[id] || (progress[id] = { b:0, due:0, reps:0, lapses:0, last:0, star:false });
+  if(typeof p.rounds !== 'number') p.rounds = 0;
+  const wasNew = p.reps === 0;
+  const now = Date.now();
+  if(correct){
+    if(p.rounds < ROUNDS){
+      p.rounds++;
+      p.b = Math.max(p.b, p.rounds);
+      // 第 1、2 轮：10 分钟后再考（当轮会直接把它插回队列）；第 3 轮：明天进复习
+      p.due = now + (p.rounds < ROUNDS ? 10 * 60 * 1000 : 1 * DAY);
+    } else {
+      p.b = Math.min(7, p.b + 1);
+      p.due = now + INTERVALS[p.b] * DAY;
+    }
+  }
+  else { p.b = 0; p.rounds = 0; p.due = now + 10 * 60 * 1000; p.lapses++; }
+  p.reps++; p.last = now;
+  store.set(K.prog, progress);
+
+  const tk = todayKey();
+  const d = stats.days[tk] || (stats.days[tk] = { a:0, c:0, n:0, r:0 });
+  d.a++; if(correct) d.c++;
+  if(!wasNew) d.r++;
+  stats.total++; if(correct) stats.correct++;
+  if(seenToday.date !== tk) seenToday = { date:tk, ids:[] };
+  if(wasNew && seenToday.ids.indexOf(id) < 0){ seenToday.ids.push(id); d.n++; }
+  store.set(K.seen, seenToday);
+  store.set(K.stats, stats);
+}
+
+/* ================= 斩杀（学一次就不再复习） ================= */
+function killWord(id){
+  const p = progress[id] || (progress[id] = { b:0, due:0, reps:0, lapses:0, last:0, star:false });
+  p.dead = true;
+  p.b = 7;
+  p.rounds = ROUNDS;
+  p.reps = Math.max(1, p.reps);   // 至少算「学过」，从新词队列里拿掉
+  p.last = Date.now();
+  p.due = Date.now() + 3650 * DAY;
+  store.set(K.prog, progress);
+  return p;
+}
+function unkillWord(id){
+  const p = progress[id];
+  if(!p) return;
+  p.dead = false;
+  p.b = 4;
+  p.rounds = ROUNDS;
+  p.due = Date.now() + 7 * DAY;
+  store.set(K.prog, progress);
+}
+function killInSession(id){
+  killWord(id);
+  if(session) session.q = session.q.filter(x => x.w.id !== id);
+  toast('已斩杀 · 这个词以后不再复习');
+}
+
+// 当前选中的词书；导入的词跟着一起背
+const deckWords = () => allWords().filter(w => settings.deck === 'my' ? w.src === 'import' : (w.src === 'import' || w.deck === settings.deck));
+const dueList = () => deckWords().filter(w => { const p = progress[w.id]; return p && p.reps > 0 && !p.dead && p.due <= Date.now(); });
+const newList = () => deckWords().filter(w => !progress[w.id] || progress[w.id].reps === 0);
+const todayRec = () => stats.days[todayKey()] || { a:0, c:0, n:0, r:0 };
+
+// 把复习词、额外回顾词均匀插进新词里
+function interleave(newQ, dueQ, extraQ){
+  const out = [];
+  const due = dueQ.slice(), extra = extraQ.slice();
+  const N = newQ.length;
+  // 到期复习词：大约每 (新词+复习)/复习 张插一次
+  const dueEvery = due.length ? Math.max(2, Math.round((N + due.length) / (due.length + 1))) : 0;
+  // 额外回顾：在新词 1/3 和 2/3 处各插一张（最多两张）
+  const extraAt = {};
+  if(extra.length && N >= 3){
+    extraAt[Math.max(1, Math.floor(N/3))] = true;
+    if(N >= 6) extraAt[Math.max(2, Math.floor(N*2/3))] = true;
+  }
+  let sinceDue = 0;
+  for(let i=0;i<N;i++){
+    out.push(newQ[i]);
+    if(extraAt[i+1] && extra.length) out.push(extra.shift());
+    sinceDue++;
+    if(dueEvery && sinceDue >= dueEvery && due.length){ out.push(due.shift()); sinceDue = 0; }
+  }
+  while(due.length) out.push(due.shift());
+  while(extra.length) out.push(extra.shift());
+  return out;
+}
+
+function buildQueue(mode){
+  const rec = todayRec();
+  const newLeft = Math.max(0, settings.dailyNew - (rec.n || 0));
+  const revLeft = Math.max(0, settings.dailyReview - (rec.r || 0));
+  const due = dueList().sort((a,b)=>progress[a.id].due - progress[b.id].due).slice(0, revLeft);
+  const fresh = newList().slice(0, newLeft);
+  if(mode === 'review') return due;
+  if(mode === 'new') return fresh;
+
+  const newQ = shuffle(fresh.slice());
+  const dueQ = shuffle(due.slice());
+  // 额外回顾：已经学过、今天不到期的词，最多 2 个
+  const freshIds = new Set(newQ.map(w=>w.id));
+  const extraQ = shuffle(deckWords().filter(w=>{
+    const p = progress[w.id];
+    return p && p.reps > 0 && !p.dead && p.due > Date.now() && !freshIds.has(w.id);
+  })).slice(0, 2);
+  return interleave(newQ, dueQ, extraQ);
+}
+
+/* ================= 学习会话 ================= */
+function newSession(mode){
+  const q = buildQueue(mode);
+  if(!q.length){
+    if(mode === 'review') toast(dueList().length ? '今天的复习额度用完了' : '没有到期的复习词，去学点新词吧');
+    else if(mode === 'new') toast(newList().length ? '今天的新词额度用完啦，明天再来' : '词库里的词都学过了');
+    else toast('今天的任务已完成 ✓');
+    return;
+  }
+  session = { q:q.map(w=>({ w, type:null })), totalUnique:q.length, correct:0, answered:0, wrong:0, mode, start:Date.now(), busy:false };
+  showView('study');
+  renderStudy();
+}
+
+function sessionLeft(){ return new Set(session.q.map(x=>x.w.id)).size; }
+function updateBar(){
+  const left = sessionLeft();
+  const done = session.totalUnique - left;
+  $('#sessBar').style.width = (done / Math.max(1, session.totalUnique) * 100) + '%';
+  $('#sessNum').textContent = done + '/' + session.totalUnique;
+}
+
+function pickType(w){
+  if(session.mode !== 'mixed') return session.mode;
+  const p = progress[w.id];
+  if(!p || p.reps === 0) return 'de2zh';
+  const b = p.b;
+  if(b <= 1) return Math.random() < 0.75 ? 'de2zh' : 'zh2de';
+  if(b === 2) return Math.random() < 0.5 ? 'de2zh' : 'zh2de';
+  if(b === 3 && settings.extraModes) return Math.random() < 0.4 ? 'listen' : (Math.random() < 0.5 ? 'de2zh' : 'zh2de');
+  if(settings.extraModes && b >= 4){
+    return ['de2zh','zh2de','listen','spell'][Math.floor(Math.random()*4)];
+  }
+  return 'zh2de';
+}
+
+function pickOthers(word, n, key){
+  let pool = deckWords().filter(w => w.id !== word.id && w[key] && w[key] !== word[key]);
+  if(pool.length < n) pool = pool.concat(allWords().filter(w => w.id !== word.id && w[key] && w[key] !== word[key]));
+  shuffle(pool);
+  const out = [], used = new Set([word[key]]);
+  for(const w of pool){
+    if(out.length >= n) break;
+    if(used.has(w[key])) continue;
+    used.add(w[key]); out.push(w);
+  }
+  return out;
+}
+
+function renderStudy(){
+  if(!session) return;
+  const cur = session.q[0];
+  if(!cur){ renderDone(); return; }
+  if(!cur.type) cur.type = pickType(cur.w);
+  const w = cur.w, type = cur.type;
+
+  updateBar();
+
+  if(type === 'de2zh' || type === 'listen'){
+    const isListen = type === 'listen';
+    const others = pickOthers(w, 3, 'zh');
+    const opts = shuffle([w].concat(others));
+    const optsHtml = opts.map((o,i)=>'<button class="opt" data-k="'+esc(o.id)+'"><span class="n">'+(i+1)+'</span><span>'+esc(o.zh)+'</span></button>').join('');
+    $('#qArea').innerHTML =
+      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">'+(isListen?'听发音，选出正确的中文意思':'这个单词是什么意思？')+'</div>'
+      + (isListen ? '<div class="q-word small">🔊</div>' : '<div class="q-word">'+esc(frame(w))+posTag(w.pos)+'</div>')
+      + '<div class="q-sub">'+(!isListen ? esc([posName(w.pos), formLabel(w)].filter(Boolean).join(' · ')) : '&nbsp;')+'</div>'
+      + '<div class="q-audio"><button class="speak" id="btnSpeak" aria-label="发音">🔊</button></div>'
+      + '<div class="options" id="options">'+optsHtml+'</div><div id="fbWrap"></div></div>';
+    const btn = $('#btnSpeak');
+    btn.onclick = ()=>speak(frame(w), btn);
+    if(settings.autoAudio || isListen) setTimeout(()=>speak(frame(w), btn), 230);
+    bindChoice(id => id === w.id);
+  } else if(type === 'zh2de'){
+    const others = pickOthers(w, 3, 'de');
+    const opts = shuffle([w].concat(others));
+    const optsHtml = opts.map((o,i)=>'<button class="opt" data-k="'+esc(o.id)+'"><span class="n">'+(i+1)+'</span><span>'+esc(frame(o))+posTag(o.pos)+'</span></button>').join('');
+    $('#qArea').innerHTML =
+      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">选出对应的德语单词</div>'
+      + '<div class="q-word small">'+esc(w.zh)+'</div><div class="q-sub">&nbsp;</div>'
+      + '<div class="options" id="options">'+optsHtml+'</div><div id="fbWrap"></div></div>';
+    bindChoice(id => id === w.id);
+  } else {
+    $('#qArea').innerHTML =
+      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">根据中文，拼出德语单词</div>'
+      + '<div class="q-word small">'+esc(w.zh)+'</div>'
+      + '<div class="q-sub">'+(w.art ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+'</div>'
+      + '<div class="spell"><input id="spellInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入德语单词…">'
+      + '<div class="hint">回车提交 · ä 可写成 ae，ß 可写成 ss</div></div><div id="fbWrap"></div></div>';
+    const inp = $('#spellInput');
+    inp.focus();
+    inp.addEventListener('keydown', e=>{
+      if(e.key === 'Enter'){ e.preventDefault(); submitAnswer(normalizeDe(inp.value) === normalizeDe(bare(w))); }
+    });
+  }
+}
+
+function bindChoice(checkFn){
+  $$('#options .opt').forEach(btn=>{
+    btn.onclick = ()=>{
+      if(session.busy) return;
+      btn.classList.add('picked');
+      submitAnswer(checkFn(btn.dataset.k));
+    };
+  });
+}
+
+function submitAnswer(ok){
+  if(session.busy) return;
+  session.busy = true;
+  const cur = session.q[0], w = cur.w;
+  session.answered++;
+  if(ok) session.correct++; else session.wrong++;
+  updateProgress(w.id, ok);
+
+  const correctId = w.id;
+  if($('#options')){
+    $$('#options .opt').forEach(b=>{
+      b.disabled = true;
+      if(b.dataset.k === correctId) b.classList.add('correct');
+      else if(!ok && b.classList.contains('picked')) b.classList.add('wrong');
+    });
+  }
+  const inp = $('#spellInput');
+  if(inp){ inp.disabled = true; inp.style.borderColor = ok ? 'var(--ok)' : 'var(--bad)'; }
+
+  // 手机上答完题就把选项/输入框收起来，让反馈一屏放得下（电脑上保留，能看到对错标记）
+  const qc = $('#qArea .qcard');
+  if(qc && qc.classList) qc.classList.add('answered');
+
+  const p = progress[w.id] || {};
+  $('#fbWrap').innerHTML =
+    '<div class="fb"><div class="fb-verdict '+(ok?'ok':'bad')+'">'+(ok?'✓ 回答正确':'✗ 答错了，正确答案是 '+(cur.type==='zh2de'?esc(frame(w)):esc(w.zh)))+'</div>'
+    + '<div class="fb-word"><span class="de">'+(w.art?'<span class="art">'+esc(w.art)+'</span> ':'')+esc(bare(w))+'</span>'+posTag(w.pos)
+    + ((w.pl && w.pl !== '—')?'<span class="tag">'+esc(formLabel(w))+'</span>':'')+'</div>'
+    + '<div class="fb-zh">'+esc(w.zh)+'</div>'
+    + (w.ex?'<div class="fb-ex">'+esc(w.ex)+(w.exZh?'<div class="exzh">'+esc(w.exZh)+'</div>':'')+'</div>':'')
+    + '<div class="fb-actions"><button class="star'+(p.star?' on':'')+'" id="btnStar" title="加入生词本">'+(p.star?'★':'☆')+'</button>'
+    + '<button class="star kill-btn" id="btnKill" title="已经会了，斩掉不再复习">⚡</button>'
+    + '<button class="btn primary" id="btnContinue">继续 <span style="opacity:.55;font-size:12px">空格</span></button></div></div>';
+
+  $('#btnContinue').focus();
+  $('#btnContinue').onclick = nextCard;
+  $('#btnKill').onclick = (ev)=>{
+    const b = ev.currentTarget;
+    if(b.classList.contains('on')) return;
+    b.classList.add('on'); b.textContent = '已斩';
+    killWord(w.id);
+    session.killed = w.id;
+    toast('已斩杀 · 这个词以后不再复习');
+  };
+  $('#btnStar').onclick = (ev)=>{
+    const pr = progress[w.id] || (progress[w.id] = { b:0, due:0, reps:0, lapses:0, last:0, star:false });
+    pr.star = !pr.star; store.set(K.prog, progress);
+    ev.currentTarget.classList.toggle('on', !!pr.star);
+    ev.currentTarget.textContent = pr.star ? '★' : '☆';
+  };
+
+  session.q.shift();
+  const np = progress[w.id];
+  const stillLearning = ok && np && !np.dead && np.rounds > 0 && np.rounds < ROUNDS;
+  if(!ok) session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
+  else if(stillLearning){
+    // 第 1、2 轮答对了：隔几张再考一遍，逼你同一轮里记三次
+    const at = Math.min(session.q.length, 4 + Math.floor(Math.random() * 3));
+    session.q.splice(at, 0, { w, type:null });
+  }
+  if(session.killed){
+    session.q = session.q.filter(x => x.w.id !== session.killed);
+    session.killed = null;
+  }
+  session.busy = false;
+}
+
+function nextCard(){
+  session.busy = false;
+  renderStudy();
+}
+
+function renderDone(){
+  const sec = Math.round((Date.now() - session.start)/1000);
+  const acc = session.answered ? Math.round(session.correct / session.answered * 100) : 0;
+  $('#sessBar').style.width = '100%';
+  $('#sessNum').textContent = session.totalUnique + '/' + session.totalUnique;
+  $('#qArea').innerHTML =
+    '<div class="qcard card done"><div class="emoji">🎉</div><h2>这一轮结束了</h2>'
+    + '<p>作答 '+session.answered+' 次 · 用时 '+Math.floor(sec/60)+' 分 '+(sec%60)+' 秒</p>'
+    + '<div class="done-grid"><div><b>'+session.correct+'</b><span>答对</span></div>'
+    + '<div><b>'+session.wrong+'</b><span>答错</span></div>'
+    + '<div><b>'+acc+'%</b><span>正确率</span></div></div>'
+    + '<div class="btns" style="justify-content:center"><button class="btn primary" id="btnAgain">再来一轮</button>'
+    + '<button class="btn ghost" id="btnHome2">回到首页</button></div></div>'
+    + '<div style="height:14px"></div>';
+  $('#btnAgain').onclick = ()=>{ const m = session.mode; session = null; newSession(m); };
+  $('#btnHome2').onclick = ()=>{ session = null; showView('home'); };
+  renderHome();
+}
+
+/* ================= 首页 ================= */
+function renderHome(){
+  const rec = todayRec();
+  const q = buildQueue('mixed');
+  const done = rec.a;
+  const total = done + q.length;
+  const pct = total ? done/total : 0;
+  const C = 2 * Math.PI * 56;
+  const ring = $('#ringFg');
+  ring.style.strokeDasharray = C;
+  ring.style.strokeDashoffset = C * (1 - pct);
+  $('#ringDone').textContent = done;
+  $('#ringTotal').textContent = '/ ' + total;
+
+  const hour = new Date().getHours();
+  const greet = hour < 5 ? '夜深了' : hour < 11 ? '早上好' : hour < 14 ? '中午好' : hour < 18 ? '下午好' : '晚上好';
+  $('#heroTitle').textContent = greet + '，今天背几个词？';
+  const dn = DECK_NAME[settings.deck] || '词书';
+  if(!deckWords().length) $('#heroSub').textContent = dn + ' 还没有词，换一本词书或导入自己的词表';
+  else if(!q.length) $('#heroSub').textContent = dn + '：今天的任务已经完成 ✓' + (total ? ' 明天见' : '');
+  else{
+    const n = Math.min(q.length, Math.max(0, settings.dailyNew - (rec.n||0)));
+    const r = Math.max(0, q.length - n);
+    $('#heroSub').textContent = dn + ' · 待学 ' + q.length + ' 词　新词 ' + n + ' · 复习 ' + r;
+  }
+
+  const W = allWords();
+  const learned = W.filter(w=>progress[w.id] && progress[w.id].reps>0).length;
+  const mastered = W.filter(w=>isLearned(progress[w.id])).length;
+  const acc = stats.total ? Math.round(stats.correct/stats.total*100) : 0;
+  $('#statTotal').textContent = W.length;
+  $('#statLearned').textContent = learned;
+  $('#statMastered').textContent = mastered;
+  $('#statAcc').innerHTML = acc + '<small>%</small>';
+
+  const lv = {};
+  W.forEach(w=>{ const k = levelOf(w); lv[k] = lv[k] || { t:0, l:0 }; lv[k].t++; if(progress[w.id] && progress[w.id].reps>0) lv[k].l++; });
+  const order = ['A1','A2','B1','B2','C1','C2','自建','其他'];
+  const keys = Object.keys(lv).sort((a,b)=>{
+    const ia = order.indexOf(a), ib = order.indexOf(b);
+    return (ia<0?99:ia) - (ib<0?99:ib);
+  });
+  $('#levelRows').innerHTML = keys.length ? keys.map(k=>{
+    const v = lv[k], p = v.t ? Math.round(v.l/v.t*100) : 0;
+    return '<div class="lv-row"><span class="name">'+esc(k)+'</span><div class="track"><div class="fill" style="width:'+p+'%"></div></div>'
+      + '<span class="num">'+v.l+' / '+v.t+'</span></div>';
+  }).join('') : '<div class="empty">还没有单词，点「设置 → 导入词库」添加</div>';
+  renderDeckSeg();
+}
+
+// 首页词书切换
+function renderDeckSeg(){
+  const seg = $('#segDeck'); if(!seg) return;
+  const counts = {};
+  words.forEach(w=>{ counts[w.deck] = (counts[w.deck] || 0) + 1; });
+  const keys = Object.keys(DECKS).length ? Object.keys(DECKS) : Object.keys(counts);
+  const btns = keys.map(k=>'<button data-deck="'+esc(k)+'" class="'+(settings.deck===k?'on':'')+'">'
+      + esc(DECK_NAME[k] || k) + '<span class="cnt">' + (counts[k] || 0) + '</span></button>').join('')
+    + '<button data-deck="my" class="'+(settings.deck==='my'?'on':'')+'">我的导入<span class="cnt">'+importedWords().length+'</span></button>';
+  seg.innerHTML = btns;
+  $$('#segDeck button').forEach(b=>b.onclick = ()=>{
+    settings.deck = b.dataset.deck;
+    store.set(K.set, settings);
+    renderHome();
+  });
+}
+
+/* ================= 词库页 ================= */
+function renderBrowse(){
+  let list = allWords();
+  if(browseLevel !== 'all') list = list.filter(w => levelOf(w) === browseLevel);
+  if(browseQuery){
+    const q = browseQuery.toLowerCase();
+    list = list.filter(w => w.de.toLowerCase().indexOf(q) >= 0 || w.zh.indexOf(browseQuery) >= 0);
+  }
+  if(browseStatus !== 'all'){
+    list = list.filter(w=>{
+      const p = progress[w.id];
+      if(browseStatus === 'new') return !p || p.reps === 0;
+      if(browseStatus === 'learning') return p && p.reps > 0 && !p.dead && !isLearned(p);
+      if(browseStatus === 'mastered') return isLearned(p);
+      if(browseStatus === 'dead') return p && p.dead;
+      if(browseStatus === 'star') return p && p.star;
+      return true;
+    });
+  }
+  $('#browseCount').textContent = list.length + ' 词';
+  const shown = list.slice(0, browseLimit);
+  $('#rowList').innerHTML = shown.length ? shown.map(w=>{
+    const p = progress[w.id];
+    const cls = !p || p.reps === 0 ? '' : p.dead ? 'b3' : p.b >= 5 ? 'b3' : p.b >= 2 ? 'b2' : 'b1';
+    return '<button class="row" data-id="'+esc(w.id)+'"><span class="box '+cls+'"></span><span class="main">'
+      + '<span class="de">'+(w.art?'<i>'+esc(w.art)+'</i>':'')+esc(bare(w))+posTag(w.pos)+'</span>'
+      + '<span class="zh">'+esc(w.zh)+'</span></span>'
+      + (p && p.dead ? '<span class="star-mini dead">⚡</span>' : '')
+      + (p && p.star ? '<span class="star-mini">★</span>' : '')
+      + '<span class="row-lv'+(p && p.dead ? ' dead' : '')+'">'+(p && p.dead ? '⚡' : p && p.reps ? clamp(typeof p.rounds === 'number' ? p.rounds : ROUNDS, 0, ROUNDS)+'/'+ROUNDS : '—')+'</span>'
+      + '<span style="color:var(--muted);font-size:18px;flex:none">›</span></button>';
+  }).join('') : '<div class="empty"><div class="big">🔍</div>没有找到对应单词</div>';
+  $('#btnMore').style.display = list.length > browseLimit ? 'block' : 'none';
+  $$('#rowList .row').forEach(r=>r.onclick = ()=>openWord(r.dataset.id));
+  renderLevelSeg();
+}
+
+function renderLevelSeg(){
+  const levels = Array.from(new Set(allWords().map(levelOf)));
+  const order = ['A1','A2','B1','B2','C1','C2','自建','其他'];
+  levels.sort((a,b)=>{ const ia=order.indexOf(a), ib=order.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib); });
+  const seg = $('#segLevel');
+  if(!seg) return;
+  seg.innerHTML = '<button data-lv="all" class="'+(browseLevel==='all'?'on':'')+'">全部</button>'
+    + levels.map(l=>'<button data-lv="'+esc(l)+'" class="'+(browseLevel===l?'on':'')+'">'+esc(l)+'</button>').join('');
+  $$('#segLevel button').forEach(b=>b.onclick = ()=>{ browseLevel = b.dataset.lv; browseLimit = 300; renderBrowse(); });
+}
+
+function openWord(id){
+  const w = getWord(id); if(!w) return;
+  const p = progress[id];
+  const stateTxt = p && p.dead ? '已斩杀' : !p || p.reps === 0 ? '新词' : isLearned(p) ? '已学完' : '学习中';
+  openModal('单词详情',
+    '<div style="text-align:center;margin:6px 0 14px">'
+    + '<div style="font-size:32px;font-weight:750">'+(w.art?'<span style="color:var(--accent)">'+esc(w.art)+'</span> ':'')+esc(bare(w))+posTag(w.pos)+'</div>'
+    + '<div class="muted" style="margin-top:4px">'+esc(w.zh)+'</div></div>'
+    + '<div class="fb-meta" style="justify-content:center">'
+    + '<span class="tag">'+esc(posName(w.pos)||'词汇')+'</span>'
+    + (w.pl?'<span class="tag">复数 '+esc(w.pl)+'</span>':'')
+    + '<span class="tag">'+esc(levelOf(w))+'</span><span class="tag">'+stateTxt+'</span>'
+    + '<span class="tag">进度 '+(p && p.reps ? clamp(typeof p.rounds === 'number' ? p.rounds : ROUNDS, 0, ROUNDS) + '/3' : '0/3')+'</span>'
+    + (p && p.reps ? '<span class="tag">复习 '+p.reps+' 次</span>' : '')+'</div>'
+    + (w.ex?'<div class="fb-ex" style="margin-top:16px">'+esc(w.ex)+(w.exZh?'<div class="exzh">'+esc(w.exZh)+'</div>':'')+'</div>':'')
+    + '<div class="modal-actions">'+(w.src==='import'?'<button class="btn ghost" id="mDel" style="color:var(--bad)">删除</button>':'')
+    + '<button class="btn ghost" id="mKill">'+(p && p.dead ? '恢复复习' : '⚡ 斩杀')+'</button>'
+    + '<button class="btn ghost" id="mSpeak">🔊 发音</button><button class="btn primary" id="mClose">关闭</button></div>',
+    null);
+  $('#mSpeak').onclick = ()=>speak(frame(w));
+  $('#mClose').onclick = closeModal;
+  $('#mKill').onclick = ()=>{
+    if(progress[id] && progress[id].dead) unkillWord(id); else killWord(id);
+    const dead = !!(progress[id] && progress[id].dead);
+    closeModal(); renderBrowse(); renderHome();
+    toast(dead ? '已斩杀 · 以后不再复习' : '已恢复复习');
+  };
+  if($('#mDel')) $('#mDel').onclick = ()=>{
+    if(!confirm('从词库删除「'+w.de+'」？')) return;
+    store.set(K.words, importedWords().filter(x=>x.id !== id));
+    delete progress[id]; store.set(K.prog, progress);
+    closeModal(); renderBrowse();
+  };
+}
+
+/* ================= 统计 ================= */
+function renderStats(){
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(Date.now() - i*DAY);
+    days.push({ k:dayKey(d), label:(d.getMonth()+1)+'/'+d.getDate(), rec:stats.days[dayKey(d)] || { a:0 } });
+  }
+  const max = Math.max(10, ...days.map(d=>d.rec.a));
+  $('#bars').innerHTML = days.map(d=>'<div class="col"><div class="bar '+(d.rec.a?'has':'')+'" style="height:'+Math.round(d.rec.a/max*100)+'%" title="'+d.rec.a+' 次"></div><div class="lbl">'+d.label+'</div></div>').join('');
+
+  const W = allWords();
+  const buckets = [0,0,0,0];
+  W.forEach(w=>{ const p = progress[w.id]; if(!p || !p.reps) buckets[0]++; else if(p.b < 3) buckets[1]++; else if(p.b < 5) buckets[2]++; else buckets[3]++; });
+  const names = ['未学','初识','熟悉','掌握'], colors = ['var(--line)','var(--gold)','#7aa2f7','var(--ok)'];
+  const tot = Math.max(1, W.length);
+  $('#dist').innerHTML = buckets.map((n,i)=>'<div class="d-row"><span style="width:38px;color:var(--muted)">'+names[i]+'</span>'
+    + '<div class="d-track"><div class="d-fill" style="width:'+(n/tot*100)+'%;background:'+colors[i]+'"></div></div>'
+    + '<span class="d-num">'+n+'</span></div>').join('');
+
+  let streak = 0;
+  for(let i=0;i<400;i++){
+    const k = dayKey(new Date(Date.now() - i*DAY));
+    const rec = stats.days[k];
+    if(rec && rec.a > 0) streak++;
+    else if(i === 0) continue;
+    else break;
+  }
+  const acc = stats.total ? Math.round(stats.correct/stats.total*100) : 0;
+  $('#statNumbers').innerHTML =
+    statCard(streak + ' 天', '连续打卡') + statCard(stats.total, '累计作答') + statCard(acc + '%', '总正确率') + statCard(W.length, '词库总量');
+}
+function statCard(v,k){ return '<div class="stat card"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>'; }
+
+/* ================= 设置 ================= */
+function renderSettings(){
+  $('#setDailyNew').textContent = settings.dailyNew;
+  $('#setDailyReview').textContent = settings.dailyReview;
+  $('#switchAudio').classList.toggle('on', settings.autoAudio);
+  $('#switchExtra').classList.toggle('on', settings.extraModes);
+  $('#setRate').textContent = settings.rate.toFixed(1) + '×';
+  $('#setTheme').textContent = ({ auto:'跟随系统', light:'浅色', dark:'深色' })[settings.theme];
+  const byDeck = Object.keys(DECKS).map(k => (DECK_NAME[k] || k) + ' ' + words.filter(w=>w.deck === k).length).join(' · ');
+  $('#setCount').textContent = allWords().length + ' 词（' + (byDeck ? byDeck + ' · ' : '') + '导入 ' + importedWords().length + '）';
+}
+
+/* ================= 弹层 ================= */
+let modalOk = null;
+function openModal(title, html, onOk){
+  $('#modalTitle').textContent = title;
+  $('#modalBody').innerHTML = html;
+  $('#mask').classList.add('on');
+  modalOk = onOk;
+  $('#modalOk').style.display = onOk ? '' : 'none';
+}
+function closeModal(){ $('#mask').classList.remove('on'); modalOk = null; }
+
+/* ================= 导入 / 导出 ================= */
+function doImport(text){
+  const exist = new Set(allWords().map(w => w.de.toLowerCase()));
+  const list = importedWords();
+  const stamp = Date.now();
+  let added = 0, skipped = 0;
+  String(text).split('\n').forEach(line=>{
+    const it = parseImportLine(line);
+    if(!it) return;
+    const key = it.de.toLowerCase();
+    if(exist.has(key)){ skipped++; return; }
+    exist.add(key);
+    it.id = 'u' + stamp + '_' + (list.length + 1);
+    list.push(it); added++;
+  });
+  store.set(K.words, list);
+  return { added, skipped };
+}
+
+function exportJSON(){
+  download('德语单词卡-备份-'+todayKey()+'.json',
+    JSON.stringify({ app:'deutsch-trainer', version:1, exportedAt:new Date().toISOString(), settings, progress, stats, imported:importedWords() }, null, 2));
+}
+function download(name, text){
+  const blob = new Blob([text], { type:'application/json;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 3000);
+}
+
+/* ================= 视图 ================= */
+function showView(name){
+  $$('.view').forEach(v=>v.classList.toggle('on', v.id === 'view-'+name));
+  if(document.body && document.body.classList) document.body.classList.toggle('studying', name === 'study');
+  $$('.tabs button, .mobile-nav button').forEach(b=>b.classList.toggle('on', b.dataset.view === name));
+  if(name === 'home') renderHome();
+  if(name === 'browse') renderBrowse();
+  if(name === 'stats') renderStats();
+  if(name === 'settings') renderSettings();
+  window.scrollTo({ top:0, behavior:'instant' in document.documentElement.style ? 'instant' : 'auto' });
+}
+
+function saveSet(){ store.set(K.set, settings); renderSettings(); applyTheme(); }
+function applyTheme(){
+  const t = settings.theme === 'auto'
+    ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : settings.theme;
+  document.documentElement.dataset.theme = t;
+}
+
+/* ================= 绑定 ================= */
+function bind(){
+  $$('.tabs button, .mobile-nav button').forEach(b=>b.onclick = ()=>showView(b.dataset.view));
+
+  $('#btnStart').onclick = ()=>newSession('mixed');
+  $('#btnReview').onclick = ()=>newSession('review');
+  $('#btnNew').onclick = ()=>newSession('new');
+  $('#btnQuit').onclick = ()=>{
+    if(session && session.answered > 0 && !confirm('退出本轮学习？已作答的记录会保留。')) return;
+    session = null; showView('home');
+  };
+
+  $('#searchInput').oninput = e=>{ browseQuery = e.target.value.trim(); browseLimit = 300; renderBrowse(); };
+  $$('#segStatus button').forEach(b=>b.onclick = ()=>{
+    browseStatus = b.dataset.s;
+    $$('#segStatus button').forEach(x=>x.classList.toggle('on', x === b));
+    renderBrowse();
+  });
+  $('#btnMore').onclick = ()=>{ browseLimit += 300; renderBrowse(); };
+
+  $('#decNew').onclick = ()=>{ settings.dailyNew = clamp(settings.dailyNew - 5, 5, 100); saveSet(); };
+  $('#incNew').onclick = ()=>{ settings.dailyNew = clamp(settings.dailyNew + 5, 5, 100); saveSet(); };
+  $('#decRev').onclick = ()=>{ settings.dailyReview = clamp(settings.dailyReview - 10, 10, 300); saveSet(); };
+  $('#incRev').onclick = ()=>{ settings.dailyReview = clamp(settings.dailyReview + 10, 10, 300); saveSet(); };
+  $('#switchAudio').onclick = ()=>{ settings.autoAudio = !settings.autoAudio; saveSet(); };
+  $('#switchExtra').onclick = ()=>{ settings.extraModes = !settings.extraModes; saveSet(); };
+  $('#rateDown').onclick = ()=>{ settings.rate = clamp(Math.round((settings.rate - 0.1)*10)/10, 0.5, 1.3); saveSet(); };
+  $('#rateUp').onclick = ()=>{ settings.rate = clamp(Math.round((settings.rate + 0.1)*10)/10, 0.5, 1.3); saveSet(); };
+  $('#setTheme').onclick = ()=>{
+    settings.theme = settings.theme === 'auto' ? 'light' : settings.theme === 'light' ? 'dark' : 'auto';
+    saveSet(); applyTheme();
+  };
+
+  $('#btnImport').onclick = ()=>{
+    openModal('导入词库',
+      '<p class="muted">每行一个单词，用 <b>|</b> 或 Tab 分隔：<br><b>德语词 | 中文释义 | 例句（可选） | 例句翻译（可选） | 等级（可选）</b><br>'
+      + '名词可以带冠词，如 <code>der Apfel | 苹果</code>，会自动识别词性；等级可填 A1/A2/B1/B2/C1/C2。</p>'
+      + '<textarea id="importText" placeholder="der Apfel | 苹果 | Ich esse einen Apfel. | 我吃一个苹果。&#10;gehen | 走，去 | Wir gehen nach Hause. | 我们回家。&#10;die Prüfung | 考试 ||| B1"></textarea>'
+      + '<div class="modal-actions"><label class="btn ghost" style="text-align:center">选择文件<input type="file" id="importFile" accept=".txt,.csv" hidden></label>'
+      + '<button class="btn ghost" id="mCancel">取消</button><button class="btn primary" id="mOk">导入</button></div>', null);
+    $('#mCancel').onclick = closeModal;
+    $('#importFile').onchange = e=>{
+      const f = e.target.files[0]; if(!f) return;
+      const rd = new FileReader();
+      // 先按 UTF-8 解码，出现乱码（Excel 存的 CSV 常是 GBK）再退回 GBK
+      rd.onload = ()=>{
+        let text = '';
+        try{ text = new TextDecoder('utf-8').decode(rd.result); }catch(err){}
+        if(/\uFFFD/.test(text)){
+          try{ text = new TextDecoder('gbk').decode(rd.result); }catch(err){}
+        }
+        $('#importText').value = text;
+        toast('已读取文件，点「导入」确认');
+      };
+      rd.readAsArrayBuffer(f);
+    };
+    $('#mOk').onclick = ()=>{
+      const r = doImport($('#importText').value);
+      closeModal(); renderBrowse(); renderHome();
+      toast(r.added ? ('成功导入 ' + r.added + ' 词' + (r.skipped ? ('，跳过重复 ' + r.skipped + ' 个') : '')) : '没有识别到有效单词（需要用 | 分隔）');
+    };
+  };
+
+  $('#btnExport').onclick = exportJSON;
+
+  $('#btnRestore').onclick = ()=>{
+    openModal('恢复备份',
+      '<p class="muted">选择之前导出的 .json 备份，会覆盖当前的进度、统计和导入的词（内置词不动）。</p>'
+      + '<div class="modal-actions"><label class="btn ghost" style="text-align:center">选择文件<input type="file" id="restoreFile" accept=".json,application/json" hidden></label>'
+      + '<button class="btn ghost" id="rCancel">取消</button></div>', null);
+    $('#rCancel').onclick = closeModal;
+    $('#restoreFile').onchange = e=>{
+      const f = e.target.files[0]; if(!f) return;
+      const rd = new FileReader();
+      rd.onload = ()=>{
+        let d = null;
+        try{ d = JSON.parse(rd.result); }catch(err){ toast('文件不是有效的 JSON'); return; }
+        if(!d || d.app !== 'deutsch-trainer'){ toast('这不是本应用的备份文件'); return; }
+        if(!confirm('确定用这个备份覆盖当前数据？')) return;
+        if(Array.isArray(d.imported)) store.set(K.words, d.imported);
+        if(d.progress && typeof d.progress === 'object'){ progress = d.progress; store.set(K.prog, progress); }
+        if(d.stats && typeof d.stats === 'object'){ stats = d.stats; store.set(K.stats, stats); }
+        if(d.settings){ settings = Object.assign({}, SET_DEF, d.settings); store.set(K.set, settings); }
+        closeModal(); applyTheme(); renderSettings(); renderHome(); renderBrowse(); renderStats();
+        toast('备份已恢复');
+      };
+      rd.readAsText(f, 'utf-8');
+    };
+  };
+  $('#btnResetProg').onclick = ()=>{
+    if(!confirm('清空所有学习进度（单词库保留）？此操作不可恢复。')) return;
+    progress = {}; stats = { days:{}, total:0, correct:0 }; seenToday = { date:'', ids:[] };
+    store.set(K.prog, progress); store.set(K.stats, stats); store.set(K.seen, seenToday);
+    renderHome(); toast('进度已清空');
+  };
+  $('#btnResetAll').onclick = ()=>{
+    if(!confirm('删除导入的词库和学习进度，恢复到初始状态？')) return;
+    [K.words, K.prog, K.stats, K.seen].forEach(store.del);
+    location.reload();
+  };
+
+  $('#modalOk').onclick = ()=>{ if(modalOk) modalOk(); };
+  $('#mask').onclick = e=>{ if(e.target === $('#mask')) closeModal(); };
+
+  document.addEventListener('keydown', e=>{
+    if($('#mask').classList.contains('on')){ if(e.key === 'Escape') closeModal(); return; }
+    if(!$('#view-study').classList.contains('on')) return;
+    if(e.target.tagName === 'INPUT') return;
+    if(e.key === ' ' || e.key === 'Enter'){
+      const c = $('#btnContinue');
+      if(c){ e.preventDefault(); c.click(); }
+      return;
+    }
+    if(e.key.toLowerCase() === 's'){ const b = $('#btnSpeak'); if(b){ e.preventDefault(); b.click(); } return; }
+    const n = parseInt(e.key, 10);
+    if(n >= 1 && n <= 4){
+      const btns = $$('#options .opt');
+      if(btns[n-1] && !btns[n-1].disabled){ btns[n-1].click(); }
+    }
+  });
+}
+
+/* ================= 启动 ================= */
+function init(){
+  words = parseDemo();
+  applyTheme();
+  bind();
+  showView('home');
+
+  setTimeout(loadVoices, 600);
+  if(window.matchMedia){
+    try{ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{ if(settings.theme==='auto') applyTheme(); }); }catch(e){}
+  }
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+})();
+
+</script>
+</body>
+</html>
