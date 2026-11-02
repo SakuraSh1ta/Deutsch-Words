@@ -71,6 +71,11 @@ a{color:var(--accent)}
 .btn.accent{background:var(--accent);color:#fff}
 .btn.ghost{background:var(--soft);color:var(--ink)}
 .btn.ghost:hover{background:var(--line)}
+.btn.ok-btn{background:var(--ok);color:#fff}
+.btn.bad-btn{background:var(--bad);color:#fff}
+.btn.dim{opacity:.45}
+.self-btns{display:flex;gap:10px;margin-top:18px}
+.self-btns .btn{flex:1;padding:14px 18px;font-size:16px}
 .btn.sm{padding:7px 13px;font-size:13px;border-radius:9px}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
@@ -290,6 +295,7 @@ a{color:var(--accent)}
   .qcard.answered .options{display:none}
   .qcard.answered .spell{display:none}
   .qcard.answered .q-audio{display:none}
+  .qcard.answered .self-btns{display:none}
 }
 
 /* 更矮的屏幕（iPhone SE / Safari 工具栏占位多）再收一档 */
@@ -399,9 +405,10 @@ a{color:var(--accent)}
     <div class="card levels" style="margin-top:14px">
       <h3>怎么用</h3>
       <p style="font-size:13.5px;color:var(--muted);line-height:1.8">
-        点「开始学习」直接出题，看到单词就选意思，答完立刻看到释义和例句。每个新词都要<b>答对 3 轮才算学完</b>：
-        答对一次是 1/3，它会隔几张再出现一次（2/3），第三次答对才是 3/3，然后按 1 / 3 / 7 / 15 天往后推。
-        答错的词会回到 0/3，几分钟后再来一遍。
+        点「开始学习」直接出题。每个新词固定走三轮：<b>第 1 轮</b>四选一（随便蒙一个也行）→
+        <b>第 2 轮</b>四选一、但四个选项词性相同 → <b>第 3 轮</b>不给选项，只给单词，先选「认识 / 不认识」，
+        看完答案再选「记对了 / 记错了」。记对了就算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；
+        记错了回到 0/3，过几张重来。
         学新词的中途会插一两张以前学过的词，防止背了新的忘了旧的。
         单词旁边的 <b>n. / v. / adj.</b> 是词性；名词还会标 <b class="gtag g-m">阳</b> <b class="gtag g-f">阴</b> <b class="gtag g-n">中</b>（der 阳性 / die 阴性 / das 中性）；点 <b>⚡</b> 可以「斩杀」——这个词以后再也不复习了。<br>
         键盘 <b>1–4</b> 选答案，<b>空格</b> 继续，<b>S</b> 重听发音。
@@ -511,7 +518,7 @@ a{color:var(--accent)}
 
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 6 · 2025-11-01 · 名词标注阳/阴/中</span>
+      <span style="opacity:.7">版本 7 · 2025-11-02 · 三轮固定流程（四选一 → 同词性四选一 → 自评）</span>
     </p>
   </section>
 </div>
@@ -731,13 +738,18 @@ function bare(w){
 function frame(w){ return (w.art && w.art !== '—' ? w.art + ' ' : '') + bare(w); }
 
 /* ================= SRS ================= */
-function updateProgress(id, correct){
+function updateProgress(id, correct, finish){
   const p = progress[id] || (progress[id] = { b:0, due:0, reps:0, lapses:0, last:0, star:false });
   if(typeof p.rounds !== 'number') p.rounds = 0;
   const wasNew = p.reps === 0;
   const now = Date.now();
   if(correct){
-    if(p.rounds < ROUNDS){
+    if(finish){
+      // 第 3 轮自评「记对了」：三轮完成，交给复习曲线
+      p.rounds = ROUNDS;
+      p.b = Math.max(p.b, ROUNDS);
+      p.due = now + 1 * DAY;
+    } else if(p.rounds < ROUNDS){
       p.rounds++;
       p.b = Math.max(p.b, p.rounds);
       // 第 1、2 轮：10 分钟后再考（当轮会直接把它插回队列）；第 3 轮：明天进复习
@@ -826,16 +838,23 @@ function buildQueue(mode){
   const revLeft = Math.max(0, settings.dailyReview - (rec.r || 0));
   const due = dueList().sort((a,b)=>progress[a.id].due - progress[b.id].due).slice(0, revLeft);
   const fresh = newList().slice(0, newLeft);
+  // 三轮没走完的词（1/3、2/3）永远拉回来，哪怕 10 分钟的 due 还没到，保证一次坐完三轮
+  const dueIds = new Set(due.map(w=>w.id));
+  const learning = shuffle(deckWords().filter(w=>{
+    const p = progress[w.id];
+    return p && !p.dead && p.rounds > 0 && p.rounds < ROUNDS && !dueIds.has(w.id);
+  }));
+  const batch = fresh.slice().concat(learning);
   if(mode === 'review') return due;
-  if(mode === 'new') return fresh;
+  if(mode === 'new') return batch;
 
-  const newQ = shuffle(fresh.slice());
+  const newQ = shuffle(batch);
   const dueQ = shuffle(due.slice());
   // 额外回顾：已经学过、今天不到期的词，最多 2 个
   const freshIds = new Set(newQ.map(w=>w.id));
   const extraQ = shuffle(deckWords().filter(w=>{
     const p = progress[w.id];
-    return p && p.reps > 0 && !p.dead && p.due > Date.now() && !freshIds.has(w.id);
+    return p && p.reps > 0 && !p.dead && roundsOf(p) >= ROUNDS && p.due > Date.now() && !freshIds.has(w.id);
   })).slice(0, 2);
   return interleave(newQ, dueQ, extraQ);
 }
@@ -862,23 +881,29 @@ function updateBar(){
   $('#sessNum').textContent = done + '/' + session.totalUnique;
 }
 
+// 三轮制：第 1 轮四选一（随便蒙）→ 第 2 轮四选一但选项词性相同 → 第 3 轮自评（认识/不认识 → 记对/记错）
 function pickType(w){
-  if(session.mode !== 'mixed') return session.mode;
   const p = progress[w.id];
-  if(!p || p.reps === 0) return 'de2zh';
-  const b = p.b;
-  if(b <= 1) return Math.random() < 0.75 ? 'de2zh' : 'zh2de';
-  if(b === 2) return Math.random() < 0.5 ? 'de2zh' : 'zh2de';
-  if(b === 3 && settings.extraModes) return Math.random() < 0.4 ? 'listen' : (Math.random() < 0.5 ? 'de2zh' : 'zh2de');
-  if(settings.extraModes && b >= 4){
-    return ['de2zh','zh2de','listen','spell'][Math.floor(Math.random()*4)];
+  if(!isLearned(p)){
+    const r = roundsOf(p);
+    if(r <= 0) return 'r1';
+    if(r === 1) return 'r2';
+    return 'r3';
   }
-  return 'zh2de';
+  const b = (p && p.b) || 0;
+  if(settings.extraModes && b >= 4) return ['de2zh','zh2de','listen','spell'][Math.floor(Math.random()*4)];
+  if(settings.extraModes && b === 3 && Math.random() < 0.35) return 'listen';
+  return Math.random() < 0.6 ? 'de2zh' : 'zh2de';
 }
 
-function pickOthers(word, n, key){
-  let pool = deckWords().filter(w => w.id !== word.id && w[key] && w[key] !== word[key]);
-  if(pool.length < n) pool = pool.concat(allWords().filter(w => w.id !== word.id && w[key] && w[key] !== word[key]));
+function pickOthers(word, n, key, samePos){
+  const fits = o => o.id !== word.id && o[key] && o[key] !== word[key] && (!samePos || o.pos === word.pos);
+  let pool = deckWords().filter(fits);
+  if(pool.length < n) pool = pool.concat(allWords().filter(fits));
+  if(pool.length < n && samePos){
+    // 同词性的词不够（短语/感叹词之类）时放宽，保证还是四个选项
+    pool = pool.concat(deckWords().filter(o => o.id !== word.id && o[key] && o[key] !== word[key]));
+  }
   shuffle(pool);
   const out = [], used = new Set([word[key]]);
   for(const w of pool){
@@ -898,13 +923,19 @@ function renderStudy(){
 
   updateBar();
 
-  if(type === 'de2zh' || type === 'listen'){
+  if(type === 'r3'){ renderSelf(); return; }
+
+  if(type === 'r1' || type === 'r2' || type === 'de2zh' || type === 'listen'){
     const isListen = type === 'listen';
-    const others = pickOthers(w, 3, 'zh');
+    const samePos = type === 'r2';
+    const others = pickOthers(w, 3, 'zh', samePos);
     const opts = shuffle([w].concat(others));
     const optsHtml = opts.map((o,i)=>'<button class="opt" data-k="'+esc(o.id)+'"><span class="n">'+(i+1)+'</span><span>'+esc(o.zh)+'</span></button>').join('');
+    const tip = isListen ? '听发音，选出正确的中文意思'
+      : samePos ? '第 2 轮 · 四个选项词性相同，选对意思'
+      : type === 'r1' ? '第 1 轮 · 这个单词是什么意思？' : '这个单词是什么意思？';
     $('#qArea').innerHTML =
-      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">'+(isListen?'听发音，选出正确的中文意思':'这个单词是什么意思？')+'</div>'
+      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">'+tip+'</div>'
       + (isListen ? '<div class="q-word small">🔊</div>' : '<div class="q-word">'+esc(frame(w))+posTag(w.pos)+genderTag(w)+'</div>')
       + '<div class="q-sub">'+(!isListen ? esc([posName(w.pos), formLabel(w)].filter(Boolean).join(' · ')) : '&nbsp;')+'</div>'
       + '<div class="q-audio"><button class="speak" id="btnSpeak" aria-label="发音">🔊</button></div>'
@@ -935,6 +966,69 @@ function renderStudy(){
       if(e.key === 'Enter'){ e.preventDefault(); submitAnswer(normalizeDe(inp.value) === normalizeDe(bare(w))); }
     });
   }
+}
+
+/* ---------- 第 3 轮：不给选项，自己判断认不认识 ---------- */
+function renderSelf(){
+  const cur = session.q[0];
+  if(!cur) return;
+  const w = cur.w;
+  updateBar();
+  $('#qArea').innerHTML =
+    '<div class="qcard card">' + chipFor(w)
+    + '<div class="q-tip">第 3 轮 · 没有选项，认识它吗？</div>'
+    + '<div class="q-word">'+esc(frame(w))+posTag(w.pos)+genderTag(w)+'</div>'
+    + '<div class="q-sub">'+esc([posName(w.pos), formLabel(w)].filter(Boolean).join(' · '))+'</div>'
+    + '<div class="q-audio"><button class="speak" id="btnSpeak" aria-label="发音">🔊</button></div>'
+    + '<div class="self-btns" id="selfBtns">'
+    +   '<button class="btn primary" id="btnKnow">认识</button>'
+    +   '<button class="btn ghost" id="btnDunno">不认识</button>'
+    + '</div><div id="fbWrap"></div></div>';
+  const btn = $('#btnSpeak');
+  btn.onclick = ()=>speak(frame(w), btn);
+  if(settings.autoAudio) setTimeout(()=>speak(frame(w), btn), 230);
+  $('#btnKnow').onclick = ()=>revealSelf(true);
+  $('#btnDunno').onclick = ()=>revealSelf(false);
+}
+
+function revealSelf(claimed){
+  const cur = session.q[0];
+  if(!cur) return;
+  const w = cur.w;
+  $$('#selfBtns .btn').forEach(b=>{ b.disabled = true; b.classList.add('dim'); });
+  $('#fbWrap').innerHTML =
+    '<div class="fb">'
+    + '<div class="fb-verdict">'+(claimed ? '你选了「认识」' : '你选了「不认识」')+' · 对照答案，你记对了没有？</div>'
+    + '<div class="fb-word"><span class="de">'+(w.art?'<span class="art">'+esc(w.art)+'</span> ':'')+esc(bare(w))+'</span>'+posTag(w.pos)+genderTag(w)
+    + ((w.pl && w.pl !== '—')?'<span class="tag">'+esc(formLabel(w))+'</span>':'')+'</div>'
+    + '<div class="fb-zh">'+esc(w.zh)+'</div>'
+    + (w.ex?'<div class="fb-ex">'+esc(w.ex)+(w.exZh?'<div class="exzh">'+esc(w.exZh)+'</div>':'')+'</div>':'')
+    + '<div class="fb-actions"><button class="btn ok-btn" id="btnRight">记对了</button>'
+    + '<button class="btn bad-btn" id="btnWrong">记错了</button></div></div>';
+  const qc = $('#qArea .qcard');
+  if(qc && qc.classList) qc.classList.add('answered');
+  $('#btnRight').onclick = ()=>gradeSelf(true);
+  $('#btnWrong').onclick = ()=>gradeSelf(false);
+}
+
+// 记对了 → 三轮完成，进复习曲线；记错了 → 归零，几张后再来
+function gradeSelf(ok){
+  const cur = session.q[0];
+  if(!cur) return;
+  if(session.busy) return;
+  session.busy = true;
+  const w = cur.w;
+  const br = $('#btnRight'), bw = $('#btnWrong');
+  if(br) br.disabled = true;
+  if(bw) bw.disabled = true;
+  session.answered++;
+  if(ok) session.correct++; else session.wrong++;
+  updateProgress(w.id, ok, true);
+  session.q.shift();
+  if(!ok) session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
+  session.busy = false;
+  toast(ok ? '✓ 学完 · 明天开始复习' : '✗ 记错了 · 回到 0/3，过几张再来');
+  renderStudy();
 }
 
 function bindChoice(checkFn){
@@ -1412,7 +1506,11 @@ function bind(){
     const n = parseInt(e.key, 10);
     if(n >= 1 && n <= 4){
       const btns = $$('#options .opt');
-      if(btns[n-1] && !btns[n-1].disabled){ btns[n-1].click(); }
+      if(btns[n-1] && !btns[n-1].disabled){ btns[n-1].click(); return; }
+      // 第 3 轮：1=认识/记对了，2=不认识/记错了
+      const selfBtns = [ $('#btnKnow'), $('#btnDunno'), $('#btnRight'), $('#btnWrong') ].filter(b=>b && !b.disabled);
+      const sb = n <= 2 ? selfBtns[n-1] : null;
+      if(sb){ e.preventDefault(); sb.click(); }
     }
   });
 }
