@@ -76,6 +76,18 @@ a{color:var(--accent)}
 .btn.dim{opacity:.45}
 .self-btns{display:flex;gap:10px;margin-top:18px}
 .self-btns .btn{flex:1;padding:14px 18px;font-size:16px}
+/* 第 3 轮 · 冠词步 */
+.art-blank{font-size:15px;font-weight:650;color:var(--muted);text-align:center;margin:4px 0 0}
+.art-blank .slot{display:inline-block;min-width:64px;letter-spacing:3px;border-bottom:2px solid var(--line);line-height:1.5}
+.art-blank .art{color:var(--ink);font-weight:800;letter-spacing:1px}
+.art-row{display:flex;gap:9px;margin-top:16px}
+.art-row .art-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 8px;font-size:16px;font-weight:750}
+.art-row .art-btn .n{font-size:11px;opacity:.5;font-weight:600}
+.art-input{display:flex;gap:9px;margin-top:12px}
+.art-input input{flex:1;min-width:0;padding:13px 15px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;font-family:inherit}
+.art-input input:focus{outline:none;border-color:var(--ink)}
+.art-input .btn{padding:0 18px;white-space:nowrap}
+.qcard.answered .art-row,.qcard.answered .art-input{display:none}
 .btn.sm{padding:7px 13px;font-size:13px;border-radius:9px}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
@@ -296,6 +308,11 @@ a{color:var(--accent)}
   .qcard.answered .spell{display:none}
   .qcard.answered .q-audio{display:none}
   .qcard.answered .self-btns{display:none}
+  .art-row{gap:7px;margin-top:12px}
+  .art-row .art-btn{padding:10px 6px;font-size:15px}
+  .art-input{margin-top:10px}
+  .art-input input{padding:11px 13px;font-size:15px}
+  .art-blank{font-size:14px;margin-top:2px}
 }
 
 /* 更矮的屏幕（iPhone SE / Safari 工具栏占位多）再收一档 */
@@ -406,9 +423,10 @@ a{color:var(--accent)}
       <h3>怎么用</h3>
       <p style="font-size:13.5px;color:var(--muted);line-height:1.8">
         点「开始学习」直接出题。每个新词固定走三轮：<b>第 1 轮</b>四选一（随便蒙一个也行）→
-        <b>第 2 轮</b>四选一、但四个选项词性相同 → <b>第 3 轮</b>不给选项，只给单词，先选「认识 / 不认识」，
-        看完答案再选「记对了 / 记错了」。记对了就算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；
-        记错了回到 0/3，过几张重来。
+        <b>第 2 轮</b>四选一、但四个选项词性相同 → <b>第 3 轮</b>不给选项，只给单词；
+        <b>有冠词的名词</b>先让你填出 der / die / das，填错就算这个词重新开始（回到 0/3），
+        填对才问「认识 / 不认识」，看完答案再选「记对了 / 记错了」。
+        记对了就算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；记错了回到 0/3，过几张重来。
         学新词的中途会插一两张以前学过的词，防止背了新的忘了旧的。
         单词旁边的 <b>n. / v. / adj.</b> 是词性；名词还会标 <b class="gtag g-m">阳</b> <b class="gtag g-f">阴</b> <b class="gtag g-n">中</b>（der 阳性 / die 阴性 / das 中性）；点 <b>⚡</b> 可以「斩杀」——这个词以后再也不复习了。<br>
         键盘 <b>1–4</b> 选答案，<b>空格</b> 继续，<b>S</b> 重听发音。
@@ -518,7 +536,7 @@ a{color:var(--accent)}
 
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 8 · 2025-11-02 · A1 词书补到 657 词</span>
+      <span style="opacity:.7">版本 9 · 2025-11-04 · 第 3 轮先填冠词</span>
     </p>
   </section>
 </div>
@@ -640,6 +658,13 @@ function genderTag(w){
   if(!g) return '';
   return '<span class="gtag g-'+g+'" title="'+esc(GENDER_NAME[g])+' · 冠词 '+esc(w.art || '')+'">'+esc(GENDER_TXT[g])+'</span>';
 }
+// 第 3 轮先考冠词：der / die / das
+const ARTICLES = ['der','die','das'];
+function needsArticle(w){ return genderOf(w) !== ''; }
+function normArticle(s){
+  return String(s || '').toLowerCase().replace(/[^a-zäöü]/g, '');
+}
+function articleOk(w, input){ return needsArticle(w) && normArticle(input) === String(w.art || '').toLowerCase(); }
 // 单词自己的学习进度：这个词答对到第几轮（共 3 轮算学完）
 function levelChip(p){
   let cls = 'new', txt = '新词';
@@ -974,6 +999,8 @@ function renderSelf(){
   if(!cur) return;
   const w = cur.w;
   updateBar();
+  // 名词先考冠词：填对了才继续问「认不认识」
+  if(needsArticle(w) && cur.stage !== 'know'){ renderArticleStep(cur, w); return; }
   $('#qArea').innerHTML =
     '<div class="qcard card">' + chipFor(w)
     + '<div class="q-tip">第 3 轮 · 没有选项，认识它吗？</div>'
@@ -989,6 +1016,73 @@ function renderSelf(){
   if(settings.autoAudio) setTimeout(()=>speak(frame(w), btn), 230);
   $('#btnKnow').onclick = ()=>revealSelf(true);
   $('#btnDunno').onclick = ()=>revealSelf(false);
+}
+
+// 冠词步：只给名词（不显示性标签、复数、例句——都会泄露 der/die/das）
+function renderArticleStep(cur, w){
+  $('#qArea').innerHTML =
+    '<div class="qcard card">' + chipFor(w)
+    + '<div class="q-tip">第 3 轮 · 先填出它的冠词</div>'
+    + '<div class="q-word">'+esc(bare(w))+'</div>'
+    + '<div class="art-blank" id="artBlank">冠词 <span class="slot">_____</span></div>'
+    + '<div class="q-sub">冠词是 '+esc(ARTICLES.join(' / '))+' 里的哪一个？</div>'
+    + '<div class="art-row" id="artRow">'
+    +   ARTICLES.map((a,i)=>'<button class="btn ghost art-btn" data-a="'+a+'"><span class="n">'+(i+1)+'</span>'+a+'</button>').join('')
+    + '</div>'
+    + '<div class="art-input"><input id="artInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入 der / die / das，回车">'
+    + '<button class="btn primary" id="artGo">确认</button></div><div id="fbWrap"></div></div>';
+  const inp = $('#artInput');
+  // 手机上不自动弹键盘（会顶起半屏），点一下输入框再输；电脑上直接聚焦
+  if(inp && (window.innerWidth || 0) > 720) inp.focus();
+  if(inp) inp.addEventListener('keydown', e=>{
+    if(e.key === 'Enter'){ e.preventDefault(); submitArticle(inp.value); }
+  });
+  const go = $('#artGo');
+  if(go) go.onclick = ()=>submitArticle(inp ? inp.value : '');
+  $$('#artRow .art-btn').forEach(b=>{ b.onclick = ()=>submitArticle(b.dataset.a); });
+}
+
+function submitArticle(val){
+  const cur = session.q[0];
+  if(!cur || session.busy) return;
+  const w = cur.w;
+  const input = $('#artInput');
+  if(input && input.disabled) return;
+  session.busy = true;
+  $$('#artRow .art-btn').forEach(b=>{ b.disabled = true; });
+  if(input) input.disabled = true;
+  const go = $('#artGo');
+  if(go) go.disabled = true;
+  const ok = articleOk(w, val);
+
+  if(ok){
+    session.busy = false;
+    toast('✓ 冠词对了 · 再看认识吗');
+    cur.stage = 'know';
+    renderSelf();
+    return;
+  }
+
+  // 冠词错 = 这个词重新开始，回到 0/3
+  session.answered++;
+  session.wrong++;
+  updateProgress(w.id, false);
+  $('#artBlank').innerHTML = '冠词 <span class="art">'+esc(w.art)+'</span>';
+  const qc = $('#qArea .qcard');
+  if(qc && qc.classList) qc.classList.add('answered');
+  $('#fbWrap').innerHTML =
+    '<div class="fb"><div class="fb-verdict bad">✗ 冠词错了，正确是 '+esc(w.art)+'</div>'
+    + '<div class="fb-word"><span class="de"><span class="art">'+esc(w.art)+'</span> '+esc(bare(w))+'</span>'+posTag(w.pos)+genderTag(w)
+    + ((w.pl && w.pl !== '—')?'<span class="tag">'+esc(formLabel(w))+'</span>':'')+'</div>'
+    + '<div class="fb-zh">'+esc(w.zh)+'</div>'
+    + (w.ex?'<div class="fb-ex">'+esc(w.ex)+(w.exZh?'<div class="exzh">'+esc(w.exZh)+'</div>':'')+'</div>':'')
+    + '<div class="fb-actions"><button class="btn primary" id="btnContinue">继续 <span style="opacity:.55;font-size:12px">空格</span></button></div></div>';
+  const bc = $('#btnContinue');
+  if(bc){ bc.focus(); bc.onclick = nextCard; }
+  session.q.shift();
+  session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
+  session.busy = false;
+  toast('✗ 冠词错了 · 这个词回到 0/3，过几张再来');
 }
 
 function revealSelf(claimed){
@@ -1505,6 +1599,9 @@ function bind(){
     if(e.key.toLowerCase() === 's'){ const b = $('#btnSpeak'); if(b){ e.preventDefault(); b.click(); } return; }
     const n = parseInt(e.key, 10);
     if(n >= 1 && n <= 4){
+      // 冠词步：1/2/3 = der/die/das
+      const artBtns = $$('#artRow .art-btn').filter(b=>b && !b.disabled);
+      if(artBtns.length && n <= 3){ e.preventDefault(); artBtns[n-1].click(); return; }
       const btns = $$('#options .opt');
       if(btns[n-1] && !btns[n-1].disabled){ btns[n-1].click(); return; }
       // 第 3 轮：1=认识/记对了，2=不认识/记错了
