@@ -406,6 +406,7 @@ a{color:var(--accent)}
     </div>
 
     <div class="seg deck-seg" id="segDeck"></div>
+    <p class="muted" style="font-size:12.5px;margin:8px 2px 0">点难度可以多选：默认三本全选，背的时候混在一起乱序出题；只勾 A1 就只背 A1。</p>
 
     <div class="stat-grid">
       <div class="stat card"><div class="k">词库总量</div><div class="v" id="statTotal">0</div></div>
@@ -425,9 +426,10 @@ a{color:var(--accent)}
         点「开始学习」直接出题。每个新词固定走三轮：<b>第 1 轮</b>四选一（随便蒙一个也行）→
         <b>第 2 轮</b>四选一、但四个选项词性相同 → <b>第 3 轮</b>不给选项，只给单词；
         <b>有冠词的名词</b>先让你填出 der / die / das，填错就算这个词重新开始（回到 0/3），
-        填对才问「认识 / 不认识」，看完答案再选「记对了 / 记错了」。
-        记对了就算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；记错了回到 0/3，过几张重来。
-        学新词的中途会插一两张以前学过的词，防止背了新的忘了旧的。
+        填对才问「认识 / 不认识」，看完答案再选「记对了 / 记错了」，最后还要
+        <b>亲手把单词拼一遍</b>，拼对才算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；哪一步错了都回到 0/3，过几张重来。
+        学完的词以后复习时，系统会随机出「拼单词」或「认单词」，并且经常插在新词中间，防止背了新的忘了旧的。
+        「词库」里点开任何一个词都能 <b>重新复习</b>（打回新词，从 0/3 重学）。
         单词旁边的 <b>n. / v. / adj.</b> 是词性；名词还会标 <b class="gtag g-m">阳</b> <b class="gtag g-f">阴</b> <b class="gtag g-n">中</b>（der 阳性 / die 阴性 / das 中性）；点 <b>⚡</b> 可以「斩杀」——这个词以后再也不复习了。<br>
         键盘 <b>1–4</b> 选答案，<b>空格</b> 继续，<b>S</b> 重听发音。
         有自己的词表？去「设置 → 导入词库」，支持从 Excel 复制粘贴。
@@ -536,7 +538,7 @@ a{color:var(--accent)}
 
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 10 · 2025-11-09 · 新增 A2 词书 273 词</span>
+      <span style="opacity:.7">版本 11 · 2025-11-11 · 混合难度 + 拼写收尾 + 重新复习</span>
     </p>
   </section>
 </div>
@@ -604,8 +606,14 @@ function normProgress(){
 normProgress();
 const roundsOf = p => (p && typeof p.rounds === 'number') ? p.rounds : (p && p.reps > 0 ? ROUNDS : 0);
 const isLearned = p => !!p && !p.dead && roundsOf(p) >= ROUNDS;
-const SET_DEF = { dailyNew:20, dailyReview:60, autoAudio:true, rate:0.9, theme:'auto', extraModes:false, deck:'a1' };
+const SET_DEF = { dailyNew:20, dailyReview:60, autoAudio:true, rate:0.9, theme:'auto', extraModes:false, levels:['a1','a2','b2c1'] };
 let settings = Object.assign({}, SET_DEF, store.get(K.set, {}));
+// 旧版本存的是单个 deck，迁移成多选 levels
+if(!Array.isArray(settings.levels) || !settings.levels.length){
+  settings.levels = settings.deck && DECKS[settings.deck] ? [settings.deck] : Object.keys(DECKS);
+}
+if(!settings.levels.length) settings.levels = Object.keys(DECKS);
+delete settings.deck;
 let stats = store.get(K.stats, { days:{}, total:0, correct:0 });
 let seenToday = store.get(K.seen, { date:'', ids:[] });
 let session = null;
@@ -821,6 +829,14 @@ function unkillWord(id){
   p.due = Date.now() + 7 * DAY;
   store.set(K.prog, progress);
 }
+// 重新复习：把这个词打回「新词」，从 0/3 重新学（保留星标和斩杀状态以外的数据全部清空）
+function resetWord(id){
+  const old = progress[id] || {};
+  progress[id] = { b:0, due:0, reps:0, lapses:0, last:0, rounds:0, star: !!old.star };
+  store.set(K.prog, progress);
+  if(session) session.q = session.q.filter(x => x.w.id !== id);
+}
+
 function killInSession(id){
   killWord(id);
   if(session) session.q = session.q.filter(x => x.w.id !== id);
@@ -828,7 +844,7 @@ function killInSession(id){
 }
 
 // 当前选中的词书；导入的词跟着一起背
-const deckWords = () => allWords().filter(w => settings.deck === 'my' ? w.src === 'import' : (w.src === 'import' || w.deck === settings.deck));
+const deckWords = () => allWords().filter(w => w.src === 'import' || settings.levels.indexOf(w.deck) >= 0);
 const dueList = () => deckWords().filter(w => { const p = progress[w.id]; return p && p.reps > 0 && !p.dead && p.due <= Date.now(); });
 const newList = () => deckWords().filter(w => !progress[w.id] || progress[w.id].reps === 0);
 const todayRec = () => stats.days[todayKey()] || { a:0, c:0, n:0, r:0 };
@@ -839,7 +855,7 @@ function interleave(newQ, dueQ, extraQ){
   const due = dueQ.slice(), extra = extraQ.slice();
   const N = newQ.length;
   // 到期复习词：大约每 (新词+复习)/复习 张插一次
-  const dueEvery = due.length ? Math.max(2, Math.round((N + due.length) / (due.length + 1))) : 0;
+  const dueEvery = due.length ? Math.max(1, Math.round((N + due.length) / (due.length + 1))) : 0;
   // 额外回顾：在新词 1/3 和 2/3 处各插一张（最多两张）
   const extraAt = {};
   if(extra.length && N >= 3){
@@ -863,7 +879,8 @@ function buildQueue(mode){
   const newLeft = Math.max(0, settings.dailyNew - (rec.n || 0));
   const revLeft = Math.max(0, settings.dailyReview - (rec.r || 0));
   const due = dueList().sort((a,b)=>progress[a.id].due - progress[b.id].due).slice(0, revLeft);
-  const fresh = newList().slice(0, newLeft);
+  // 所有选中的词书混在一起、先打乱再取今天的新词，避免总是先背 A1
+  const fresh = shuffle(newList().slice()).slice(0, newLeft);
   // 三轮没走完的词（1/3、2/3）永远拉回来，哪怕 10 分钟的 due 还没到，保证一次坐完三轮
   const dueIds = new Set(due.map(w=>w.id));
   const learning = shuffle(deckWords().filter(w=>{
@@ -881,7 +898,7 @@ function buildQueue(mode){
   const extraQ = shuffle(deckWords().filter(w=>{
     const p = progress[w.id];
     return p && p.reps > 0 && !p.dead && roundsOf(p) >= ROUNDS && p.due > Date.now() && !freshIds.has(w.id);
-  })).slice(0, 2);
+  })).slice(0, 3);
   return interleave(newQ, dueQ, extraQ);
 }
 
@@ -916,10 +933,9 @@ function pickType(w){
     if(r === 1) return 'r2';
     return 'r3';
   }
-  const b = (p && p.b) || 0;
-  if(settings.extraModes && b >= 4) return ['de2zh','zh2de','listen','spell'][Math.floor(Math.random()*4)];
-  if(settings.extraModes && b === 3 && Math.random() < 0.35) return 'listen';
-  return Math.random() < 0.6 ? 'de2zh' : 'zh2de';
+  // 学完的词：复习时随机「拼单词」或「认单词」，拼写题更费脑，间隔也更密
+  if(settings.extraModes && Math.random() < 0.2) return Math.random() < 0.5 ? 'listen' : 'zh2de';
+  return Math.random() < 0.5 ? 'rspell' : 'r3';
 }
 
 function pickOthers(word, n, key, samePos){
@@ -949,7 +965,11 @@ function renderStudy(){
 
   updateBar();
 
-  if(type === 'r3'){ renderSelf(); return; }
+  if(type === 'r3'){
+    if(cur.stage === 'write'){ renderWrite(); return; }
+    if(isLearned(progress[w.id])) cur.stage = 'know';
+    renderSelf(); return;
+  }
 
   if(type === 'r1' || type === 'r2' || type === 'de2zh' || type === 'listen'){
     const isListen = type === 'listen';
@@ -980,8 +1000,9 @@ function renderStudy(){
       + '<div class="options" id="options">'+optsHtml+'</div><div id="fbWrap"></div></div>';
     bindChoice(id => id === w.id);
   } else {
+    const rspell = type === 'rspell';
     $('#qArea').innerHTML =
-      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">根据中文，拼出德语单词</div>'
+      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">'+(rspell ? '复习 · 拼出这个单词' : '根据中文，拼出德语单词')+'</div>'
       + '<div class="q-word small">'+esc(w.zh)+'</div>'
       + '<div class="q-sub">'+(w.art ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+'</div>'
       + '<div class="spell"><input id="spellInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入德语单词…">'
@@ -998,6 +1019,7 @@ function renderStudy(){
 function renderSelf(){
   const cur = session.q[0];
   if(!cur) return;
+  if(cur.stage === 'write'){ renderWrite(); return; }
   const w = cur.w;
   updateBar();
   // 名词先考冠词：填对了才继续问「认不认识」
@@ -1111,8 +1133,14 @@ function gradeSelf(ok){
   const cur = session.q[0];
   if(!cur) return;
   if(session.busy) return;
-  session.busy = true;
   const w = cur.w;
+  // 刚学的新词：记对了还不算完，必须亲手拼一遍
+  if(ok && !isLearned(progress[w.id])){
+    cur.stage = 'write';
+    renderWrite();
+    return;
+  }
+  session.busy = true;
   const br = $('#btnRight'), bw = $('#btnWrong');
   if(br) br.disabled = true;
   if(bw) bw.disabled = true;
@@ -1124,6 +1152,54 @@ function gradeSelf(ok){
   session.busy = false;
   toast(ok ? '✓ 学完 · 明天开始复习' : '✗ 记错了 · 回到 0/3，过几张再来');
   renderStudy();
+}
+
+/* ---------- 最后一步：亲手拼写，拼对才算学完 ---------- */
+function renderWrite(){
+  const cur = session.q[0]; if(!cur) return;
+  const w = cur.w;
+  updateBar();
+  $('#qArea').innerHTML =
+    '<div class="qcard card">' + chipFor(w)
+    + '<div class="q-tip">最后一步 · 把单词拼出来才算学完</div>'
+    + '<div class="q-word small">'+esc(w.zh)+'</div>'
+    + '<div class="q-sub">'+(w.art && w.art !== '—' ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+'</div>'
+    + '<div class="spell"><input id="writeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入德语单词…">'
+    + '<div class="hint">回车提交 · ä 可写成 ae，ß 可写成 ss</div></div><div id="fbWrap"></div></div>';
+  const inp = $('#writeInput');
+  if(inp){
+    if((window.innerWidth || 0) > 720) inp.focus();
+    inp.addEventListener('keydown', e=>{
+      if(e.key === 'Enter'){ e.preventDefault(); submitWrite(normalizeDe(inp.value) === normalizeDe(bare(w))); }
+    });
+  }
+}
+
+function submitWrite(ok){
+  const cur = session.q[0];
+  if(!cur || session.busy) return;
+  session.busy = true;
+  const w = cur.w;
+  const inp = $('#writeInput');
+  if(inp){ inp.disabled = true; inp.style.borderColor = ok ? 'var(--ok)' : 'var(--bad)'; }
+  session.answered++;
+  if(ok) session.correct++; else session.wrong++;
+  updateProgress(w.id, ok, ok);
+  const qc = $('#qArea .qcard');
+  if(qc && qc.classList) qc.classList.add('answered');
+  $('#fbWrap').innerHTML =
+    '<div class="fb"><div class="fb-verdict '+(ok?'ok':'bad')+'">'+(ok?'✓ 拼对了 · 这个词学完了':'✗ 拼写不对，正确写法是 '+esc(frame(w)))+'</div>'
+    + '<div class="fb-word"><span class="de">'+(w.art && w.art !== '—' ? '<span class="art">'+esc(w.art)+'</span> ':'')+esc(bare(w))+'</span>'+posTag(w.pos)+genderTag(w)
+    + ((w.pl && w.pl !== '—')?'<span class="tag">'+esc(formLabel(w))+'</span>':'')+'</div>'
+    + '<div class="fb-zh">'+esc(w.zh)+'</div>'
+    + (w.ex?'<div class="fb-ex">'+esc(w.ex)+(w.exZh?'<div class="exzh">'+esc(w.exZh)+'</div>':'')+'</div>':'')
+    + '<div class="fb-actions"><button class="btn primary" id="btnContinue">继续 <span style="opacity:.55;font-size:12px">空格</span></button></div></div>';
+  const bc = $('#btnContinue');
+  if(bc){ bc.focus(); bc.onclick = nextCard; }
+  session.q.shift();
+  if(!ok) session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
+  session.busy = false;
+  toast(ok ? '✓ 学完 · 明天开始复习' : '✗ 拼写错了 · 回到 0/3，过几张再来');
 }
 
 function bindChoice(checkFn){
@@ -1244,7 +1320,9 @@ function renderHome(){
   const hour = new Date().getHours();
   const greet = hour < 5 ? '夜深了' : hour < 11 ? '早上好' : hour < 14 ? '中午好' : hour < 18 ? '下午好' : '晚上好';
   $('#heroTitle').textContent = greet + '，今天背几个词？';
-  const dn = DECK_NAME[settings.deck] || '词书';
+  const allDecks = Object.keys(DECKS);
+  const dn = settings.levels.length >= allDecks.length ? '全部词汇'
+    : settings.levels.map(k=>DECK_NAME[k] || k).join(' + ');
   if(!deckWords().length) $('#heroSub').textContent = dn + ' 还没有词，换一本词书或导入自己的词表';
   else if(!q.length) $('#heroSub').textContent = dn + '：今天的任务已经完成 ✓' + (total ? ' 明天见' : '');
   else{
@@ -1283,12 +1361,22 @@ function renderDeckSeg(){
   const counts = {};
   words.forEach(w=>{ counts[w.deck] = (counts[w.deck] || 0) + 1; });
   const keys = Object.keys(DECKS).length ? Object.keys(DECKS) : Object.keys(counts);
-  const btns = keys.map(k=>'<button data-deck="'+esc(k)+'" class="'+(settings.deck===k?'on':'')+'">'
-      + esc(DECK_NAME[k] || k) + '<span class="cnt">' + (counts[k] || 0) + '</span></button>').join('')
-    + '<button data-deck="my" class="'+(settings.deck==='my'?'on':'')+'">我的导入<span class="cnt">'+importedWords().length+'</span></button>';
+  const allOn = keys.length && keys.every(k=>settings.levels.indexOf(k) >= 0);
+  const btns = '<button data-lv="all" class="'+(allOn?'on':'')+'">全部<span class="cnt">'+allWords().length+'</span></button>'
+    + keys.map(k=>'<button data-lv="'+esc(k)+'" class="'+(settings.levels.indexOf(k)>=0?'on':'')+'">'
+      + esc(DECK_NAME[k] || k) + '<span class="cnt">' + (counts[k] || 0) + '</span></button>').join('');
   seg.innerHTML = btns;
   $$('#segDeck button').forEach(b=>b.onclick = ()=>{
-    settings.deck = b.dataset.deck;
+    const v = b.dataset.lv;
+    if(v === 'all'){
+      settings.levels = keys.slice();
+    } else if(settings.levels.indexOf(v) >= 0){
+      if(settings.levels.length <= 1){ toast('至少留一个难度，不然就没词可背了'); return; }
+      settings.levels = settings.levels.filter(k=>k !== v);
+    } else {
+      settings.levels = settings.levels.concat([v]);
+    }
+    settings.levels = keys.filter(k=>settings.levels.indexOf(k) >= 0);
     store.set(K.set, settings);
     renderHome();
   });
@@ -1359,6 +1447,7 @@ function openWord(id){
     + (w.ex?'<div class="fb-ex" style="margin-top:16px">'+esc(w.ex)+(w.exZh?'<div class="exzh">'+esc(w.exZh)+'</div>':'')+'</div>':'')
     + '<div class="modal-actions">'+(w.src==='import'?'<button class="btn ghost" id="mDel" style="color:var(--bad)">删除</button>':'')
     + '<button class="btn ghost" id="mKill">'+(p && p.dead ? '恢复复习' : '⚡ 斩杀')+'</button>'
+    + '<button class="btn ghost" id="mReset">重新复习</button>'
     + '<button class="btn ghost" id="mSpeak">🔊 发音</button><button class="btn primary" id="mClose">关闭</button></div>',
     null);
   $('#mSpeak').onclick = ()=>speak(frame(w));
@@ -1368,6 +1457,11 @@ function openWord(id){
     const dead = !!(progress[id] && progress[id].dead);
     closeModal(); renderBrowse(); renderHome();
     toast(dead ? '已斩杀 · 以后不再复习' : '已恢复复习');
+  };
+  $('#mReset').onclick = ()=>{
+    resetWord(id);
+    closeModal(); renderBrowse(); renderHome();
+    toast('已重置 · 这个词会当新词重新学一遍');
   };
   if($('#mDel')) $('#mDel').onclick = ()=>{
     if(!confirm('从词库删除「'+w.de+'」？')) return;
