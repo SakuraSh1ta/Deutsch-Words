@@ -135,11 +135,12 @@ a{color:var(--accent)}
 .opt.wrong .n{background:var(--bad);color:#fff}
 .opt[disabled]{cursor:default}
 
-.spell{margin-top:auto;padding-top:20px}
-.spell input{width:100%;padding:16px 18px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);
+.spell{margin-top:auto;padding-top:20px;display:flex;flex-wrap:wrap;gap:9px}
+.spell input{flex:1 1 180px;min-width:0;padding:16px 18px;border-radius:13px;border:1.5px solid var(--line);background:var(--card);
   font-size:20px;font-weight:600;letter-spacing:.5px;outline:none}
 .spell input:focus{border-color:var(--ink)}
-.spell .hint{margin-top:8px;font-size:12.5px;color:var(--muted);text-align:center}
+.spell .btn{flex:0 0 auto;padding:0 20px;min-height:52px}
+.spell .hint{flex:1 1 100%;margin-top:0;font-size:12.5px;color:var(--muted);text-align:center}
 
 /* 反馈面板 */
 /* 反馈面板 */
@@ -294,9 +295,10 @@ a{color:var(--accent)}
   .fb-ex .exzh{font-size:11.5px}
   .fb-actions{margin-top:10px;gap:8px}
   .fb-actions .star{width:38px;height:38px;font-size:16px}
-  .spell{padding-top:10px}
+  .spell{padding-top:10px;gap:7px}
   .spell input{padding:12px 14px;font-size:17px}
-  .spell .hint{margin-top:5px;font-size:11.5px}
+  .spell .btn{min-height:46px;padding:0 16px;font-size:14px}
+  .spell .hint{margin-top:0;font-size:11.5px}
   .done{padding:26px 16px}
   .done .emoji{font-size:40px}
   .done h2{font-size:20px;margin-top:8px}
@@ -425,14 +427,14 @@ a{color:var(--accent)}
     <div class="card levels" style="margin-top:14px">
       <h3>怎么用</h3>
       <p style="font-size:13.5px;color:var(--muted);line-height:1.8">
-        点「开始学习」直接出题。每个新词固定走三轮：<b>第 1 轮</b>四选一（随便蒙一个也行）→
+        点「开始学习」直接出题。每个新词要过三轮加一轮拼写：<b>第 1 轮</b>四选一（随便蒙一个也行）→
         <b>第 2 轮</b>四选一、但四个选项词性相同 → <b>第 3 轮</b>不给选项，只给单词；
         <b>有冠词的名词</b>先让你填出 der / die / das，填错就算这个词重新开始（回到 0/3），
         填对才问「认识 / 不认识」：选<b>不认识</b>就直接回 0/3、过几张重来（不再追问）；
-        选<b>认识</b>才出答案，再选「记对了 / 记错了」，最后还要
-        <b>亲手把单词拼一遍</b>，拼对才算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；哪一步错了都回到 0/3，过几张重来。
-        <b>拼不出来也不清零</b>：会放进「中间区」（词库里显示 <b>待拼写</b>），既不算新词也不算学完，
-        之后每次学习都会捞回来让你再拼，出现的次数比复习多、比新词少，直到写对为止。
+        选<b>认识</b>才出答案，再选「记对了 / 记错了」。记对了之后<b>先不拼写</b>，
+        隔 4–6 张词再单独考<b>第 4 轮：拼写</b>，写对才算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；前三轮哪步错了都回到 0/3，过几张重来。
+        拼写写错<b>不清零</b>：会留在「待拼写」（词库里能看到），既不算新词也不算学完，
+        之后每次学习都会捞回来再拼，出现的次数比复习多、比新词少，直到写对为止。
         嫌麻烦可以在设置里关掉「拼写验收」，第三轮记对了就直接学完。
         学完的词以后复习时，系统会随机出「拼单词」或「认单词」，并且经常插在新词中间，防止背了新的忘了旧的。
         「词库」里点开任何一个词都能 <b>重新复习</b>（打回新词，从 0/3 重学）。
@@ -510,7 +512,7 @@ a{color:var(--accent)}
         <div class="switch" id="switchExtra"></div>
       </div>
       <div class="set-row">
-        <div class="lbl"><b>拼写验收</b><span>第 3 轮要亲手拼出来才算学会；写不出来先放中间区，多见面几次，直到写对</span></div>
+        <div class="lbl"><b>拼写验收</b><span>前三轮过完，隔几张再单独考第 4 轮拼写；写不出来就留着反复来，直到写对</span></div>
         <div class="switch" id="switchSpell"></div>
       </div>
       <div class="set-row">
@@ -548,7 +550,7 @@ a{color:var(--accent)}
 
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 15 · 2025-11-15 · 不认识直接跳过、不再追问</span>
+      <span style="opacity:.7">版本 16 · 2025-11-16 · 拼写独立成第 4 轮 + 冠词拼写容错</span>
     </p>
   </section>
 </div>
@@ -652,6 +654,16 @@ function normalizeDe(s){
     .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
     .replace(/[^a-z0-9aeous \-]/g,'').replace(/\s+/g,' ');
 }
+// 判拼写对不对：允许带上冠词（der Mann / die Frau），也允许只写单词本身
+function stripArticle(s){
+  return String(s || '').replace(/^\s*(der|die|das)\b\.?\s*/i, '');
+}
+function checkSpelling(w, input){
+  const want = normalizeDe(bare(w));
+  const got = normalizeDe(input);
+  if(!got) return false;
+  return got === want || normalizeDe(stripArticle(input)) === want;
+}
 const POS = { n:'名词', v:'动词', adj:'形容词', adv:'副词', prep:'介词', conj:'连词', pron:'代词', num:'数词', phrase:'短语', int:'感叹词' };
 const posName = p => POS[p] || '';
 // 词性英文缩写，跟在单词旁边
@@ -685,7 +697,18 @@ function needsArticle(w){ return genderOf(w) !== ''; }
 function normArticle(s){
   return String(s || '').toLowerCase().replace(/[^a-zäöü]/g, '');
 }
-function articleOk(w, input){ return needsArticle(w) && normArticle(input) === String(w.art || '').toLowerCase(); }
+function articleOk(w, input){
+  if(!needsArticle(w)) return false;
+  const want = String(w.art || '').toLowerCase();
+  if(normArticle(input) === want) return true;
+  // 手滑把单词也一起打进来（der Mann）：只要冠词对、后面的词也对，就算对
+  const m = /^\s*(der|die|das)\b\.?\s*/i.exec(String(input || ''));
+  if(m && m[1].toLowerCase() === want){
+    const rest = normalizeDe(String(input).slice(m[0].length));
+    if(rest && rest === normalizeDe(bare(w))) return true;
+  }
+  return false;
+}
 // 单词自己的学习进度：这个词答对到第几轮（共 3 轮算学完）
 function levelChip(p){
   let cls = 'new', txt = '新词';
@@ -1174,29 +1197,36 @@ function revealSelf(claimed){
   $('#btnWrong').onclick = ()=>gradeSelf(false);
 }
 
-// 记对了 → 三轮完成，进复习曲线；记错了 → 归零，几张后再来
+// 记对了 → 三轮完成；拼写验收开着时，拼写单独算「第 4 轮」，过几张再考
 function gradeSelf(ok){
   const cur = session.q[0];
   if(!cur) return;
   if(session.busy) return;
   const w = cur.w;
-  // 刚学的新词：记对了还不算完，必须亲手拼一遍（设置里可以关掉这一步）
-  if(ok && settings.spellCheck !== false && !isLearned(progress[w.id])){
-    cur.stage = 'write';
-    renderWrite();
-    return;
-  }
+  const wasLearned = isLearned(progress[w.id]);
   session.busy = true;
   const br = $('#btnRight'), bw = $('#btnWrong');
   if(br) br.disabled = true;
   if(bw) bw.disabled = true;
   session.answered++;
   if(ok) session.correct++; else session.wrong++;
-  updateProgress(w.id, ok, true);
+  // 新词：finish=true 收尾三轮；已学完的词复习：走正常 SRS 递增，别把间隔打回 1 天
+  updateProgress(w.id, ok, !wasLearned);
+  const np = progress[w.id];
+  // 新词记对了：三轮过了，但拼写还没考——挂起「第 4 轮」，过几张再拉回来
+  const fourth = !!(ok && !wasLearned && settings.spellCheck !== false && np);
+  if(fourth){ np.half = true; store.set(K.prog, progress); }
   session.q.shift();
-  if(!ok) session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
+  if(!ok){
+    session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
+  } else if(fourth){
+    // 过 4–6 张词再考拼写
+    const at = 4 + Math.floor(Math.random() * 3);
+    session.q.splice(Math.min(at, session.q.length), 0, { w, type:null });
+  }
   session.busy = false;
-  toast(ok ? '✓ 学完 · 明天开始复习' : '✗ 记错了 · 回到 0/3，过几张再来');
+  toast(ok ? (fourth ? '✓ 记对了 · 第 4 轮拼写，过几张就来' : '✓ 学完 · 明天开始复习')
+           : '✗ 记错了 · 回到 0/3，过几张再来');
   renderStudy();
 }
 
@@ -1206,7 +1236,7 @@ function renderWrite(isHalf){
   const w = cur.w;
   updateBar();
   const tip = isHalf
-    ? '中间区 · 还差拼写这一步，写出来才算学会'
+    ? '第 4 轮 · 拼写：写出来才算真的学会'
     : '最后一步 · 把单词拼出来才算学完';
   $('#qArea').innerHTML =
     '<div class="qcard card">' + chipFor(w)
@@ -1214,14 +1244,18 @@ function renderWrite(isHalf){
     + '<div class="q-word small">'+esc(w.zh)+'</div>'
     + '<div class="q-sub">'+(w.art && w.art !== '—' ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+'</div>'
     + '<div class="spell"><input id="writeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入德语单词…">'
-    + '<div class="hint">回车提交 · ä 可写成 ae，ß 可写成 ss</div></div><div id="fbWrap"></div></div>';
+    + '<button class="btn primary" id="writeGo">确认</button>'
+    + '<div class="hint">写单词本身就行，带上冠词（der Mann）也算对 · ä 可写成 ae，ß 可写成 ss</div></div><div id="fbWrap"></div></div>';
   const inp = $('#writeInput');
+  const submit = () => submitWrite(checkSpelling(w, inp ? inp.value : ''));
   if(inp){
     if((window.innerWidth || 0) > 720) inp.focus();
     inp.addEventListener('keydown', e=>{
-      if(e.key === 'Enter'){ e.preventDefault(); submitWrite(normalizeDe(inp.value) === normalizeDe(bare(w))); }
+      if(e.key === 'Enter'){ e.preventDefault(); submit(); }
     });
   }
+  const go = $('#writeGo');
+  if(go) go.onclick = submit;
 }
 
 function submitWrite(ok){
