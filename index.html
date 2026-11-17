@@ -432,12 +432,14 @@ a{color:var(--accent)}
         <b>有冠词的名词</b>先让你填出 der / die / das，填错就算这个词重新开始（回到 0/3），
         填对才问「认识 / 不认识」：选<b>不认识</b>就直接回 0/3、过几张重来（不再追问）；
         选<b>认识</b>才出答案，再选「记对了 / 记错了」。记对了之后<b>先不拼写</b>，
-        隔 4–6 张词再单独考<b>第 4 轮：拼写</b>，写对才算 3/3 学完，按 1 / 3 / 7 / 15 天往后推；前三轮哪步错了都回到 0/3，过几张重来。
+        隔 4–6 张词再单独考<b>第 4 轮：拼写</b>，写对才算 3/3 学完；前三轮哪步错了都回到 0/3，过几张重来。
         <b>名词在这一轮不给冠词提示</b>，要自己连冠词一起写对（<b>der Mann</b>），冠词错了不算对。
         拼写写错<b>不清零</b>：会留在「待拼写」（词库里能看到），既不算新词也不算学完，
         之后每次学习都会捞回来再拼，出现的次数比复习多、比新词少，直到写对为止。
         嫌麻烦可以在设置里关掉「拼写验收」，第三轮记对了就直接学完。
-        学完的词以后复习时，系统会随机出「拼单词」或「认单词」，并且经常插在新词中间，防止背了新的忘了旧的。
+        <b>复习</b>：学完的词<b>每天都复习一遍</b>（不清零，间隔不往后拖），而且复习题<b>直接就是拼写</b>——
+        给中文，你把德语写出来；<b>拼不出来就重新算新词</b>，回到 0/3 从头学。
+        每天<b>凌晨 4 点</b>刷新：新的一天、新的新词额度、该复习的词都从这时算。
         「词库」里点开任何一个词都能 <b>重新复习</b>（打回新词，从 0/3 重学）。
         单词旁边的 <b>n. / v. / adj.</b> 是词性；名词还会标 <b class="gtag g-m">阳</b> <b class="gtag g-f">阴</b> <b class="gtag g-n">中</b>（der 阳性 / die 阴性 / das 中性）；点 <b>⚡</b> 可以「斩杀」——这个词以后再也不复习了。<br>
         键盘 <b>1–4</b> 选答案，<b>空格</b> 继续，<b>S</b> 重听发音。
@@ -497,12 +499,12 @@ a{color:var(--accent)}
   <section id="view-settings" class="view">
     <div class="card set-card">
       <div class="set-row">
-        <div class="lbl"><b>每日新词</b><span>每天最多学几个新词</span></div>
+        <div class="lbl"><b>每日新词</b><span>只算新词，复习不占这个名额</span></div>
         <div class="stepper"><button id="decNew">−</button><b id="setDailyNew">20</b><button id="incNew">+</button></div>
       </div>
       <div class="set-row">
-        <div class="lbl"><b>每日复习上限</b><span>防止某天堆积太多</span></div>
-        <div class="stepper"><button id="decRev">−</button><b id="setDailyReview">60</b><button id="incRev">+</button></div>
+        <div class="lbl"><b>每日复习上限</b><span>「不限」= 今天到期的词全复习一遍</span></div>
+        <div class="stepper"><button id="decRev">−</button><b id="setDailyReview">不限</b><button id="incRev">+</button></div>
       </div>
       <div class="set-row">
         <div class="lbl"><b>自动发音</b><span>出现单词时自动读一遍</span></div>
@@ -550,8 +552,9 @@ a{color:var(--accent)}
     </div>
 
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
+      每天 <b>凌晨 4:00</b> 刷新新词额度与当天复习安排（4 点前算前一天）<br>
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 17 · 2025-11-16 · 拼写轮名词不提示冠词、冠词错算错</span>
+      <span style="opacity:.7">版本 18 · 2025-11-17 · 复习每天一次且直接拼写、凌晨 4 点刷新</span>
     </p>
   </section>
 </div>
@@ -621,7 +624,7 @@ const roundsOf = p => (p && typeof p.rounds === 'number') ? p.rounds : (p && p.r
 const isLearned = p => !!p && !p.dead && !p.half && roundsOf(p) >= ROUNDS;
 // 中间区：三轮走完但拼写没写出来，既不算新词也不算学完
 const isHalf = p => !!p && !p.dead && !!p.half;
-const SET_DEF = { dailyNew:20, dailyReview:60, autoAudio:true, rate:0.9, theme:'auto', extraModes:false, spellCheck:true, levels:['a1','a2','b2c1'] };
+const SET_DEF = { dailyNew:20, dailyReview:0, autoAudio:true, rate:0.9, theme:'auto', extraModes:false, spellCheck:true, levels:['a1','a2','b2c1'] };
 let settings = Object.assign({}, SET_DEF, store.get(K.set, {}));
 // 旧版本存的是单个 deck，迁移成多选 levels
 if(!Array.isArray(settings.levels) || !settings.levels.length){
@@ -638,8 +641,23 @@ let browseStatus = 'all', browseQuery = '', browseLevel = 'all', browseLimit = 3
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const pad = n => String(n).padStart(2,'0');
-function dayKey(d){ d = d || new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
-const todayKey = () => dayKey(new Date());
+// 每天凌晨 4 点算新的一天：今日统计、新词/复习额度、复习到期时间都在 04:00 刷新
+const DAY_START_HOUR = 4;
+function dayKey(d){
+  const t = d instanceof Date ? d.getTime() : (d || Date.now());
+  const x = new Date(t - DAY_START_HOUR * 3600 * 1000);
+  return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate());
+}
+const todayKey = () => dayKey(Date.now());
+// 当前学习日从凌晨 4 点开始；4 点前算前一天
+function dayStart(ts){
+  const t = ts || Date.now();
+  const d = new Date(t);
+  const s = new Date(d.getFullYear(), d.getMonth(), d.getDate(), DAY_START_HOUR, 0, 0, 0).getTime();
+  return t >= s ? s : s - DAY;
+}
+// 学会的词每天都复习：下一次复习时间就是明天凌晨 4 点
+const nextReviewDue = () => dayStart() + DAY;
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
@@ -827,19 +845,20 @@ function updateProgress(id, correct, finish){
   const now = Date.now();
   if(correct){
     if(finish){
-      // 第 3 轮自评「记对了」：三轮完成，交给复习曲线
+      // 第 3 轮自评「记对了」：三轮完成，明天凌晨 4 点起复习
       p.rounds = ROUNDS;
       p.b = Math.max(p.b, ROUNDS);
       p.half = false;
-      p.due = now + 1 * DAY;
+      p.due = nextReviewDue();
     } else if(p.rounds < ROUNDS){
       p.rounds++;
       p.b = Math.max(p.b, p.rounds);
-      // 第 1、2 轮：10 分钟后再考（当轮会直接把它插回队列）；第 3 轮：明天进复习
-      p.due = now + (p.rounds < ROUNDS ? 10 * 60 * 1000 : 1 * DAY);
+      // 第 1、2 轮：10 分钟后再考（当轮会直接把它插回队列）；第 3 轮：明天凌晨 4 点进复习
+      p.due = p.rounds < ROUNDS ? now + 10 * 60 * 1000 : nextReviewDue();
     } else {
+      // 学会的词每天都复习：答对也只把下次排到明天凌晨 4 点，不越拖越远
       p.b = Math.min(7, p.b + 1);
-      p.due = now + INTERVALS[p.b] * DAY;
+      p.due = nextReviewDue();
     }
   }
   else { p.b = 0; p.rounds = 0; p.due = now + 10 * 60 * 1000; p.lapses++; }
@@ -927,8 +946,10 @@ function interleave(newQ, dueQ, extraQ){
 
 function buildQueue(mode){
   const rec = todayRec();
+  // 每日新词额度只算「新词」，复习词不占这个名额
   const newLeft = Math.max(0, settings.dailyNew - (rec.n || 0));
-  const revLeft = Math.max(0, settings.dailyReview - (rec.r || 0));
+  // 复习上限：0 = 不限，默认把今天所有到期的词都排上（学过的词每天都复习）
+  const revLeft = settings.dailyReview > 0 ? Math.max(0, settings.dailyReview - (rec.r || 0)) : Infinity;
   const due = dueList().sort((a,b)=>progress[a.id].due - progress[b.id].due).slice(0, revLeft);
   // 所有选中的词书混在一起、先打乱再取今天的新词，避免总是先背 A1
   const fresh = shuffle(newList().slice()).slice(0, newLeft);
@@ -988,10 +1009,12 @@ function pickType(w){
     if(r === 1) return 'r2';
     return 'r3';
   }
-  // 学完的词：复习时随机「拼单词」或「认单词」，拼写题更费脑，间隔也更密
-  if(settings.extraModes && Math.random() < 0.2) return Math.random() < 0.5 ? 'listen' : 'zh2de';
-  if(settings.spellCheck === false) return 'r3';
-  return Math.random() < 0.5 ? 'rspell' : 'r3';
+  // 复习就是直接拼单词：拼不出来就重新算新词（见 submitWrite）
+  if(settings.spellCheck === false){
+    if(settings.extraModes && Math.random() < 0.35) return Math.random() < 0.5 ? 'listen' : 'zh2de';
+    return 'r3';
+  }
+  return 'rspell';
 }
 
 function pickOthers(word, n, key, samePos){
@@ -1275,18 +1298,31 @@ function renderWrite(isHalf){
 function submitWrite(ok){
   const cur = session.q[0];
   if(!cur || session.busy) return;
-  session.busy = true;
   const w = cur.w;
+  const p0 = progress[w.id];
+  // 这是「复习」还是「新词的第 4 轮」：复习走的是已学完的词（没有 half 标记）
+  const isReview = !!(p0 && !p0.half && !p0.dead && roundsOf(p0) >= ROUNDS);
+  session.busy = true;
   const inp = $('#writeInput');
   if(inp){ inp.disabled = true; inp.style.borderColor = ok ? 'var(--ok)' : 'var(--bad)'; }
   session.answered++;
   if(ok) session.correct++; else session.wrong++;
-  updateProgress(w.id, ok, ok);
+  updateProgress(w.id, ok, ok && !isReview);
   const np = progress[w.id];
   if(np){
-    if(ok){ np.half = false; }
-    else {
-      // 写不出来：既不算新词也不算学完，放进中间区，之后会经常被拉回来
+    if(ok){
+      np.half = false;
+      if(!isReview){ np.rounds = ROUNDS; np.b = Math.max(np.b, ROUNDS); }
+      np.due = nextReviewDue();
+    } else if(isReview){
+      // 复习时拼不出来：这个词重新算新词，回到词库的新词队列，从 0/3 再学
+      np.half = false;
+      np.rounds = 0;
+      np.b = 0;
+      np.reps = 0;
+      np.due = 0;
+    } else {
+      // 新词第 4 轮写不出来：既不算新词也不算学完，放进中间区，之后会经常被拉回来
       np.half = true;
       np.rounds = ROUNDS;
       np.b = 1;
@@ -1297,7 +1333,11 @@ function submitWrite(ok){
   const qc = $('#qArea .qcard');
   if(qc && qc.classList) qc.classList.add('answered');
   $('#fbWrap').innerHTML =
-    '<div class="fb"><div class="fb-verdict '+(ok?'ok':'bad')+'">'+(ok?'✓ 写出来了 · 这个词学完了':'✗ 没写出来 · 先放进中间区，正确写法是 '+esc(frame(w)))+'</div>'
+    '<div class="fb"><div class="fb-verdict '+(ok?'ok':'bad')+'">'
+    + (ok ? (isReview ? '✓ 写出来了 · 明天凌晨 4 点后再复习' : '✓ 写出来了 · 这个词学完了')
+          : (isReview ? '✗ 没写出来 · 这个词重新算新词，从 0/3 再学，正确写法是 '+esc(frame(w))
+                      : '✗ 没写出来 · 先放进中间区，正确写法是 '+esc(frame(w))))
+    + '</div>'
     + '<div class="fb-word"><span class="de">'+(w.art && w.art !== '—' ? '<span class="art">'+esc(w.art)+'</span> ':'')+esc(bare(w))+'</span>'+posTag(w.pos)+genderTag(w)
     + ((w.pl && w.pl !== '—')?'<span class="tag">'+esc(formLabel(w))+'</span>':'')+'</div>'
     + '<div class="fb-zh">'+esc(w.zh)+'</div>'
@@ -1308,7 +1348,8 @@ function submitWrite(ok){
   session.q.shift();
   if(!ok) session.q.splice(Math.min(3, session.q.length), 0, { w, type:null });
   session.busy = false;
-  toast(ok ? '✓ 学完 · 明天开始复习' : '✗ 没写出来 · 放进中间区，过几张再来');
+  toast(ok ? (isReview ? '✓ 写出来了 · 明天 4 点后再复习' : '✓ 学完 · 明天开始复习')
+           : (isReview ? '✗ 没写出来 · 重新算新词，从 0/3 开始' : '✗ 没写出来 · 放进中间区，过几张再来'));
 }
 
 function bindChoice(checkFn){
@@ -1416,8 +1457,11 @@ function renderDone(){
 function renderHome(){
   const rec = todayRec();
   const q = buildQueue('mixed');
-  const done = rec.a;
-  const total = done + q.length;
+  // 环形进度只算「今日新词」：复习词不占每天的新词名额
+  const newToday = rec.n || 0;
+  const newRemain = Math.min(Math.max(0, settings.dailyNew - newToday), newList().length);
+  const done = newToday;
+  const total = done + newRemain;
   const pct = total ? done/total : 0;
   const C = 2 * Math.PI * 56;
   const ring = $('#ringFg');
@@ -1435,7 +1479,7 @@ function renderHome(){
   if(!deckWords().length) $('#heroSub').textContent = dn + ' 还没有词，换一本词书或导入自己的词表';
   else if(!q.length) $('#heroSub').textContent = dn + '：今天的任务已经完成 ✓' + (total ? ' 明天见' : '');
   else{
-    const n = Math.min(q.length, Math.max(0, settings.dailyNew - (rec.n||0)));
+    const n = newRemain;
     const r = Math.max(0, q.length - n);
     $('#heroSub').textContent = dn + ' · 待学 ' + q.length + ' 词　新词 ' + n + ' · 复习 ' + r;
   }
@@ -1618,7 +1662,7 @@ function statCard(v,k){ return '<div class="stat card"><div class="k">'+k+'</div
 /* ================= 设置 ================= */
 function renderSettings(){
   $('#setDailyNew').textContent = settings.dailyNew;
-  $('#setDailyReview').textContent = settings.dailyReview;
+  $('#setDailyReview').textContent = settings.dailyReview > 0 ? settings.dailyReview : '不限';
   $('#switchAudio').classList.toggle('on', settings.autoAudio);
   $('#switchExtra').classList.toggle('on', settings.extraModes);
   $('#switchSpell').classList.toggle('on', settings.spellCheck !== false);
@@ -1712,8 +1756,8 @@ function bind(){
 
   $('#decNew').onclick = ()=>{ settings.dailyNew = clamp(settings.dailyNew - 5, 5, 100); saveSet(); };
   $('#incNew').onclick = ()=>{ settings.dailyNew = clamp(settings.dailyNew + 5, 5, 100); saveSet(); };
-  $('#decRev').onclick = ()=>{ settings.dailyReview = clamp(settings.dailyReview - 10, 10, 300); saveSet(); };
-  $('#incRev').onclick = ()=>{ settings.dailyReview = clamp(settings.dailyReview + 10, 10, 300); saveSet(); };
+  $('#decRev').onclick = ()=>{ settings.dailyReview = clamp(settings.dailyReview - 50, 0, 1000); saveSet(); };
+  $('#incRev').onclick = ()=>{ settings.dailyReview = settings.dailyReview <= 0 ? 50 : clamp(settings.dailyReview + 50, 50, 1000); saveSet(); };
   $('#switchAudio').onclick = ()=>{ settings.autoAudio = !settings.autoAudio; saveSet(); };
   $('#switchExtra').onclick = ()=>{ settings.extraModes = !settings.extraModes; saveSet(); };
   $('#switchSpell').onclick = ()=>{ settings.spellCheck = settings.spellCheck === false; saveSet(); };
@@ -1821,8 +1865,21 @@ function bind(){
 }
 
 /* ================= 启动 ================= */
+// 老数据迁移：以前按 1/3/7/15… 天排的复习，统一改成「下一轮 4 点复习」（学完的词每天都要复习）
+function migrateDailyReview(){
+  const nd = nextReviewDue();
+  let changed = false;
+  Object.keys(progress).forEach(id=>{
+    const p = progress[id];
+    if(!p || p.dead) return;
+    if(roundsOf(p) >= ROUNDS && !p.half && p.due > nd){ p.due = nd; changed = true; }
+  });
+  if(changed) store.set(K.prog, progress);
+}
+
 function init(){
   words = parseDemo();
+  migrateDailyReview();
   applyTheme();
   bind();
   showView('home');
