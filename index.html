@@ -111,6 +111,9 @@ a{color:var(--accent)}
 .progress{flex:1;height:8px;background:var(--soft);border-radius:99px;overflow:hidden}
 .progress i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .3s}
 .sess-num{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+.sess-done{display:none;margin:-8px 0 10px;padding:7px 12px;border-radius:10px;text-align:center;font-size:13px;font-weight:700;
+  color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.sess-done.on{display:block}
 
 .qcard{padding:30px 26px 26px;position:relative;overflow:hidden;min-height:430px;display:flex;flex-direction:column}
 .qcard::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#15171c 0 33%,#d31c2b 33% 66%,#e3a008 66%)}
@@ -438,7 +441,8 @@ a{color:var(--accent)}
         之后每次学习都会捞回来再拼，出现的次数比复习多、比新词少，直到写对为止。
         嫌麻烦可以在设置里关掉「拼写验收」，第三轮记对了就直接学完。
         <b>复习</b>：学完的词<b>每天都复习一遍</b>（不清零，间隔不往后拖），而且复习题<b>直接就是拼写</b>——
-        给中文，你把德语写出来；<b>拼不出来就重新算新词</b>，回到 0/3 从头学。
+        给中文，你把德语写出来；名词<b>第一次复习</b>会给冠词提示，<b>第二次起不给</b>；<b>拼不出来就重新算新词</b>，回到 0/3 从头学，下次复习又给一次提示，如此循环。
+        学习页上方的进度条<b>只统计今日新词</b>，新词额度用完会亮「今日已学完！」；复习再多也不占这条进度。
         每天<b>凌晨 4 点</b>刷新：新的一天、新的新词额度、该复习的词都从这时算。
         「词库」里点开任何一个词都能 <b>重新复习</b>（打回新词，从 0/3 重学）。
         单词旁边的 <b>n. / v. / adj.</b> 是词性；名词还会标 <b class="gtag g-m">阳</b> <b class="gtag g-f">阴</b> <b class="gtag g-n">中</b>（der 阳性 / die 阴性 / das 中性）；点 <b>⚡</b> 可以「斩杀」——这个词以后再也不复习了。<br>
@@ -455,6 +459,7 @@ a{color:var(--accent)}
       <div class="progress"><i id="sessBar"></i></div>
       <div class="sess-num" id="sessNum">0/0</div>
     </div>
+    <div class="sess-done" id="sessDone">🎉 今日已学完！</div>
     <div id="qArea"></div>
   </section>
 
@@ -554,7 +559,7 @@ a{color:var(--accent)}
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
       每天 <b>凌晨 4:00</b> 刷新新词额度与当天复习安排（4 点前算前一天）<br>
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 18 · 2025-11-17 · 复习每天一次且直接拼写、凌晨 4 点刷新</span>
+      <span style="opacity:.7">版本 19 · 2025-11-18 · 进度条只算新词、复习首次给冠词提示</span>
     </p>
   </section>
 </div>
@@ -849,6 +854,7 @@ function updateProgress(id, correct, finish){
       p.rounds = ROUNDS;
       p.b = Math.max(p.b, ROUNDS);
       p.half = false;
+      p.rev = 0;      // 刚学完：下一次复习算「第一次复习」（名词会给冠词提示）
       p.due = nextReviewDue();
     } else if(p.rounds < ROUNDS){
       p.rounds++;
@@ -861,7 +867,7 @@ function updateProgress(id, correct, finish){
       p.due = nextReviewDue();
     }
   }
-  else { p.b = 0; p.rounds = 0; p.due = now + 10 * 60 * 1000; p.lapses++; }
+  else { p.b = 0; p.rounds = 0; p.rev = 0; p.due = now + 10 * 60 * 1000; p.lapses++; }
   p.reps++; p.last = now;
   store.set(K.prog, progress);
 
@@ -900,7 +906,7 @@ function unkillWord(id){
 // 重新复习：把这个词打回「新词」，从 0/3 重新学（保留星标和斩杀状态以外的数据全部清空）
 function resetWord(id){
   const old = progress[id] || {};
-  progress[id] = { b:0, due:0, reps:0, lapses:0, last:0, rounds:0, star: !!old.star };
+  progress[id] = { b:0, due:0, reps:0, lapses:0, last:0, rounds:0, rev:0, star: !!old.star };
   store.set(K.prog, progress);
   if(session) session.q = session.q.filter(x => x.w.id !== id);
 }
@@ -991,11 +997,20 @@ function newSession(mode){
 }
 
 function sessionLeft(){ return new Set(session.q.map(x=>x.w.id)).size; }
+// 上方进度条只统计「今日新词」：复习再多也不进这条进度；今日新词额度达成就亮「今日已学完！」
 function updateBar(){
-  const left = sessionLeft();
-  const done = session.totalUnique - left;
-  $('#sessBar').style.width = (done / Math.max(1, session.totalUnique) * 100) + '%';
-  $('#sessNum').textContent = done + '/' + session.totalUnique;
+  const rec = todayRec();
+  const newDone = rec.n || 0;
+  const pool = newList().length;                 // 还没学过的新词还剩多少
+  const target = Math.max(1, Math.min(settings.dailyNew, newDone + pool));
+  const done = Math.min(newDone, target);
+  $('#sessBar').style.width = (done / target * 100) + '%';
+  $('#sessNum').textContent = done + '/' + target;
+  const fin = $('#sessDone');
+  if(fin){
+    const finished = newDone >= settings.dailyNew || (pool === 0 && newDone > 0);
+    fin.classList.toggle('on', finished);
+  }
 }
 
 // 三轮制：第 1 轮四选一（随便蒙）→ 第 2 轮四选一但选项词性相同 → 第 3 轮自评（认识/不认识 → 记对/记错）
@@ -1271,14 +1286,17 @@ function renderWrite(isHalf){
   const w = cur.w;
   updateBar();
   const isNoun = needsArticle(w);
-  const tip = isHalf
-    ? '第 4 轮 · 拼写：写出来才算真的学会'
-    : '最后一步 · 把单词拼出来才算学完';
+  const p0 = progress[w.id];
+  const isReview = !!(p0 && !p0.half && !p0.dead && roundsOf(p0) >= ROUNDS);
+  // 第一次复习名词：给冠词提示；第二次及以后：不给提示，要自己写；错了重来后又回到「第一次」
+  const artHint = isNoun && isReview && !(p0 && p0.rev > 0);
+  const tip = isReview ? '复习 · 把单词拼出来'
+    : (isHalf ? '第 4 轮 · 拼写：写出来才算真的学会' : '最后一步 · 把单词拼出来才算学完');
   $('#qArea').innerHTML =
     '<div class="qcard card">' + chipFor(w)
     + '<div class="q-tip">'+tip+'</div>'
     + '<div class="q-word small">'+esc(w.zh)+'</div>'
-    + '<div class="q-sub">首字母：'+esc(bare(w).charAt(0))+(isNoun ? '　·　冠词也要写对' : '')+'</div>'
+    + '<div class="q-sub">'+(artHint ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+(isNoun && !artHint ? '　·　冠词也要写对' : '')+'</div>'
     + '<div class="spell"><input id="writeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(isNoun ? '冠词 + 单词，如 der Mann' : '输入德语单词…')+'">'
     + '<button class="btn primary" id="writeGo">确认</button>'
     + '<div class="hint">'+(isNoun ? '名词要把冠词和单词一起写，冠词错了不算对' : '写单词本身就行')
@@ -1313,6 +1331,7 @@ function submitWrite(ok){
     if(ok){
       np.half = false;
       if(!isReview){ np.rounds = ROUNDS; np.b = Math.max(np.b, ROUNDS); }
+      else { np.rev = (np.rev || 0) + 1; }   // 复习通过一次，下次复习就不再给冠词提示
       np.due = nextReviewDue();
     } else if(isReview){
       // 复习时拼不出来：这个词重新算新词，回到词库的新词队列，从 0/3 再学
@@ -1320,6 +1339,7 @@ function submitWrite(ok){
       np.rounds = 0;
       np.b = 0;
       np.reps = 0;
+      np.rev = 0;      // 重来后又算「第一次复习」，下次会给冠词提示
       np.due = 0;
     } else {
       // 新词第 4 轮写不出来：既不算新词也不算学完，放进中间区，之后会经常被拉回来
