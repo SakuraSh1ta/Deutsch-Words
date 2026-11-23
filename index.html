@@ -559,7 +559,7 @@ a{color:var(--accent)}
     <p style="font-size:12px;color:var(--muted);text-align:center;margin:22px 0">
       每天 <b>凌晨 4:00</b> 刷新新词额度与当天复习安排（4 点前算前一天）<br>
       数据只保存在这台设备的浏览器里 · 不上传任何内容<br>
-      <span style="opacity:.7">版本 19 · 2025-11-18 · 进度条只算新词、复习首次给冠词提示</span>
+      <span style="opacity:.7">版本 20 · 2025-11-23 · 复习拼写可只写单词/修判分</span>
     </p>
   </section>
 </div>
@@ -687,11 +687,20 @@ function splitArticle(s){
   if(!m) return null;
   return { art: m[1].toLowerCase(), rest: String(s).slice(m[0].length) };
 }
-function checkSpelling(w, input){
+function checkSpelling(w, input, opts){
   const word = normalizeDe(bare(w));
   if(!word) return false;
   if(needsArticle(w)){
-    const sp = splitArticle(input);
+    const raw = String(input || '');
+    // 第一次复习屏幕上给了冠词提示：只写单词、或连冠词一起写都算对（冠词写错仍算错）
+    if(opts && opts.artOptional){
+      const sp = splitArticle(raw);
+      const body = sp ? sp.rest : raw;
+      if(normalizeDe(body) !== word) return false;
+      if(!sp) return true;
+      return sp.art === String(w.art || '').toLowerCase();
+    }
+    const sp = splitArticle(raw);
     if(!sp) return false;
     if(sp.art !== String(w.art || '').toLowerCase()) return false;
     return normalizeDe(sp.rest) === word;
@@ -1060,6 +1069,8 @@ function renderStudy(){
   updateBar();
 
   if(type === 'half'){ renderWrite(true); return; }
+  // 复习的拼写题：走和第 4 轮同一套判分（名词必须连冠词一起写对）
+  if(type === 'rspell'){ renderWrite(); return; }
 
   if(type === 'r3'){
     if(cur.stage === 'write'){ renderWrite(); return; }
@@ -1096,18 +1107,7 @@ function renderStudy(){
       + '<div class="options" id="options">'+optsHtml+'</div><div id="fbWrap"></div></div>';
     bindChoice(id => id === w.id);
   } else {
-    const rspell = type === 'rspell';
-    $('#qArea').innerHTML =
-      '<div class="qcard card">' + chipFor(w) + '<div class="q-tip">'+(rspell ? '复习 · 拼出这个单词' : '根据中文，拼出德语单词')+'</div>'
-      + '<div class="q-word small">'+esc(w.zh)+'</div>'
-      + '<div class="q-sub">'+(w.art ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+'</div>'
-      + '<div class="spell"><input id="spellInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入德语单词…">'
-      + '<div class="hint">回车提交 · ä 可写成 ae，ß 可写成 ss</div></div><div id="fbWrap"></div></div>';
-    const inp = $('#spellInput');
-    inp.focus();
-    inp.addEventListener('keydown', e=>{
-      if(e.key === 'Enter'){ e.preventDefault(); submitAnswer(normalizeDe(inp.value) === normalizeDe(bare(w))); }
-    });
+    renderWrite();
   }
 }
 
@@ -1299,10 +1299,10 @@ function renderWrite(isHalf){
     + '<div class="q-sub">'+(artHint ? '冠词：'+esc(w.art)+'　' : '')+'首字母：'+esc(bare(w).charAt(0))+(isNoun && !artHint ? '　·　冠词也要写对' : '')+'</div>'
     + '<div class="spell"><input id="writeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(isNoun ? '冠词 + 单词，如 der Mann' : '输入德语单词…')+'">'
     + '<button class="btn primary" id="writeGo">确认</button>'
-    + '<div class="hint">'+(isNoun ? '名词要把冠词和单词一起写，冠词错了不算对' : '写单词本身就行')
+    + '<div class="hint">'+(isNoun ? (artHint ? '第一次复习给了冠词提示：写 Mann 或 der Mann 都算对' : '名词要把冠词和单词一起写，冠词错了不算对') : '写单词本身就行')
     + ' · ä 可写成 ae，ß 可写成 ss</div></div><div id="fbWrap"></div></div>';
   const inp = $('#writeInput');
-  const submit = () => submitWrite(checkSpelling(w, inp ? inp.value : ''));
+  const submit = () => submitWrite(checkSpelling(w, inp ? inp.value : '', { artOptional: artHint }));
   if(inp){
     if((window.innerWidth || 0) > 720) inp.focus();
     inp.addEventListener('keydown', e=>{
@@ -1398,7 +1398,7 @@ function submitAnswer(ok){
       else if(!ok && b.classList.contains('picked')) b.classList.add('wrong');
     });
   }
-  const inp = $('#spellInput');
+  const inp = $('#writeInput');
   if(inp){ inp.disabled = true; inp.style.borderColor = ok ? 'var(--ok)' : 'var(--bad)'; }
 
   // 手机上答完题就把选项/输入框收起来，让反馈一屏放得下（电脑上保留，能看到对错标记）
